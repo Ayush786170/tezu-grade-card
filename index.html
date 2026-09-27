@@ -588,7 +588,7 @@
       </form>
       <p class="hint" id="inputHint">Example: EEB22026. You can type in lowercase; it will be converted automatically.</p>
       <p class="hint destination-note" id="destinationNote">Get My Grade Card opens your PDF directly in a new tab.</p>
-      <p class="hint privacy-note">Entered roll numbers are logged for usage statistics.</p>
+      <p class="hint privacy-note">Entered roll numbers and IP addresses are logged for usage statistics.</p>
       <p class="message" id="formMessage" role="alert"></p>
       <p class="confirmation" id="confirmationMessage" role="status" aria-live="polite"></p>
     </section>
@@ -821,16 +821,48 @@
         confirmationMessage.classList.add("visible");
       }
 
-      function logLookup(rollNumber) {
+      function postLookup(rollNumber, ipAddress) {
         try {
           fetch(loggingEndpoint, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({ roll: rollNumber, ua: navigator.userAgent })
+            body: JSON.stringify({ roll: rollNumber, ua: navigator.userAgent, ip: ipAddress })
           }).catch(function () {});
         } catch (error) {
           // Logging must never interrupt the grade-card lookup.
+        }
+      }
+
+      function logLookup(rollNumber) {
+        let timeoutId;
+
+        try {
+          const controller = new AbortController();
+          timeoutId = window.setTimeout(function () {
+            controller.abort();
+          }, 2500);
+
+          fetch("https://api.ipify.org?format=json", { signal: controller.signal })
+            .then(function (response) {
+              if (!response.ok) throw new Error("IP lookup failed");
+              return response.json();
+            })
+            .then(function (data) {
+              return data && typeof data.ip === "string" ? data.ip : "";
+            })
+            .catch(function () {
+              return "";
+            })
+            .then(function (ipAddress) {
+              postLookup(rollNumber, ipAddress);
+            })
+            .finally(function () {
+              window.clearTimeout(timeoutId);
+            });
+        } catch (error) {
+          if (timeoutId) window.clearTimeout(timeoutId);
+          postLookup(rollNumber, "");
         }
       }
 
