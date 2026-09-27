@@ -661,6 +661,141 @@
       to { transform: rotate(360deg); }
     }
 
+    .linkedin-section {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid var(--line);
+    }
+
+    .linkedin-section[hidden] { display: none; }
+
+    .linkedin-heading {
+      margin: 0;
+      color: var(--ink);
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .linkedin-status {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .linkedin-candidates {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .linkedin-candidate {
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: color-mix(in srgb, var(--surface-strong) 78%, transparent);
+    }
+
+    .linkedin-candidate-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .linkedin-profile-name {
+      min-width: 0;
+      margin: 0;
+      overflow-wrap: anywhere;
+      color: var(--ink);
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .linkedin-badge {
+      flex: 0 0 auto;
+      padding: 4px 7px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+
+    .linkedin-badge.strong {
+      border-color: color-mix(in srgb, var(--success) 28%, transparent);
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .linkedin-badge.possible {
+      border-color: color-mix(in srgb, var(--amber) 32%, transparent);
+      background: color-mix(in srgb, var(--amber) 14%, transparent);
+      color: color-mix(in srgb, var(--amber) 78%, var(--ink));
+    }
+
+    .linkedin-badge.low {
+      background: color-mix(in srgb, var(--muted) 9%, transparent);
+      color: var(--muted);
+    }
+
+    .linkedin-headline {
+      display: -webkit-box;
+      margin: 8px 0 0;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.45;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .linkedin-url {
+      display: block;
+      margin-top: 9px;
+      overflow: hidden;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.69rem;
+      line-height: 1.35;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .linkedin-profile-link,
+    .linkedin-search-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      margin-top: 11px;
+      padding: 0 12px;
+      border: 1px solid var(--line-strong);
+      border-radius: 9px;
+      background: var(--surface-strong);
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 1.25;
+      text-decoration: none;
+    }
+
+    .linkedin-profile-link:hover,
+    .linkedin-search-link:hover {
+      border-color: color-mix(in srgb, var(--teal) 52%, var(--line-strong));
+      background: color-mix(in srgb, var(--teal) 9%, var(--surface-strong));
+      color: var(--focus);
+    }
+
+    .linkedin-fallback-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     .secondary-action {
       min-height: 42px;
       padding: 0 15px;
@@ -1008,11 +1143,16 @@
         <label class="result-label" for="directPdfUrl">Direct PDF link</label>
         <input class="result-url" id="directPdfUrl" type="text" readonly />
         <div class="result-actions">
-          <button class="secondary-action" id="copyLinkButton" type="button">Copy link</button>
+          <button class="secondary-action" id="copyLinkButton" type="button">Copy PDF URL</button>
           <button class="secondary-action" id="qrCodeButton" type="button">QR code</button>
           <span class="copy-status" id="copyStatus" role="status" aria-live="polite"></span>
         </div>
         <p class="student-name-status" id="studentNameStatus" role="status" aria-live="polite" hidden></p>
+        <section class="linkedin-section" id="linkedinSection" aria-labelledby="linkedinHeading" hidden>
+          <h2 class="linkedin-heading" id="linkedinHeading">LinkedIn Profile</h2>
+          <p class="linkedin-status" id="linkedinStatus" role="status" aria-live="polite"></p>
+          <div class="linkedin-candidates" id="linkedinCandidates"></div>
+        </section>
       </div>
     </section>
 
@@ -1071,6 +1211,9 @@
       const copyStatus = document.getElementById("copyStatus");
       const qrCodeButton = document.getElementById("qrCodeButton");
       const studentNameStatus = document.getElementById("studentNameStatus");
+      const linkedinSection = document.getElementById("linkedinSection");
+      const linkedinStatus = document.getElementById("linkedinStatus");
+      const linkedinCandidates = document.getElementById("linkedinCandidates");
       const qrDialog = document.getElementById("qrDialog");
       const qrCloseButton = document.getElementById("qrCloseButton");
       const qrImage = document.getElementById("qrImage");
@@ -1372,11 +1515,12 @@
         singleResult.hidden = true;
         directPdfUrl.value = "";
         copyStatus.textContent = "";
-        copyLinkButton.textContent = "Copy link";
+        copyLinkButton.textContent = "Copy PDF URL";
         studentNameRequestNumber += 1;
         studentNameStatus.hidden = true;
         studentNameStatus.textContent = "";
         studentNameStatus.classList.remove("loading");
+        resetLinkedIn();
       }
 
       function normalizeRollNumber(value) {
@@ -1513,6 +1657,175 @@
         });
       }
 
+      function resetLinkedIn() {
+        linkedinSection.hidden = true;
+        linkedinStatus.textContent = "";
+        linkedinCandidates.replaceChildren();
+      }
+
+      function buildLinkedInQuery(studentInfo) {
+        let query = 'site:linkedin.com/in "' + studentInfo.name + '" "Tezpur University"';
+        if (studentInfo.branch) query += ' "' + studentInfo.branch + '"';
+        return query;
+      }
+
+      function addLinkedInFallback(studentInfo, backendQuery, requestNumber) {
+        if (requestNumber !== studentNameRequestNumber) return;
+        const query = typeof backendQuery === "string" && backendQuery.trim()
+          ? backendQuery.trim()
+          : buildLinkedInQuery(studentInfo);
+        const searchEngines = [
+          { label: "Search Google", url: "https://www.google.com/search?q=" },
+          { label: "Search Bing", url: "https://www.bing.com/search?q=" },
+          { label: "Search DuckDuckGo", url: "https://duckduckgo.com/?q=" }
+        ];
+        const actions = document.createElement("div");
+        actions.className = "linkedin-fallback-actions";
+
+        searchEngines.forEach(function (engine) {
+          const link = document.createElement("a");
+          link.className = "linkedin-search-link";
+          link.href = engine.url + encodeURIComponent(query);
+          link.target = "_blank";
+          link.rel = "noopener";
+          link.textContent = engine.label;
+          actions.appendChild(link);
+        });
+
+        linkedinCandidates.replaceChildren(actions);
+        linkedinStatus.textContent = "No matching LinkedIn profile found.";
+        linkedinSection.hidden = false;
+      }
+
+      function getLinkedInProfileURL(value) {
+        if (typeof value !== "string" || !value.trim()) return "";
+        try {
+          const parsed = new URL(value.trim());
+          const hostname = parsed.hostname.toLowerCase();
+          if (parsed.protocol !== "https:" || !(hostname === "linkedin.com" || hostname.endsWith(".linkedin.com"))) return "";
+          if (!/^\/in\//i.test(parsed.pathname)) return "";
+          return parsed.href;
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function getLinkedInCandidateDetails(candidate, studentInfo) {
+        const slug = typeof candidate.slug === "string" ? candidate.slug.trim().replace(/^\/+|\/+$/g, "") : "";
+        const slugName = slug.replace(/-[0-9a-f]{6,}$/i, "").replace(/-+/g, " ").trim();
+        const profileName = slugName ? toTitleCase(slugName) : studentInfo.name;
+        const normalizedSlugName = slugName.toLowerCase().replace(/\s+/g, " ").trim();
+        const normalizedStudentName = studentInfo.name.toLowerCase().replace(/\s+/g, " ").trim();
+        const evidence = [candidate.snippet, candidate.title].filter(function (value) {
+          return typeof value === "string" && value.trim();
+        }).join(" ").toLowerCase();
+        const exactName = normalizedSlugName === normalizedStudentName;
+        const mentionsTezpur = evidence.indexOf("tezpur") !== -1;
+        const mentionsBranch = Boolean(studentInfo.branch) && evidence.indexOf(studentInfo.branch.toLowerCase()) !== -1;
+        let badgeLabel = "Low confidence";
+        let badgeClass = "low";
+
+        if (exactName && (mentionsTezpur || mentionsBranch)) {
+          badgeLabel = "Strong match";
+          badgeClass = "strong";
+        } else if (exactName || (mentionsTezpur && mentionsBranch)) {
+          badgeLabel = "Possible match";
+          badgeClass = "possible";
+        }
+
+        return {
+          profileName: profileName,
+          headline: typeof candidate.snippet === "string" && candidate.snippet.trim()
+            ? candidate.snippet.trim()
+            : (typeof candidate.title === "string" ? candidate.title.trim() : ""),
+          badgeLabel: badgeLabel,
+          badgeClass: badgeClass
+        };
+      }
+
+      function createLinkedInCandidateCard(candidate, studentInfo, profileURL) {
+        const details = getLinkedInCandidateDetails(candidate, studentInfo);
+        const card = document.createElement("article");
+        card.className = "linkedin-candidate";
+
+        const header = document.createElement("div");
+        header.className = "linkedin-candidate-head";
+        const name = document.createElement("h3");
+        name.className = "linkedin-profile-name";
+        name.textContent = details.profileName;
+        const badge = document.createElement("span");
+        badge.className = "linkedin-badge " + details.badgeClass;
+        badge.textContent = details.badgeLabel;
+        header.append(name, badge);
+        card.appendChild(header);
+
+        if (details.headline) {
+          const headline = document.createElement("p");
+          headline.className = "linkedin-headline";
+          headline.textContent = details.headline;
+          card.appendChild(headline);
+        }
+
+        const url = document.createElement("span");
+        url.className = "linkedin-url";
+        url.title = profileURL;
+        url.textContent = profileURL;
+        card.appendChild(url);
+
+        const profileLink = document.createElement("a");
+        profileLink.className = "linkedin-profile-link";
+        profileLink.href = profileURL;
+        profileLink.target = "_blank";
+        profileLink.rel = "noopener";
+        profileLink.textContent = "View LinkedIn Profile";
+        card.appendChild(profileLink);
+        return card;
+      }
+
+      function findLinkedIn(studentInfo, requestNumber) {
+        if (requestNumber !== studentNameRequestNumber) return;
+        linkedinCandidates.replaceChildren();
+        linkedinStatus.textContent = "Searching LinkedIn…";
+        linkedinSection.hidden = false;
+
+        const linkedinURL = loggingEndpoint + "?action=linkedin&name=" + encodeURIComponent(studentInfo.name) +
+          "&programme=" + encodeURIComponent(studentInfo.programme) +
+          "&department=" + encodeURIComponent(studentInfo.department);
+
+        fetch(linkedinURL, { cache: "no-store" })
+          .then(function (response) {
+            if (!response.ok) throw new Error("LinkedIn search request failed");
+            return response.json();
+          })
+          .then(function (data) {
+            if (requestNumber !== studentNameRequestNumber) return;
+            if (!data || data.ok !== true || !Array.isArray(data.candidates) || !data.candidates.length) {
+              addLinkedInFallback(studentInfo, data && data.query, requestNumber);
+              return;
+            }
+
+            const cards = [];
+            data.candidates.slice(0, 5).forEach(function (candidate) {
+              if (!candidate || typeof candidate !== "object") return;
+              const profileURL = getLinkedInProfileURL(candidate.profileUrl);
+              if (!profileURL) return;
+              cards.push(createLinkedInCandidateCard(candidate, studentInfo, profileURL));
+            });
+
+            if (!cards.length) {
+              addLinkedInFallback(studentInfo, data.query, requestNumber);
+              return;
+            }
+
+            linkedinCandidates.replaceChildren.apply(linkedinCandidates, cards);
+            linkedinStatus.textContent = "LinkedIn results for " + studentInfo.name + ":";
+            linkedinSection.hidden = false;
+          })
+          .catch(function () {
+            addLinkedInFallback(studentInfo, "", requestNumber);
+          });
+      }
+
       function findStudentName(rollNumber) {
         const requestNumber = ++studentNameRequestNumber;
         studentNameStatus.textContent = "Finding student name…";
@@ -1552,6 +1865,8 @@
             if (!textContent || requestNumber !== studentNameRequestNumber) return;
             const lines = textItemsToLines(textContent.items || []);
             let studentName = "";
+            let programme = "";
+            let department = "";
 
             lines.some(function (line) {
               if (!/\bName\s*:/i.test(line)) return false;
@@ -1563,10 +1878,39 @@
               return true;
             });
 
+            lines.some(function (line) {
+              if (!/\bProgramme\s*:/i.test(line)) return false;
+              const match = line.match(/\bProgramme\s*:\s*(.+?)(?=\s{2,}[A-Za-z_]+\s*:|\s*$)/i);
+              if (!match) return false;
+              programme = match[1].trim();
+              return true;
+            });
+
+            lines.some(function (line) {
+              if (!/\bDepartment\s*:/i.test(line)) return false;
+              const match = line.match(/\bDepartment\s*:\s*(.+?)(?=\s{2,}[A-Za-z_]+\s*:|\s*$)/i);
+              if (!match) return false;
+              department = match[1].trim();
+              return true;
+            });
+
             if (!studentName) throw new Error("Student name not found");
+
+            const branchMatch = programme.match(/\bIN\s+(.+)$/i);
+            const branch = branchMatch && branchMatch[1].trim()
+              ? toTitleCase(branchMatch[1].trim())
+              : (department ? toTitleCase(department) : "");
+            const studentInfo = {
+              name: studentName,
+              programme: programme,
+              department: department,
+              branch: branch
+            };
+
             studentNameStatus.textContent = "Student: " + studentName;
             studentNameStatus.classList.remove("loading");
             studentNameStatus.hidden = false;
+            findLinkedIn(studentInfo, requestNumber);
           })
           .catch(function () {
             hideStudentName(requestNumber);
@@ -1719,7 +2063,7 @@
           "(function(){",
           "var pdfURL=" + safePdfURL + ";",
           "var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;",
-          "function openPdf(){window.location.href=pdfURL;}",
+          "function openPdf(){window.location.replace(pdfURL);}",
           "function celebrate(){",
           "if(!reduced&&typeof window.confetti==='function'){",
           "var options={particleCount:36,spread:42,startVelocity:27,gravity:1.15,decay:.9,scalar:.78,ticks:88,colors:['#2dd4bf','#9075f0','#f05b98','#f2b755'],disableForReducedMotion:true};",
@@ -1738,7 +2082,7 @@
           newTab.document.write(interstitialHTML);
           newTab.document.close();
         } catch (error) {
-          newTab.location.href = pdfURL;
+          newTab.location.replace(pdfURL);
         }
       }
 
@@ -1875,7 +2219,7 @@
         copyLinkButton.textContent = "Copied";
         copyStatus.textContent = "Link copied to clipboard.";
         window.setTimeout(function () {
-          copyLinkButton.textContent = "Copy link";
+          copyLinkButton.textContent = "Copy PDF URL";
         }, 1800);
       }
 
@@ -1956,6 +2300,8 @@
 
       batchForm.addEventListener("submit", function (event) {
         event.preventDefault();
+        studentNameRequestNumber += 1;
+        resetLinkedIn();
         batchResults.replaceChildren();
         const entries = batchRollNumbers.value.split(/[\s,]+/).filter(function (entry) {
           return entry.trim().length > 0;
