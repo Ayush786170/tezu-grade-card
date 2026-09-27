@@ -916,6 +916,7 @@
     </div>
   </dialog>
 
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <script>
     (function () {
       "use strict";
@@ -942,6 +943,7 @@
       const batchForm = document.getElementById("batchForm");
       const batchRollNumbers = document.getElementById("batchRollNumbers");
       const batchResults = document.getElementById("batchResults");
+      const batchSubmitButton = batchForm.querySelector(".primary");
       const gradientBlobs = Array.from(document.querySelectorAll(".gradient-blob"));
       const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
       const hoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
@@ -1336,6 +1338,105 @@
         });
       }
 
+      function pulseHaptic() {
+        if (typeof navigator.vibrate === "function") {
+          try {
+            navigator.vibrate(25);
+          } catch (error) {
+            // Haptics are optional and unsupported on some devices.
+          }
+        }
+      }
+
+      function celebrateSuccess(anchorButton) {
+        pulseHaptic();
+
+        if (reducedMotionQuery.matches || typeof window.confetti !== "function") return;
+
+        const rect = anchorButton.getBoundingClientRect();
+        const viewportWidth = Math.max(window.innerWidth, 1);
+        const viewportHeight = Math.max(window.innerHeight, 1);
+        const styles = window.getComputedStyle(document.documentElement);
+        const colors = ["--teal", "--violet", "--magenta", "--amber"].map(function (token) {
+          return styles.getPropertyValue(token).trim();
+        });
+        const originY = Math.max(0.08, Math.min(0.92, (rect.top + rect.height * 0.55) / viewportHeight));
+        const sharedOptions = {
+          particleCount: 36,
+          spread: 42,
+          startVelocity: 27,
+          gravity: 1.15,
+          decay: 0.9,
+          scalar: 0.78,
+          ticks: 88,
+          colors: colors,
+          disableForReducedMotion: true
+        };
+
+        window.confetti(Object.assign({}, sharedOptions, {
+          angle: 62,
+          origin: {
+            x: Math.max(0.03, Math.min(0.97, (rect.left + rect.width * 0.16) / viewportWidth)),
+            y: originY
+          }
+        }));
+        window.confetti(Object.assign({}, sharedOptions, {
+          angle: 118,
+          origin: {
+            x: Math.max(0.03, Math.min(0.97, (rect.right - rect.width * 0.16) / viewportWidth)),
+            y: originY
+          }
+        }));
+      }
+
+      function writeGradeCardInterstitial(newTab, pdfURL) {
+        const safePdfURL = JSON.stringify(pdfURL).replace(/</g, "\\u003c");
+        const interstitialHTML = [
+          "<!doctype html>",
+          "<html lang=\"en\"><head>",
+          "<meta charset=\"utf-8\">",
+          "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
+          "<meta name=\"color-scheme\" content=\"dark\">",
+          "<meta name=\"theme-color\" content=\"#0a0a12\">",
+          "<title>Opening grade card…</title>",
+          "<style>",
+          "html,body{height:100%;margin:0;background:#0a0a12;color:#f7f6ff;color-scheme:dark}",
+          "body{display:grid;place-items:center;font-family:system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif}",
+          ".status{display:grid;justify-items:center;gap:16px;padding:24px;text-align:center}",
+          ".spinner{width:28px;height:28px;border:2px solid rgba(247,246,255,.18);border-top-color:#2dd4bf;border-right-color:#f05b98;border-radius:50%;animation:spin .8s linear infinite}",
+          "p{margin:0;font-size:15px;font-weight:600;letter-spacing:.01em}",
+          "@keyframes spin{to{transform:rotate(360deg)}}",
+          "@media(prefers-reduced-motion:reduce){.spinner{animation:none;border-color:#2dd4bf}}",
+          "</style></head><body>",
+          "<main class=\"status\"><span class=\"spinner\" aria-hidden=\"true\"></span><p>Opening your grade card…</p></main>",
+          "<script src=\"https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js\"><\/script>",
+          "<script>",
+          "(function(){",
+          "var pdfURL=" + safePdfURL + ";",
+          "var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;",
+          "function openPdf(){window.location.href=pdfURL;}",
+          "function celebrate(){",
+          "if(!reduced&&typeof window.confetti==='function'){",
+          "var options={particleCount:36,spread:42,startVelocity:27,gravity:1.15,decay:.9,scalar:.78,ticks:88,colors:['#2dd4bf','#9075f0','#f05b98','#f2b755'],disableForReducedMotion:true};",
+          "window.confetti(Object.assign({},options,{angle:62,origin:{x:.28,y:.58}}));",
+          "window.confetti(Object.assign({},options,{angle:118,origin:{x:.72,y:.58}}));",
+          "}",
+          "window.setTimeout(openPdf,reduced?220:1400);",
+          "}",
+          "if(document.readyState==='complete'){celebrate();}else{window.addEventListener('load',celebrate,{once:true});}",
+          "})();",
+          "<\/script></body></html>"
+        ].join("");
+
+        try {
+          newTab.document.open();
+          newTab.document.write(interstitialHTML);
+          newTab.document.close();
+        } catch (error) {
+          newTab.location.href = pdfURL;
+        }
+      }
+
       function openGradeCard(rawValue) {
         clearMessages();
         const rollNumber = normalizeRollNumber(rawValue);
@@ -1357,9 +1458,17 @@
         // Roll Number is encoded and inserted as the PDF filename.
         const fileName = rollNumber + ".pdf";
         const pdfURL = baseURL + encodeURIComponent(rollNumber) + ".pdf";
-        window.open(pdfURL, "_blank", "noopener");
+        const newTab = window.open("about:blank", "_blank");
+
+        if (newTab === null) {
+          showConfirmation(fileName, pdfURL);
+          celebrateSuccess(submitButton);
+        } else {
+          writeGradeCardInterstitial(newTab, pdfURL);
+          pulseHaptic();
+        }
+
         logSubmission(rollNumber);
-        showConfirmation(fileName, pdfURL);
         showSingleResult(pdfURL);
       }
 
@@ -1382,9 +1491,11 @@
         }, 1800);
       }
 
-      function showManualCopyPrompt(pdfURL) {
-        window.prompt("Copy this link:", pdfURL);
-        copyStatus.textContent = "Copy the link from the prompt.";
+      function showManualCopyPrompt() {
+        directPdfUrl.focus();
+        directPdfUrl.select();
+        directPdfUrl.setSelectionRange(0, directPdfUrl.value.length);
+        copyStatus.textContent = "Link selected. Use your device's copy command.";
       }
 
       copyLinkButton.addEventListener("click", function () {
@@ -1527,6 +1638,9 @@
         });
 
         batchResults.hidden = false;
+        if (validEntries.length) {
+          celebrateSuccess(batchSubmitButton);
+        }
       });
     })();
   </script>
