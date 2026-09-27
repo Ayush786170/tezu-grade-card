@@ -112,12 +112,18 @@
     }
 
     .gradient-blob {
+      --blob-opacity: 0.2;
       position: absolute;
       border-radius: 50%;
-      opacity: 0.2;
+      opacity: calc(var(--blob-opacity) + var(--proximity-lift, 0));
       filter: blur(42px);
-      transform: translate3d(var(--parallax-x, 0), var(--parallax-y, 0), 0);
-      will-change: transform;
+      transform: translate3d(
+        calc(var(--parallax-x, 0px) + var(--ambient-x, 0px) + var(--repel-x, 0px)),
+        calc(var(--parallax-y, 0px) + var(--ambient-y, 0px) + var(--repel-y, 0px)),
+        0
+      ) scale(var(--blob-scale, 1));
+      transform-origin: center;
+      will-change: transform, opacity;
     }
 
     .gradient-blob.teal {
@@ -137,21 +143,21 @@
     }
 
     .gradient-blob.amber {
+      --blob-opacity: 0.13;
       right: 5%;
       bottom: -16%;
       width: clamp(180px, 27vw, 360px);
       aspect-ratio: 1;
       background: var(--amber);
-      opacity: 0.13;
     }
 
     .gradient-blob.violet {
+      --blob-opacity: 0.16;
       bottom: -13%;
       left: 2%;
       width: clamp(210px, 30vw, 410px);
       aspect-ratio: 1;
       background: var(--violet);
-      opacity: 0.16;
     }
 
     .page {
@@ -612,13 +618,23 @@
       const hoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
 
       function createMotionLayer() {
-        if (reducedMotionQuery.matches || !hoverQuery.matches) return function () {};
+        if (reducedMotionQuery.matches) return function () {};
 
+        const pointerEnabled = hoverQuery.matches;
+        const floatProfiles = [
+          { x: 13, y: 10, period: 17600, phase: 0.35 },
+          { x: 10, y: 14, period: 21100, phase: 2.1 },
+          { x: 16, y: 9, period: 23800, phase: 4.25 },
+          { x: 11, y: 13, period: 19400, phase: 5.4 }
+        ];
         const state = {
           pointerX: 0,
           pointerY: 0,
           pointerTargetX: 0,
           pointerTargetY: 0,
+          pointerClientX: window.innerWidth / 2,
+          pointerClientY: window.innerHeight / 2,
+          pointerActive: false,
           tiltX: 0,
           tiltY: 0,
           tiltTargetX: 0,
@@ -634,8 +650,28 @@
           buttonTargetX: 0,
           buttonTargetY: 0,
           buttonScale: 1,
-          buttonTargetScale: 1
+          buttonTargetScale: 1,
+          elapsed: 0,
+          lastFrameTime: 0
         };
+        const blobStates = gradientBlobs.map(function (blob, index) {
+          const profile = floatProfiles[index % floatProfiles.length];
+          return {
+            element: blob,
+            depth: Number(blob.dataset.depth) || 8,
+            amplitudeX: profile.x,
+            amplitudeY: profile.y,
+            period: profile.period,
+            phase: profile.phase,
+            centerX: 0,
+            centerY: 0,
+            influence: 260,
+            repelX: 0,
+            repelY: 0,
+            scale: 1,
+            lift: 0
+          };
+        });
 
         let animationFrame = 0;
 
@@ -643,21 +679,23 @@
           return current + (target - current) * amount;
         }
 
-        function isSettled() {
-          return Math.abs(state.pointerX - state.pointerTargetX) < 0.002 &&
-            Math.abs(state.pointerY - state.pointerTargetY) < 0.002 &&
-            Math.abs(state.tiltX - state.tiltTargetX) < 0.01 &&
-            Math.abs(state.tiltY - state.tiltTargetY) < 0.01 &&
-            Math.abs(state.glareX - state.glareTargetX) < 0.08 &&
-            Math.abs(state.glareY - state.glareTargetY) < 0.08 &&
-            Math.abs(state.glareOpacity - state.glareTargetOpacity) < 0.005 &&
-            Math.abs(state.buttonX - state.buttonTargetX) < 0.01 &&
-            Math.abs(state.buttonY - state.buttonTargetY) < 0.01 &&
-            Math.abs(state.buttonScale - state.buttonTargetScale) < 0.001;
+        function measureBlobs() {
+          blobStates.forEach(function (blobState) {
+            const element = blobState.element;
+            blobState.centerX = element.offsetLeft + element.offsetWidth / 2;
+            blobState.centerY = element.offsetTop + element.offsetHeight / 2;
+            blobState.influence = Math.max(element.offsetWidth, element.offsetHeight) * 0.72 + 150;
+          });
         }
 
-        function renderMotion() {
+        function renderMotion(frameTime) {
           animationFrame = 0;
+          if (document.hidden) return;
+
+          if (!state.lastFrameTime) state.lastFrameTime = frameTime;
+          state.elapsed += Math.min(40, frameTime - state.lastFrameTime);
+          state.lastFrameTime = frameTime;
+
           state.pointerX = ease(state.pointerX, state.pointerTargetX, 0.075);
           state.pointerY = ease(state.pointerY, state.pointerTargetY, 0.075);
           state.tiltX = ease(state.tiltX, state.tiltTargetX, 0.11);
@@ -669,38 +707,83 @@
           state.buttonY = ease(state.buttonY, state.buttonTargetY, 0.16);
           state.buttonScale = ease(state.buttonScale, state.buttonTargetScale, 0.16);
 
-          searchCard.style.setProperty("--tilt-x", state.tiltX.toFixed(3) + "deg");
-          searchCard.style.setProperty("--tilt-y", state.tiltY.toFixed(3) + "deg");
-          searchCard.style.setProperty("--glare-shift-x", state.glareX.toFixed(2) + "px");
-          searchCard.style.setProperty("--glare-shift-y", state.glareY.toFixed(2) + "px");
-          searchCard.style.setProperty("--glare-opacity", state.glareOpacity.toFixed(3));
-          submitButton.style.setProperty("--magnetic-x", state.buttonX.toFixed(2) + "px");
-          submitButton.style.setProperty("--magnetic-y", state.buttonY.toFixed(2) + "px");
-          submitButton.style.setProperty("--magnetic-scale", state.buttonScale.toFixed(4));
+          if (pointerEnabled) {
+            searchCard.style.setProperty("--tilt-x", state.tiltX.toFixed(3) + "deg");
+            searchCard.style.setProperty("--tilt-y", state.tiltY.toFixed(3) + "deg");
+            searchCard.style.setProperty("--glare-shift-x", state.glareX.toFixed(2) + "px");
+            searchCard.style.setProperty("--glare-shift-y", state.glareY.toFixed(2) + "px");
+            searchCard.style.setProperty("--glare-opacity", state.glareOpacity.toFixed(3));
+            submitButton.style.setProperty("--magnetic-x", state.buttonX.toFixed(2) + "px");
+            submitButton.style.setProperty("--magnetic-y", state.buttonY.toFixed(2) + "px");
+            submitButton.style.setProperty("--magnetic-scale", state.buttonScale.toFixed(4));
+          }
 
-          gradientBlobs.forEach(function (blob) {
-            const depth = Number(blob.dataset.depth) || 8;
-            blob.style.setProperty("--parallax-x", (-state.pointerX * depth).toFixed(2) + "px");
-            blob.style.setProperty("--parallax-y", (-state.pointerY * depth).toFixed(2) + "px");
+          blobStates.forEach(function (blobState, index) {
+            const time = state.elapsed / blobState.period * Math.PI * 2 + blobState.phase;
+            const ambientX = Math.sin(time) * blobState.amplitudeX;
+            const ambientY = Math.cos(time * 0.83 + blobState.phase * 0.7) * blobState.amplitudeY;
+            let targetRepelX = 0;
+            let targetRepelY = 0;
+            let targetScale = 1;
+            let targetLift = 0;
+
+            if (pointerEnabled && state.pointerActive) {
+              let deltaX = blobState.centerX - state.pointerClientX;
+              let deltaY = blobState.centerY - state.pointerClientY;
+              let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+              const proximity = Math.max(0, 1 - distance / blobState.influence);
+
+              if (proximity > 0) {
+                if (distance < 1) {
+                  deltaX = Math.cos(blobState.phase);
+                  deltaY = Math.sin(blobState.phase);
+                  distance = 1;
+                }
+                const easedProximity = proximity * proximity * (3 - 2 * proximity);
+                const maxPush = 20 + index * 3;
+                targetRepelX = deltaX / distance * maxPush * easedProximity;
+                targetRepelY = deltaY / distance * maxPush * easedProximity;
+                targetScale = 1 + 0.024 * easedProximity;
+                targetLift = 0.045 * easedProximity;
+              }
+            }
+
+            blobState.repelX = ease(blobState.repelX, targetRepelX, 0.055);
+            blobState.repelY = ease(blobState.repelY, targetRepelY, 0.055);
+            blobState.scale = ease(blobState.scale, targetScale, 0.06);
+            blobState.lift = ease(blobState.lift, targetLift, 0.06);
+
+            blobState.element.style.setProperty("--parallax-x", (-state.pointerX * blobState.depth).toFixed(2) + "px");
+            blobState.element.style.setProperty("--parallax-y", (-state.pointerY * blobState.depth).toFixed(2) + "px");
+            blobState.element.style.setProperty("--ambient-x", ambientX.toFixed(2) + "px");
+            blobState.element.style.setProperty("--ambient-y", ambientY.toFixed(2) + "px");
+            blobState.element.style.setProperty("--repel-x", blobState.repelX.toFixed(2) + "px");
+            blobState.element.style.setProperty("--repel-y", blobState.repelY.toFixed(2) + "px");
+            blobState.element.style.setProperty("--blob-scale", blobState.scale.toFixed(4));
+            blobState.element.style.setProperty("--proximity-lift", blobState.lift.toFixed(4));
           });
 
-          if (!isSettled()) animationFrame = window.requestAnimationFrame(renderMotion);
+          animationFrame = window.requestAnimationFrame(renderMotion);
         }
 
         function startMotion() {
-          if (!animationFrame) animationFrame = window.requestAnimationFrame(renderMotion);
+          if (!animationFrame && !document.hidden) {
+            animationFrame = window.requestAnimationFrame(renderMotion);
+          }
         }
 
         function handleViewportPointer(event) {
+          state.pointerClientX = event.clientX;
+          state.pointerClientY = event.clientY;
+          state.pointerActive = true;
           state.pointerTargetX = (event.clientX / window.innerWidth - 0.5) * 2;
           state.pointerTargetY = (event.clientY / window.innerHeight - 0.5) * 2;
-          startMotion();
         }
 
         function resetViewportMotion() {
+          state.pointerActive = false;
           state.pointerTargetX = 0;
           state.pointerTargetY = 0;
-          startMotion();
         }
 
         function handleCardPointer(event) {
@@ -712,14 +795,12 @@
           state.glareTargetX = ((localX + 1) / 2) * rect.width * 0.62;
           state.glareTargetY = ((localY + 1) / 2) * rect.height * 0.5;
           state.glareTargetOpacity = 0.72;
-          startMotion();
         }
 
         function resetCardMotion() {
           state.tiltTargetX = 0;
           state.tiltTargetY = 0;
           state.glareTargetOpacity = 0;
-          startMotion();
         }
 
         function handleButtonPointer(event) {
@@ -729,27 +810,46 @@
           state.buttonTargetX = localX * 3.5;
           state.buttonTargetY = localY * 2.5;
           state.buttonTargetScale = 1.025;
-          startMotion();
         }
 
         function resetButtonMotion() {
           state.buttonTargetX = 0;
           state.buttonTargetY = 0;
           state.buttonTargetScale = 1;
-          startMotion();
         }
 
-        document.addEventListener("pointermove", handleViewportPointer, { passive: true });
-        document.documentElement.addEventListener("mouseleave", resetViewportMotion);
-        window.addEventListener("blur", resetViewportMotion);
-        searchCard.addEventListener("pointermove", handleCardPointer, { passive: true });
-        searchCard.addEventListener("pointerleave", resetCardMotion);
-        submitButton.addEventListener("pointermove", handleButtonPointer, { passive: true });
-        submitButton.addEventListener("pointerenter", handleButtonPointer, { passive: true });
-        submitButton.addEventListener("pointerleave", resetButtonMotion);
+        function handleVisibilityChange() {
+          if (document.hidden) {
+            if (animationFrame) window.cancelAnimationFrame(animationFrame);
+            animationFrame = 0;
+            state.lastFrameTime = 0;
+          } else {
+            measureBlobs();
+            startMotion();
+          }
+        }
+
+        measureBlobs();
+        window.addEventListener("resize", measureBlobs, { passive: true });
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+
+        if (pointerEnabled) {
+          document.addEventListener("pointermove", handleViewportPointer, { passive: true });
+          document.documentElement.addEventListener("mouseleave", resetViewportMotion);
+          window.addEventListener("blur", resetViewportMotion);
+          searchCard.addEventListener("pointermove", handleCardPointer, { passive: true });
+          searchCard.addEventListener("pointerleave", resetCardMotion);
+          submitButton.addEventListener("pointermove", handleButtonPointer, { passive: true });
+          submitButton.addEventListener("pointerenter", handleButtonPointer, { passive: true });
+          submitButton.addEventListener("pointerleave", resetButtonMotion);
+        }
+
+        startMotion();
 
         return function destroyMotion() {
           if (animationFrame) window.cancelAnimationFrame(animationFrame);
+          window.removeEventListener("resize", measureBlobs);
+          document.removeEventListener("visibilitychange", handleVisibilityChange);
           document.removeEventListener("pointermove", handleViewportPointer);
           document.documentElement.removeEventListener("mouseleave", resetViewportMotion);
           window.removeEventListener("blur", resetViewportMotion);
@@ -769,6 +869,12 @@
           gradientBlobs.forEach(function (blob) {
             blob.style.removeProperty("--parallax-x");
             blob.style.removeProperty("--parallax-y");
+            blob.style.removeProperty("--ambient-x");
+            blob.style.removeProperty("--ambient-y");
+            blob.style.removeProperty("--repel-x");
+            blob.style.removeProperty("--repel-y");
+            blob.style.removeProperty("--blob-scale");
+            blob.style.removeProperty("--proximity-lift");
           });
         };
       }
