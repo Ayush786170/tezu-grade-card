@@ -629,6 +629,38 @@
       margin-top: 10px;
     }
 
+    .student-name-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 11px 0 0;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: color-mix(in srgb, var(--surface-strong) 72%, transparent);
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .student-name-status[hidden] { display: none; }
+
+    .student-name-status.loading::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      flex: 0 0 auto;
+      border: 2px solid color-mix(in srgb, var(--teal) 24%, var(--line));
+      border-top-color: var(--teal);
+      border-radius: 50%;
+      animation: student-name-spin 780ms linear infinite;
+    }
+
+    @keyframes student-name-spin {
+      to { transform: rotate(360deg); }
+    }
+
     .secondary-action {
       min-height: 42px;
       padding: 0 15px;
@@ -980,6 +1012,7 @@
           <button class="secondary-action" id="qrCodeButton" type="button">QR code</button>
           <span class="copy-status" id="copyStatus" role="status" aria-live="polite"></span>
         </div>
+        <p class="student-name-status" id="studentNameStatus" role="status" aria-live="polite" hidden></p>
       </div>
     </section>
 
@@ -1037,6 +1070,7 @@
       const copyLinkButton = document.getElementById("copyLinkButton");
       const copyStatus = document.getElementById("copyStatus");
       const qrCodeButton = document.getElementById("qrCodeButton");
+      const studentNameStatus = document.getElementById("studentNameStatus");
       const qrDialog = document.getElementById("qrDialog");
       const qrCloseButton = document.getElementById("qrCloseButton");
       const qrImage = document.getElementById("qrImage");
@@ -1048,6 +1082,8 @@
       const gradientBlobs = Array.from(document.querySelectorAll(".gradient-blob"));
       const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
       const hoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+      let pdfJsLoadPromise = null;
+      let studentNameRequestNumber = 0;
 
       function createMotionLayer() {
         if (reducedMotionQuery.matches) return function () {};
@@ -1337,6 +1373,10 @@
         directPdfUrl.value = "";
         copyStatus.textContent = "";
         copyLinkButton.textContent = "Copy link";
+        studentNameRequestNumber += 1;
+        studentNameStatus.hidden = true;
+        studentNameStatus.textContent = "";
+        studentNameStatus.classList.remove("loading");
       }
 
       function normalizeRollNumber(value) {
@@ -1388,6 +1428,148 @@
       function showSingleResult(pdfURL) {
         directPdfUrl.value = pdfURL;
         singleResult.hidden = false;
+      }
+
+      function hideStudentName(requestNumber) {
+        if (requestNumber !== studentNameRequestNumber) return;
+        studentNameStatus.hidden = true;
+        studentNameStatus.textContent = "";
+        studentNameStatus.classList.remove("loading");
+      }
+
+      function loadPdfJs() {
+        if (window.pdfjsLib) {
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+          return Promise.resolve(window.pdfjsLib);
+        }
+
+        if (pdfJsLoadPromise) return pdfJsLoadPromise;
+
+        pdfJsLoadPromise = new Promise(function (resolve, reject) {
+          const script = document.createElement("script");
+          script.src = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js";
+          script.async = true;
+          script.onload = function () {
+            if (!window.pdfjsLib) {
+              reject(new Error("PDF reader unavailable"));
+              return;
+            }
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+            resolve(window.pdfjsLib);
+          };
+          script.onerror = function () {
+            reject(new Error("PDF reader failed to load"));
+          };
+          document.head.appendChild(script);
+        }).catch(function (error) {
+          pdfJsLoadPromise = null;
+          throw error;
+        });
+
+        return pdfJsLoadPromise;
+      }
+
+      function decodeBase64Pdf(base64Pdf) {
+        const binary = window.atob(base64Pdf.replace(/\s+/g, ""));
+        const bytes = new Uint8Array(binary.length);
+        for (let index = 0; index < binary.length; index += 1) {
+          bytes[index] = binary.charCodeAt(index);
+        }
+        return bytes;
+      }
+
+      function textItemsToLines(items) {
+        const lines = [];
+        let currentLine = "";
+        let currentY = null;
+
+        items.forEach(function (item) {
+          const text = typeof item.str === "string" ? item.str.replace(/\s+/g, " ").trim() : "";
+          const itemY = item.transform && Number.isFinite(item.transform[5]) ? item.transform[5] : currentY;
+          const startsNewLine = currentLine && currentY !== null && itemY !== null && Math.abs(itemY - currentY) > 2;
+
+          if (startsNewLine) {
+            lines.push(currentLine.replace(/\s+/g, " ").trim());
+            currentLine = "";
+          }
+
+          if (text) currentLine += (currentLine ? " " : "") + text;
+          if (itemY !== null) currentY = itemY;
+
+          if (item.hasEOL && currentLine) {
+            lines.push(currentLine.replace(/\s+/g, " ").trim());
+            currentLine = "";
+            currentY = null;
+          }
+        });
+
+        if (currentLine) lines.push(currentLine.replace(/\s+/g, " ").trim());
+        return lines.filter(Boolean);
+      }
+
+      function toTitleCase(name) {
+        return name.toLowerCase().replace(/(^|[\s.'-])([a-z])/g, function (match, boundary, letter) {
+          return boundary + letter.toUpperCase();
+        });
+      }
+
+      function findStudentName(rollNumber) {
+        const requestNumber = ++studentNameRequestNumber;
+        studentNameStatus.textContent = "Finding student name…";
+        studentNameStatus.classList.add("loading");
+        studentNameStatus.hidden = false;
+
+        const pdfTextURL = loggingEndpoint + "?action=pdfText&roll=" + encodeURIComponent(rollNumber);
+
+        Promise.all([
+          loadPdfJs(),
+          fetch(pdfTextURL, { cache: "no-store" }).then(function (response) {
+            if (!response.ok) throw new Error("Student name request failed");
+            return response.json();
+          })
+        ])
+          .then(function (results) {
+            if (requestNumber !== studentNameRequestNumber) return null;
+            const pdfjsLib = results[0];
+            const responseData = results[1];
+            if (!responseData || responseData.ok !== true || typeof responseData.pdf !== "string" || !responseData.pdf) {
+              throw new Error("No PDF returned");
+            }
+            return pdfjsLib.getDocument({ data: decodeBase64Pdf(responseData.pdf) }).promise;
+          })
+          .then(function (pdfDocument) {
+            if (!pdfDocument || requestNumber !== studentNameRequestNumber) return null;
+            return pdfDocument.getPage(1).then(function (page) {
+              return page.getTextContent();
+            }).then(function (textContent) {
+              if (typeof pdfDocument.destroy === "function") {
+                Promise.resolve(pdfDocument.destroy()).catch(function () {});
+              }
+              return textContent;
+            });
+          })
+          .then(function (textContent) {
+            if (!textContent || requestNumber !== studentNameRequestNumber) return;
+            const lines = textItemsToLines(textContent.items || []);
+            let studentName = "";
+
+            lines.some(function (line) {
+              const match = line.match(/^\s*Name\s*:\s*(.+?)\s*$/i);
+              if (!match) return false;
+              const candidate = match[1].trim();
+              if (!/^[A-Za-z][A-Za-z .'-]*$/.test(candidate)) return false;
+              studentName = toTitleCase(candidate);
+              return true;
+            });
+
+            if (!studentName) throw new Error("Student name not found");
+            studentNameStatus.textContent = "Student: " + studentName;
+            studentNameStatus.classList.remove("loading");
+            studentNameStatus.hidden = false;
+          })
+          .catch(function () {
+            hideStudentName(requestNumber);
+          });
       }
 
       function getInvalidReason(value) {
@@ -1592,6 +1774,7 @@
 
         logSubmission(rollNumber);
         showSingleResult(pdfURL);
+        findStudentName(rollNumber);
       }
 
       let speechRecognition = null;
