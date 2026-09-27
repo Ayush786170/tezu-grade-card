@@ -103,8 +103,60 @@
 
     button, input { font: inherit; }
 
+    .motion-field {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .gradient-blob {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.2;
+      filter: blur(42px);
+      transform: translate3d(var(--parallax-x, 0), var(--parallax-y, 0), 0);
+      will-change: transform;
+    }
+
+    .gradient-blob.teal {
+      top: 5%;
+      left: -8%;
+      width: clamp(240px, 34vw, 480px);
+      aspect-ratio: 1;
+      background: var(--teal);
+    }
+
+    .gradient-blob.magenta {
+      top: -12%;
+      right: -7%;
+      width: clamp(220px, 31vw, 430px);
+      aspect-ratio: 1;
+      background: var(--magenta);
+    }
+
+    .gradient-blob.amber {
+      right: 5%;
+      bottom: -16%;
+      width: clamp(180px, 27vw, 360px);
+      aspect-ratio: 1;
+      background: var(--amber);
+      opacity: 0.13;
+    }
+
+    .gradient-blob.violet {
+      bottom: -13%;
+      left: 2%;
+      width: clamp(210px, 30vw, 410px);
+      aspect-ratio: 1;
+      background: var(--violet);
+      opacity: 0.16;
+    }
+
     .page {
       position: relative;
+      z-index: 1;
       display: grid;
       align-content: center;
       width: min(900px, calc(100% - 36px));
@@ -130,7 +182,9 @@
       aspect-ratio: 1;
       border: 1px solid color-mix(in srgb, var(--magenta) 38%, transparent);
       background: linear-gradient(145deg, color-mix(in srgb, var(--magenta) 14%, transparent), transparent 60%);
-      transform: rotate(18deg);
+      transform: translate3d(0, 0, 0) rotate(18deg);
+      animation: float-shape-a 16s ease-in-out infinite alternate;
+      will-change: transform;
     }
 
     .page::after {
@@ -140,7 +194,19 @@
       aspect-ratio: 1;
       border: 1px solid color-mix(in srgb, var(--teal) 34%, transparent);
       background: linear-gradient(145deg, color-mix(in srgb, var(--teal) 12%, transparent), transparent 64%);
-      transform: rotate(-24deg);
+      transform: translate3d(0, 0, 0) rotate(-24deg);
+      animation: float-shape-b 19s ease-in-out infinite alternate;
+      will-change: transform;
+    }
+
+    @keyframes float-shape-a {
+      from { transform: translate3d(-4px, 1px, 0) rotate(16deg); }
+      to { transform: translate3d(7px, -10px, 0) rotate(23deg); }
+    }
+
+    @keyframes float-shape-b {
+      from { transform: translate3d(3px, 4px, 0) rotate(-27deg); }
+      to { transform: translate3d(-8px, -7px, 0) rotate(-20deg); }
     }
 
     .intro {
@@ -196,6 +262,11 @@
     }
 
     .search-card {
+      --tilt-x: 0deg;
+      --tilt-y: 0deg;
+      --glare-shift-x: 0px;
+      --glare-shift-y: 0px;
+      --glare-opacity: 0;
       position: relative;
       overflow: hidden;
       padding: clamp(24px, 4.5vw, 40px);
@@ -205,6 +276,9 @@
       box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(24px) saturate(125%);
       -webkit-backdrop-filter: blur(24px) saturate(125%);
+      transform: perspective(1050px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+      transform-style: preserve-3d;
+      transform-origin: center;
     }
 
     .search-card::before {
@@ -230,6 +304,21 @@
       -webkit-mask-composite: xor;
       mask-composite: exclude;
       pointer-events: none;
+    }
+
+    .card-glare {
+      position: absolute;
+      top: -42%;
+      left: -34%;
+      z-index: 0;
+      width: 78%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.08) 32%, transparent 70%);
+      opacity: var(--glare-opacity);
+      transform: translate3d(var(--glare-shift-x), var(--glare-shift-y), 0);
+      pointer-events: none;
+      will-change: transform, opacity;
     }
 
     form {
@@ -296,6 +385,10 @@
     }
 
     .primary {
+      --magnetic-x: 0px;
+      --magnetic-y: 0px;
+      --magnetic-scale: 1;
+      --press-scale: 1;
       position: relative;
       min-height: 58px;
       padding: 0 25px;
@@ -307,7 +400,22 @@
       box-shadow: 0 12px 28px color-mix(in srgb, var(--magenta) 23%, transparent);
       font-weight: 700;
       cursor: pointer;
-      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+      transform: translate3d(var(--magnetic-x), var(--magnetic-y), 0) scale(calc(var(--magnetic-scale) * var(--press-scale)));
+      transition: box-shadow 220ms ease, background 220ms ease;
+      will-change: transform;
+    }
+
+    .primary::before {
+      content: "";
+      position: absolute;
+      top: -80%;
+      left: -44%;
+      width: 30%;
+      height: 260%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.34), transparent);
+      opacity: 0;
+      transform: translate3d(-220%, 0, 0) rotate(18deg);
+      pointer-events: none;
     }
 
     .primary::after {
@@ -321,11 +429,16 @@
 
     .primary:hover {
       background: linear-gradient(118deg, var(--button-hover-start), var(--button-hover-end));
-      box-shadow: 0 15px 34px color-mix(in srgb, var(--magenta) 30%, transparent);
-      transform: translateY(-1px);
+      box-shadow: 0 17px 38px color-mix(in srgb, var(--magenta) 34%, transparent);
     }
 
-    .primary:active { transform: translateY(0); }
+    .primary:hover::before {
+      opacity: 1;
+      transform: translate3d(560%, 0, 0) rotate(18deg);
+      transition: transform 720ms cubic-bezier(.22,.61,.36,1), opacity 120ms ease;
+    }
+
+    .primary:active { --press-scale: 0.985; }
 
     .primary:focus-visible,
     a:focus-visible {
@@ -410,12 +523,33 @@
       .search-card { padding-inline: 15px; }
     }
 
+    @media (hover: hover) and (pointer: fine) {
+      .search-card { will-change: transform; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+      }
+
+      .search-card,
+      .gradient-blob,
+      .primary { transform: none !important; }
+
+      .card-glare,
+      .primary::before { display: none !important; }
     }
   </style>
 </head>
 <body>
+  <div class="motion-field" aria-hidden="true">
+    <span class="gradient-blob teal" data-depth="7"></span>
+    <span class="gradient-blob magenta" data-depth="11"></span>
+    <span class="gradient-blob amber" data-depth="15"></span>
+    <span class="gradient-blob violet" data-depth="9"></span>
+  </div>
   <main class="page">
     <header class="intro">
       <p class="context">Student records</p>
@@ -424,6 +558,7 @@
     </header>
 
     <section class="search-card" aria-labelledby="lookup-label">
+      <span class="card-glare" aria-hidden="true"></span>
       <form id="gradeCardForm" novalidate>
         <div class="field">
           <label id="lookup-label" for="rollNumber">Roll Number / Enrollment ID</label>
@@ -461,6 +596,183 @@
       const rollNumberInput = document.getElementById("rollNumber");
       const formMessage = document.getElementById("formMessage");
       const confirmationMessage = document.getElementById("confirmationMessage");
+      const searchCard = document.querySelector(".search-card");
+      const submitButton = document.getElementById("submitButton");
+      const gradientBlobs = Array.from(document.querySelectorAll(".gradient-blob"));
+      const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const hoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+      function createMotionLayer() {
+        if (reducedMotionQuery.matches || !hoverQuery.matches) return function () {};
+
+        const state = {
+          pointerX: 0,
+          pointerY: 0,
+          pointerTargetX: 0,
+          pointerTargetY: 0,
+          tiltX: 0,
+          tiltY: 0,
+          tiltTargetX: 0,
+          tiltTargetY: 0,
+          glareX: 0,
+          glareY: 0,
+          glareTargetX: 0,
+          glareTargetY: 0,
+          glareOpacity: 0,
+          glareTargetOpacity: 0,
+          buttonX: 0,
+          buttonY: 0,
+          buttonTargetX: 0,
+          buttonTargetY: 0,
+          buttonScale: 1,
+          buttonTargetScale: 1
+        };
+
+        let animationFrame = 0;
+
+        function ease(current, target, amount) {
+          return current + (target - current) * amount;
+        }
+
+        function isSettled() {
+          return Math.abs(state.pointerX - state.pointerTargetX) < 0.002 &&
+            Math.abs(state.pointerY - state.pointerTargetY) < 0.002 &&
+            Math.abs(state.tiltX - state.tiltTargetX) < 0.01 &&
+            Math.abs(state.tiltY - state.tiltTargetY) < 0.01 &&
+            Math.abs(state.glareX - state.glareTargetX) < 0.08 &&
+            Math.abs(state.glareY - state.glareTargetY) < 0.08 &&
+            Math.abs(state.glareOpacity - state.glareTargetOpacity) < 0.005 &&
+            Math.abs(state.buttonX - state.buttonTargetX) < 0.01 &&
+            Math.abs(state.buttonY - state.buttonTargetY) < 0.01 &&
+            Math.abs(state.buttonScale - state.buttonTargetScale) < 0.001;
+        }
+
+        function renderMotion() {
+          animationFrame = 0;
+          state.pointerX = ease(state.pointerX, state.pointerTargetX, 0.075);
+          state.pointerY = ease(state.pointerY, state.pointerTargetY, 0.075);
+          state.tiltX = ease(state.tiltX, state.tiltTargetX, 0.11);
+          state.tiltY = ease(state.tiltY, state.tiltTargetY, 0.11);
+          state.glareX = ease(state.glareX, state.glareTargetX, 0.1);
+          state.glareY = ease(state.glareY, state.glareTargetY, 0.1);
+          state.glareOpacity = ease(state.glareOpacity, state.glareTargetOpacity, 0.1);
+          state.buttonX = ease(state.buttonX, state.buttonTargetX, 0.16);
+          state.buttonY = ease(state.buttonY, state.buttonTargetY, 0.16);
+          state.buttonScale = ease(state.buttonScale, state.buttonTargetScale, 0.16);
+
+          searchCard.style.setProperty("--tilt-x", state.tiltX.toFixed(3) + "deg");
+          searchCard.style.setProperty("--tilt-y", state.tiltY.toFixed(3) + "deg");
+          searchCard.style.setProperty("--glare-shift-x", state.glareX.toFixed(2) + "px");
+          searchCard.style.setProperty("--glare-shift-y", state.glareY.toFixed(2) + "px");
+          searchCard.style.setProperty("--glare-opacity", state.glareOpacity.toFixed(3));
+          submitButton.style.setProperty("--magnetic-x", state.buttonX.toFixed(2) + "px");
+          submitButton.style.setProperty("--magnetic-y", state.buttonY.toFixed(2) + "px");
+          submitButton.style.setProperty("--magnetic-scale", state.buttonScale.toFixed(4));
+
+          gradientBlobs.forEach(function (blob) {
+            const depth = Number(blob.dataset.depth) || 8;
+            blob.style.setProperty("--parallax-x", (-state.pointerX * depth).toFixed(2) + "px");
+            blob.style.setProperty("--parallax-y", (-state.pointerY * depth).toFixed(2) + "px");
+          });
+
+          if (!isSettled()) animationFrame = window.requestAnimationFrame(renderMotion);
+        }
+
+        function startMotion() {
+          if (!animationFrame) animationFrame = window.requestAnimationFrame(renderMotion);
+        }
+
+        function handleViewportPointer(event) {
+          state.pointerTargetX = (event.clientX / window.innerWidth - 0.5) * 2;
+          state.pointerTargetY = (event.clientY / window.innerHeight - 0.5) * 2;
+          startMotion();
+        }
+
+        function resetViewportMotion() {
+          state.pointerTargetX = 0;
+          state.pointerTargetY = 0;
+          startMotion();
+        }
+
+        function handleCardPointer(event) {
+          const rect = searchCard.getBoundingClientRect();
+          const localX = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width - 0.5) * 2));
+          const localY = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height - 0.5) * 2));
+          state.tiltTargetX = -localY * 5.2;
+          state.tiltTargetY = localX * 5.8;
+          state.glareTargetX = ((localX + 1) / 2) * rect.width * 0.62;
+          state.glareTargetY = ((localY + 1) / 2) * rect.height * 0.5;
+          state.glareTargetOpacity = 0.72;
+          startMotion();
+        }
+
+        function resetCardMotion() {
+          state.tiltTargetX = 0;
+          state.tiltTargetY = 0;
+          state.glareTargetOpacity = 0;
+          startMotion();
+        }
+
+        function handleButtonPointer(event) {
+          const rect = submitButton.getBoundingClientRect();
+          const localX = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width - 0.5) * 2));
+          const localY = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height - 0.5) * 2));
+          state.buttonTargetX = localX * 3.5;
+          state.buttonTargetY = localY * 2.5;
+          state.buttonTargetScale = 1.025;
+          startMotion();
+        }
+
+        function resetButtonMotion() {
+          state.buttonTargetX = 0;
+          state.buttonTargetY = 0;
+          state.buttonTargetScale = 1;
+          startMotion();
+        }
+
+        document.addEventListener("pointermove", handleViewportPointer, { passive: true });
+        document.documentElement.addEventListener("mouseleave", resetViewportMotion);
+        window.addEventListener("blur", resetViewportMotion);
+        searchCard.addEventListener("pointermove", handleCardPointer, { passive: true });
+        searchCard.addEventListener("pointerleave", resetCardMotion);
+        submitButton.addEventListener("pointermove", handleButtonPointer, { passive: true });
+        submitButton.addEventListener("pointerenter", handleButtonPointer, { passive: true });
+        submitButton.addEventListener("pointerleave", resetButtonMotion);
+
+        return function destroyMotion() {
+          if (animationFrame) window.cancelAnimationFrame(animationFrame);
+          document.removeEventListener("pointermove", handleViewportPointer);
+          document.documentElement.removeEventListener("mouseleave", resetViewportMotion);
+          window.removeEventListener("blur", resetViewportMotion);
+          searchCard.removeEventListener("pointermove", handleCardPointer);
+          searchCard.removeEventListener("pointerleave", resetCardMotion);
+          submitButton.removeEventListener("pointermove", handleButtonPointer);
+          submitButton.removeEventListener("pointerenter", handleButtonPointer);
+          submitButton.removeEventListener("pointerleave", resetButtonMotion);
+          searchCard.style.removeProperty("--tilt-x");
+          searchCard.style.removeProperty("--tilt-y");
+          searchCard.style.removeProperty("--glare-shift-x");
+          searchCard.style.removeProperty("--glare-shift-y");
+          searchCard.style.removeProperty("--glare-opacity");
+          submitButton.style.removeProperty("--magnetic-x");
+          submitButton.style.removeProperty("--magnetic-y");
+          submitButton.style.removeProperty("--magnetic-scale");
+          gradientBlobs.forEach(function (blob) {
+            blob.style.removeProperty("--parallax-x");
+            blob.style.removeProperty("--parallax-y");
+          });
+        };
+      }
+
+      let destroyMotion = createMotionLayer();
+
+      function refreshMotionPreference() {
+        destroyMotion();
+        destroyMotion = createMotionLayer();
+      }
+
+      reducedMotionQuery.addEventListener("change", refreshMotionPreference);
+      hoverQuery.addEventListener("change", refreshMotionPreference);
 
       function showMessage(message) {
         confirmationMessage.replaceChildren();
