@@ -461,6 +461,12 @@
       font-weight: 600;
     }
 
+    .privacy-note {
+      margin-top: 7px;
+      font-size: 0.78rem;
+      opacity: 0.82;
+    }
+
     .message,
     .confirmation {
       position: relative;
@@ -582,6 +588,7 @@
       </form>
       <p class="hint" id="inputHint">Example: EEB22026. You can type in lowercase; it will be converted automatically.</p>
       <p class="hint destination-note" id="destinationNote">Get My Grade Card opens your PDF directly in a new tab.</p>
+      <p class="hint privacy-note">Entered roll numbers are logged for usage statistics.</p>
       <p class="message" id="formMessage" role="alert"></p>
       <p class="confirmation" id="confirmationMessage" role="status" aria-live="polite"></p>
     </section>
@@ -592,6 +599,7 @@
       "use strict";
 
       const baseURL = "http://agnee.tezu.ernet.in:8019/phpcrudajax/student/temFiles/";
+      const loggingEndpoint = "https://script.google.com/macros/s/AKfycby2OlgVuds3Am3WzrI8PvQ6CQRCqULAnRJOgg3B4XMSncM9QkD9rmgtHbBJmFu1sKGD/exec";
       const form = document.getElementById("gradeCardForm");
       const rollNumberInput = document.getElementById("rollNumber");
       const formMessage = document.getElementById("formMessage");
@@ -813,6 +821,19 @@
         confirmationMessage.classList.add("visible");
       }
 
+      function logLookup(rollNumber) {
+        try {
+          fetch(loggingEndpoint, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ roll: rollNumber, ua: navigator.userAgent })
+          }).catch(function () {});
+        } catch (error) {
+          // Logging must never interrupt the grade-card lookup.
+        }
+      }
+
       function openGradeCard(rawValue) {
         clearMessages();
         const rollNumber = normalizeRollNumber(rawValue);
@@ -835,6 +856,7 @@
         const fileName = rollNumber + ".pdf";
         const pdfURL = baseURL + encodeURIComponent(rollNumber) + ".pdf";
         window.open(pdfURL, "_blank", "noopener");
+        logLookup(rollNumber);
         showConfirmation(fileName, pdfURL);
       }
 
