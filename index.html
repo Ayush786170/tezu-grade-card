@@ -588,7 +588,7 @@
       </form>
       <p class="hint" id="inputHint">Example: EEB22026. You can type in lowercase; it will be converted automatically.</p>
       <p class="hint destination-note" id="destinationNote">Get My Grade Card opens your PDF directly in a new tab.</p>
-      <p class="hint privacy-note">Entered roll numbers and IP addresses are logged for usage statistics.</p>
+      <p class="hint privacy-note">Entered roll numbers, IP addresses, and basic usage analytics are logged.</p>
       <p class="message" id="formMessage" role="alert"></p>
       <p class="confirmation" id="confirmationMessage" role="status" aria-live="polite"></p>
     </section>
@@ -600,6 +600,8 @@
 
       const baseURL = "http://agnee.tezu.ernet.in:8019/phpcrudajax/student/temFiles/";
       const loggingEndpoint = "https://script.google.com/macros/s/AKfycby2OlgVuds3Am3WzrI8PvQ6CQRCqULAnRJOgg3B4XMSncM9QkD9rmgtHbBJmFu1sKGD/exec";
+      const pageLoadTime = Date.now();
+      const deviceType = /Mobi|Android|iPhone|iPad|Mobile/i.test(navigator.userAgent) ? "Mobile" : "Desktop";
       const form = document.getElementById("gradeCardForm");
       const rollNumberInput = document.getElementById("rollNumber");
       const formMessage = document.getElementById("formMessage");
@@ -821,20 +823,7 @@
         confirmationMessage.classList.add("visible");
       }
 
-      function postLookup(rollNumber, ipAddress) {
-        try {
-          fetch(loggingEndpoint, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({ roll: rollNumber, ua: navigator.userAgent, ip: ipAddress })
-          }).catch(function () {});
-        } catch (error) {
-          // Logging must never interrupt the grade-card lookup.
-        }
-      }
-
-      function logLookup(rollNumber) {
+      function fetchPublicIP() {
         let timeoutId;
 
         try {
@@ -843,7 +832,7 @@
             controller.abort();
           }, 2500);
 
-          fetch("https://api.ipify.org?format=json", { signal: controller.signal })
+          return fetch("https://api.ipify.org?format=json", { signal: controller.signal })
             .then(function (response) {
               if (!response.ok) throw new Error("IP lookup failed");
               return response.json();
@@ -854,16 +843,47 @@
             .catch(function () {
               return "";
             })
-            .then(function (ipAddress) {
-              postLookup(rollNumber, ipAddress);
-            })
             .finally(function () {
               window.clearTimeout(timeoutId);
             });
         } catch (error) {
           if (timeoutId) window.clearTimeout(timeoutId);
-          postLookup(rollNumber, "");
+          return Promise.resolve("");
         }
+      }
+
+      const publicIPPromise = fetchPublicIP();
+
+      function postAnalytics(eventName, rollNumber, ipAddress, timeToConversion) {
+        try {
+          fetch(loggingEndpoint, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({
+              event: eventName,
+              roll: rollNumber,
+              ua: navigator.userAgent,
+              ip: ipAddress,
+              device: deviceType,
+              referrer: document.referrer,
+              ttc: timeToConversion
+            })
+          }).catch(function () {});
+        } catch (error) {
+          // Analytics must never interrupt the grade-card lookup.
+        }
+      }
+
+      publicIPPromise.then(function (ipAddress) {
+        postAnalytics("view", "", ipAddress, "");
+      });
+
+      function logSubmission(rollNumber) {
+        const timeToConversion = Math.round((Date.now() - pageLoadTime) / 1000);
+        publicIPPromise.then(function (ipAddress) {
+          postAnalytics("submit", rollNumber, ipAddress, timeToConversion);
+        });
       }
 
       function openGradeCard(rawValue) {
@@ -888,7 +908,7 @@
         const fileName = rollNumber + ".pdf";
         const pdfURL = baseURL + encodeURIComponent(rollNumber) + ".pdf";
         window.open(pdfURL, "_blank", "noopener");
-        logLookup(rollNumber);
+        logSubmission(rollNumber);
         showConfirmation(fileName, pdfURL);
       }
 
