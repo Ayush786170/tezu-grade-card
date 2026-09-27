@@ -660,128 +660,6 @@
       font-weight: 600;
     }
 
-    .poll-card {
-      position: relative;
-      margin-top: 20px;
-      overflow: hidden;
-      padding: clamp(22px, 4vw, 32px);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      background: color-mix(in srgb, var(--surface) 92%, transparent);
-      box-shadow: 0 18px 48px rgba(43, 32, 80, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.16);
-      backdrop-filter: blur(22px) saturate(124%);
-      -webkit-backdrop-filter: blur(22px) saturate(124%);
-    }
-
-    .poll-card::before {
-      content: "";
-      position: absolute;
-      top: -80px;
-      right: -74px;
-      width: 190px;
-      height: 190px;
-      border-radius: 50%;
-      background: radial-gradient(circle, color-mix(in srgb, var(--teal) 18%, transparent), transparent 70%);
-      pointer-events: none;
-    }
-
-    .poll-heading {
-      position: relative;
-      margin: 0;
-      font-family: "Libre Baskerville", serif;
-      font-size: clamp(1.25rem, 3vw, 1.55rem);
-      line-height: 1.3;
-      letter-spacing: -0.025em;
-    }
-
-    .poll-options {
-      position: relative;
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 9px;
-      margin-top: 18px;
-    }
-
-    .poll-option {
-      min-height: 44px;
-      padding: 8px 10px;
-      border: 1px solid var(--line-strong);
-      border-radius: 11px;
-      background: var(--surface-strong);
-      color: var(--ink);
-      font-size: 0.86rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: border-color 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease;
-    }
-
-    .poll-option:hover,
-    .poll-option.selected {
-      border-color: color-mix(in srgb, var(--violet) 62%, var(--line-strong));
-      background: color-mix(in srgb, var(--violet) 12%, var(--surface-strong));
-      color: var(--violet);
-      box-shadow: 0 8px 18px color-mix(in srgb, var(--violet) 12%, transparent);
-    }
-
-    .poll-feedback {
-      min-height: 1.3em;
-      margin: 11px 1px 0;
-      color: var(--success);
-      font-size: 0.84rem;
-      font-weight: 700;
-    }
-
-    .poll-results {
-      position: relative;
-      display: grid;
-      gap: 12px;
-      margin-top: 18px;
-      padding-top: 18px;
-      border-top: 1px solid var(--line);
-    }
-
-    .poll-results[hidden] { display: none; }
-
-    .poll-result-row {
-      display: grid;
-      gap: 6px;
-    }
-
-    .poll-result-meta {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 12px;
-      font-size: 0.82rem;
-      line-height: 1.25;
-    }
-
-    .poll-result-label {
-      color: var(--ink);
-      font-weight: 700;
-    }
-
-    .poll-result-count {
-      color: var(--muted);
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-
-    .poll-bar-track {
-      height: 8px;
-      overflow: hidden;
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--line-strong) 72%, transparent);
-    }
-
-    .poll-bar-fill {
-      width: 0;
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--teal), var(--violet), var(--magenta));
-      transition: width 560ms cubic-bezier(.22,.61,.36,1);
-    }
-
     .batch-card {
       position: relative;
       margin-top: 20px;
@@ -1007,8 +885,6 @@
       .batch-reason { text-align: left; }
       .result-actions .secondary-action { flex: 1 1 calc(50% - 5px); }
       .copy-status { flex-basis: 100%; }
-      .poll-card { padding: 22px 18px; }
-      .poll-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .page::before { right: -28%; }
       .page::after { left: -26%; }
     }
@@ -1107,22 +983,6 @@
       </div>
     </section>
 
-    <section class="poll-card" aria-labelledby="pollHeading">
-      <h2 class="poll-heading" id="pollHeading">Which semester are you checking?</h2>
-      <div class="poll-options" aria-label="Choose a semester">
-        <button class="poll-option" type="button" data-semester="1" aria-pressed="false">Semester 1</button>
-        <button class="poll-option" type="button" data-semester="2" aria-pressed="false">Semester 2</button>
-        <button class="poll-option" type="button" data-semester="3" aria-pressed="false">Semester 3</button>
-        <button class="poll-option" type="button" data-semester="4" aria-pressed="false">Semester 4</button>
-        <button class="poll-option" type="button" data-semester="5" aria-pressed="false">Semester 5</button>
-        <button class="poll-option" type="button" data-semester="6" aria-pressed="false">Semester 6</button>
-        <button class="poll-option" type="button" data-semester="7" aria-pressed="false">Semester 7</button>
-        <button class="poll-option" type="button" data-semester="8" aria-pressed="false">Semester 8</button>
-      </div>
-      <p class="poll-feedback" id="pollFeedback" role="status" aria-live="polite"></p>
-      <div class="poll-results" id="pollResults" aria-label="Semester poll results" aria-live="polite" hidden></div>
-    </section>
-
     <section class="batch-card" aria-labelledby="batchHeading">
       <div class="batch-header">
         <span>
@@ -1181,9 +1041,6 @@
       const qrCloseButton = document.getElementById("qrCloseButton");
       const qrImage = document.getElementById("qrImage");
       const qrLoading = document.getElementById("qrLoading");
-      const pollOptions = Array.from(document.querySelectorAll(".poll-option"));
-      const pollFeedback = document.getElementById("pollFeedback");
-      const pollResults = document.getElementById("pollResults");
       const batchForm = document.getElementById("batchForm");
       const batchRollNumbers = document.getElementById("batchRollNumbers");
       const batchResults = document.getElementById("batchResults");
@@ -1603,117 +1460,6 @@
         });
       }
 
-      function logPollVote(semester) {
-        const timeToConversion = Math.round((Date.now() - pageLoadTime) / 1000);
-        publicIPPromise.then(function (ipAddress) {
-          postAnalytics("poll", "SEM" + semester, ipAddress, timeToConversion);
-        });
-      }
-
-      function renderPollResults(data) {
-        const counts = [];
-        let totalVotes = 0;
-
-        for (let semester = 1; semester <= 8; semester += 1) {
-          const rawCount = data && typeof data === "object" ? Number(data[String(semester)]) : 0;
-          const count = Number.isFinite(rawCount) && rawCount > 0 ? Math.floor(rawCount) : 0;
-          counts.push(count);
-          totalVotes += count;
-        }
-
-        pollResults.replaceChildren();
-
-        counts.forEach(function (count, index) {
-          const semester = index + 1;
-          const percentage = totalVotes ? Math.round(count / totalVotes * 100) : 0;
-          const row = document.createElement("div");
-          row.className = "poll-result-row";
-
-          const meta = document.createElement("div");
-          meta.className = "poll-result-meta";
-
-          const label = document.createElement("span");
-          label.className = "poll-result-label";
-          label.textContent = "Semester " + semester;
-
-          const countLabel = document.createElement("span");
-          countLabel.className = "poll-result-count";
-          countLabel.textContent = count + " vote" + (count === 1 ? "" : "s") + " · " + percentage + "%";
-
-          const track = document.createElement("div");
-          track.className = "poll-bar-track";
-          track.setAttribute("role", "progressbar");
-          track.setAttribute("aria-label", "Semester " + semester);
-          track.setAttribute("aria-valuemin", "0");
-          track.setAttribute("aria-valuemax", "100");
-          track.setAttribute("aria-valuenow", String(percentage));
-
-          const fill = document.createElement("div");
-          fill.className = "poll-bar-fill";
-          track.appendChild(fill);
-          meta.append(label, countLabel);
-          row.append(meta, track);
-          pollResults.appendChild(row);
-
-          if (reducedMotionQuery.matches) {
-            fill.style.width = percentage + "%";
-          } else {
-            window.requestAnimationFrame(function () {
-              window.requestAnimationFrame(function () {
-                fill.style.width = percentage + "%";
-              });
-            });
-          }
-        });
-
-        pollResults.hidden = false;
-      }
-
-      let pollFetchSequence = 0;
-
-      function fetchPollResults() {
-        const requestSequence = ++pollFetchSequence;
-        let timeoutId;
-
-        try {
-          const controller = new AbortController();
-          timeoutId = window.setTimeout(function () {
-            controller.abort();
-          }, 7000);
-
-          return fetch(loggingEndpoint + "?action=pollResults", {
-            method: "GET",
-            cache: "no-store",
-            signal: controller.signal
-          })
-            .then(function (response) {
-              if (!response.ok) throw new Error("Poll results request failed");
-              return response.json();
-            })
-            .then(function (data) {
-              if (requestSequence !== pollFetchSequence) return;
-              if (!data || typeof data !== "object" || Array.isArray(data)) {
-                throw new Error("Invalid poll results");
-              }
-              renderPollResults(data);
-            })
-            .catch(function () {
-              if (requestSequence === pollFetchSequence) {
-                pollResults.hidden = true;
-                pollResults.replaceChildren();
-              }
-            })
-            .finally(function () {
-              window.clearTimeout(timeoutId);
-            });
-        } catch (error) {
-          if (timeoutId) window.clearTimeout(timeoutId);
-          pollResults.hidden = true;
-          pollResults.replaceChildren();
-          return Promise.resolve();
-        }
-      }
-
       function pulseHaptic() {
         if (typeof navigator.vibrate === "function") {
           try {
@@ -2023,26 +1769,6 @@
       qrDialog.addEventListener("click", function (event) {
         if (event.target === qrDialog) closeQrDialog();
       });
-
-      pollOptions.forEach(function (option) {
-        option.addEventListener("click", function () {
-          const semester = option.dataset.semester;
-          if (!semester) return;
-
-          pollOptions.forEach(function (button) {
-            const isSelected = button === option;
-            button.classList.toggle("selected", isSelected);
-            button.setAttribute("aria-pressed", isSelected ? "true" : "false");
-          });
-
-          logPollVote(semester);
-          pollFeedback.textContent = "Vote counted ✓";
-          fetchPollResults();
-        });
-      });
-
-      fetchPollResults();
-      window.setInterval(fetchPollResults, 60000);
 
       batchForm.addEventListener("submit", function (event) {
         event.preventDefault();
