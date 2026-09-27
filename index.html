@@ -1554,7 +1554,8 @@
             let studentName = "";
 
             lines.some(function (line) {
-              const match = line.match(/^\s*Name\s*:\s*(.+?)\s*$/i);
+              if (!/\bName\s*:/i.test(line)) return false;
+              const match = line.match(/\bName\s*:\s*([A-Za-z][A-Za-z.'-]*(?:\s+[A-Za-z][A-Za-z.'-]*)*?)(?=\s+[A-Za-z_]+\s*:|\s*$)/i);
               if (!match) return false;
               const candidate = match[1].trim();
               if (!/^[A-Za-z][A-Za-z .'-]*$/.test(candidate)) return false;
