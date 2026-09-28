@@ -1946,6 +1946,26 @@
         }
       }
 
+      function hasTuEvidence(text) {
+        const normalizedText = typeof text === "string" ? text.toLowerCase() : "";
+        return normalizedText.indexOf("tezpur university") !== -1 ||
+          normalizedText.indexOf("tezpur uni") !== -1 ||
+          normalizedText.indexOf("tezpur.uni") !== -1 ||
+          normalizedText.indexOf("tezu") !== -1 ||
+          /\btezpur\b/.test(normalizedText) ||
+          /\btu\b/.test(normalizedText);
+      }
+
+      function getTuEvidenceReason(text) {
+        const normalizedText = typeof text === "string" ? text.toLowerCase() : "";
+        if (normalizedText.indexOf("tezpur university") !== -1) return "Bio mentions Tezpur University";
+        if (normalizedText.indexOf("tezpur.uni") !== -1) return "Bio tags @tezpur.uni";
+        if (normalizedText.indexOf("tezu") !== -1) return "Bio mentions Tezu";
+        if (/\btezpur\b/.test(normalizedText)) return "Bio mentions Tezpur";
+        if (/\btu\b/.test(normalizedText)) return "Bio mentions TU";
+        return "";
+      }
+
       function getInstagramCandidateDetails(candidate, studentInfo) {
         const username = typeof candidate.username === "string"
           ? candidate.username.trim().replace(/^@+/, "").toLowerCase()
@@ -1954,14 +1974,10 @@
         const normalizedDisplayName = displayName.toLowerCase().replace(/\s+/g, " ").trim();
         const normalizedStudentName = studentInfo.name.toLowerCase().replace(/\s+/g, " ").trim();
         const nameParts = normalizedStudentName.split(/\s+/).filter(Boolean);
-        const evidence = [candidate.snippet, candidate.title].map(function (value) {
+        const evidence = [candidate.title, candidate.snippet].map(function (value) {
           return typeof value === "string" ? value.trim() : "";
-        }).join(" ").toLowerCase();
-        const mentionsTezpur = evidence.indexOf("tezpur") !== -1;
-        const normalizedBranch = typeof studentInfo.branch === "string"
-          ? studentInfo.branch.toLowerCase().replace(/\s+/g, " ").trim()
-          : "";
-        const mentionsBranch = Boolean(normalizedBranch) && evidence.indexOf(normalizedBranch) !== -1;
+        }).join(" ");
+        const tuEvidence = hasTuEvidence(evidence);
         const snippet = typeof candidate.snippet === "string" ? candidate.snippet.toLowerCase() : "";
         const snippetMentionsTezpurUniversity = snippet.indexOf("tezpur university") !== -1;
         const exactDisplayName = normalizedDisplayName === normalizedStudentName;
@@ -1978,7 +1994,7 @@
         let badgeLabel = "Low confidence";
         let badgeClass = "low";
 
-        if (exactDisplayName && (mentionsTezpur || mentionsBranch)) {
+        if (exactDisplayName && tuEvidence) {
           badgeLabel = "Strong match";
           badgeClass = "strong";
         } else if (exactDisplayName || displayContainsEveryNamePart || usernameContainsFirstAndLast || snippetMentionsTezpurUniversity) {
@@ -1986,21 +2002,23 @@
           badgeClass = "possible";
         }
 
-        let reason = "Name similarity";
+        const reasons = [];
         if (exactDisplayName || displayContainsEveryNamePart) {
-          reason = "Matching display name";
+          reasons.push("Matching display name");
         } else if (exactUsername || usernameContainsFirstAndLast) {
-          reason = "Username matches name";
-        } else if (mentionsTezpur) {
-          reason = "Mentions Tezpur University in bio/snippet";
+          reasons.push("Username matches name");
         }
+        const tuReason = getTuEvidenceReason(evidence);
+        if (tuReason) reasons.push(tuReason);
+        if (!reasons.length) reasons.push("Name similarity");
 
         return {
           username: username,
           displayName: displayName,
           badgeLabel: badgeLabel,
           badgeClass: badgeClass,
-          reason: reason
+          reason: reasons.join(" · "),
+          hasTuEvidence: tuEvidence
         };
       }
 
@@ -2072,13 +2090,19 @@
             }
 
             const rankedCandidates = [];
-            data.candidates.forEach(function (candidate) {
+            data.candidates.forEach(function (candidate, sourceIndex) {
               if (!candidate || typeof candidate !== "object") return;
               const profileURL = getInstagramProfileURL(candidate.profileUrl);
               if (!profileURL) return;
               const details = getInstagramCandidateDetails(candidate, studentInfo);
               const rank = details.badgeClass === "strong" ? 0 : (details.badgeClass === "possible" ? 1 : 2);
-              rankedCandidates.push({ candidate: candidate, profileURL: profileURL, details: details, rank: rank });
+              rankedCandidates.push({
+                candidate: candidate,
+                profileURL: profileURL,
+                details: details,
+                rank: rank,
+                sourceIndex: sourceIndex
+              });
             });
 
             if (!rankedCandidates.length) {
@@ -2087,7 +2111,7 @@
             }
 
             rankedCandidates.sort(function (first, second) {
-              return first.rank - second.rank;
+              return first.rank - second.rank || first.sourceIndex - second.sourceIndex;
             });
 
             let strongMatchKept = false;
@@ -2105,7 +2129,9 @@
             });
 
             rankedCandidates.sort(function (first, second) {
-              return first.rank - second.rank;
+              return first.rank - second.rank ||
+                Number(second.details.hasTuEvidence) - Number(first.details.hasTuEvidence) ||
+                first.sourceIndex - second.sourceIndex;
             });
 
             const cards = rankedCandidates.slice(0, 5).map(function (entry) {
