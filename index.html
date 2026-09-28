@@ -796,6 +796,153 @@
       gap: 8px;
     }
 
+    .instagram-section {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid var(--line);
+    }
+
+    .instagram-section[hidden] { display: none; }
+
+    .instagram-heading {
+      margin: 0;
+      color: var(--ink);
+      font-size: 1rem;
+      line-height: 1.35;
+    }
+
+    .instagram-status {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .instagram-candidates {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .instagram-candidate {
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: color-mix(in srgb, var(--surface-strong) 78%, transparent);
+    }
+
+    .instagram-candidate-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .instagram-display-name {
+      min-width: 0;
+      margin: 0;
+      overflow-wrap: anywhere;
+      color: var(--ink);
+      font-size: 0.95rem;
+      line-height: 1.35;
+    }
+
+    .instagram-badge {
+      flex: 0 0 auto;
+      padding: 4px 7px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+
+    .instagram-badge.strong {
+      border-color: color-mix(in srgb, var(--success) 28%, transparent);
+      background: var(--success-soft);
+      color: var(--success);
+    }
+
+    .instagram-badge.possible {
+      border-color: color-mix(in srgb, var(--amber) 32%, transparent);
+      background: color-mix(in srgb, var(--amber) 14%, transparent);
+      color: color-mix(in srgb, var(--amber) 78%, var(--ink));
+    }
+
+    .instagram-badge.low {
+      background: color-mix(in srgb, var(--muted) 9%, transparent);
+      color: var(--muted);
+    }
+
+    .instagram-username {
+      display: inline-block;
+      margin-top: 9px;
+      overflow-wrap: anywhere;
+      color: var(--focus);
+      font-size: 0.84rem;
+      font-weight: 700;
+      line-height: 1.4;
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 3px;
+    }
+
+    .instagram-reason {
+      display: -webkit-box;
+      margin: 8px 0 0;
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.45;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+
+    .instagram-url {
+      display: block;
+      margin-top: 9px;
+      overflow: hidden;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.69rem;
+      line-height: 1.35;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .instagram-profile-link,
+    .instagram-search-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      margin-top: 11px;
+      padding: 0 12px;
+      border: 1px solid var(--line-strong);
+      border-radius: 9px;
+      background: var(--surface-strong);
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 1.25;
+      text-decoration: none;
+    }
+
+    .instagram-profile-link:hover,
+    .instagram-search-link:hover {
+      border-color: color-mix(in srgb, var(--teal) 52%, var(--line-strong));
+      background: color-mix(in srgb, var(--teal) 9%, var(--surface-strong));
+      color: var(--focus);
+    }
+
+    .instagram-fallback-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     .secondary-action {
       min-height: 42px;
       padding: 0 15px;
@@ -1148,6 +1295,11 @@
           <span class="copy-status" id="copyStatus" role="status" aria-live="polite"></span>
         </div>
         <p class="student-name-status" id="studentNameStatus" role="status" aria-live="polite" hidden></p>
+        <section class="instagram-section" id="instagramSection" aria-labelledby="instagramHeading" hidden>
+          <h2 class="instagram-heading" id="instagramHeading">Instagram Profile</h2>
+          <p class="instagram-status" id="instagramStatus" role="status" aria-live="polite"></p>
+          <div class="instagram-candidates" id="instagramCandidates"></div>
+        </section>
         <section class="linkedin-section" id="linkedinSection" aria-labelledby="linkedinHeading" hidden>
           <h2 class="linkedin-heading" id="linkedinHeading">LinkedIn Profile</h2>
           <p class="linkedin-status" id="linkedinStatus" role="status" aria-live="polite"></p>
@@ -1211,6 +1363,9 @@
       const copyStatus = document.getElementById("copyStatus");
       const qrCodeButton = document.getElementById("qrCodeButton");
       const studentNameStatus = document.getElementById("studentNameStatus");
+      const instagramSection = document.getElementById("instagramSection");
+      const instagramStatus = document.getElementById("instagramStatus");
+      const instagramCandidates = document.getElementById("instagramCandidates");
       const linkedinSection = document.getElementById("linkedinSection");
       const linkedinStatus = document.getElementById("linkedinStatus");
       const linkedinCandidates = document.getElementById("linkedinCandidates");
@@ -1521,6 +1676,7 @@
         studentNameStatus.textContent = "";
         studentNameStatus.classList.remove("loading");
         resetLinkedIn();
+        resetInstagram();
       }
 
       function normalizeRollNumber(value) {
@@ -1826,6 +1982,212 @@
           });
       }
 
+      function resetInstagram() {
+        instagramSection.hidden = true;
+        instagramStatus.textContent = "";
+        instagramCandidates.replaceChildren();
+      }
+
+      function buildInstagramQuery(studentInfo) {
+        let query = 'site:instagram.com "' + studentInfo.name + '" "Tezpur University"';
+        if (studentInfo.branch) query += ' "' + studentInfo.branch + '"';
+        return query;
+      }
+
+      function addInstagramFallback(studentInfo, backendQuery, requestNumber) {
+        if (requestNumber !== studentNameRequestNumber) return;
+        const query = typeof backendQuery === "string" && backendQuery.trim()
+          ? backendQuery.trim()
+          : buildInstagramQuery(studentInfo);
+        const searchEngines = [
+          { label: "Search Google", url: "https://www.google.com/search?q=" },
+          { label: "Search Bing", url: "https://www.bing.com/search?q=" },
+          { label: "Search DuckDuckGo", url: "https://duckduckgo.com/?q=" }
+        ];
+        const actions = document.createElement("div");
+        actions.className = "instagram-fallback-actions";
+
+        searchEngines.forEach(function (engine) {
+          const link = document.createElement("a");
+          link.className = "instagram-search-link";
+          link.href = engine.url + encodeURIComponent(query);
+          link.target = "_blank";
+          link.rel = "noopener";
+          link.textContent = engine.label;
+          actions.appendChild(link);
+        });
+
+        instagramCandidates.replaceChildren(actions);
+        instagramStatus.textContent = "Instagram: No matching public profile found.";
+        instagramSection.hidden = false;
+      }
+
+      function getInstagramProfileURL(value) {
+        if (typeof value !== "string" || !value.trim()) return "";
+        try {
+          const parsed = new URL(value.trim());
+          const hostname = parsed.hostname.toLowerCase();
+          if (parsed.protocol !== "https:" || !(hostname === "instagram.com" || hostname.endsWith(".instagram.com"))) return "";
+
+          const path = parsed.pathname.replace(/^\/+/, "");
+          if (!/^[A-Za-z0-9._]+\/?$/.test(path)) return "";
+
+          const username = path.replace(/\/$/, "").toLowerCase();
+          const reservedPaths = ["p", "reel", "reels", "explore", "accounts", "direct", "stories", "tv", "about", "legal", "developer", "share"];
+          if (reservedPaths.indexOf(username) !== -1) return "";
+          return parsed.href;
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function getInstagramCandidateDetails(candidate, studentInfo) {
+        const username = typeof candidate.username === "string"
+          ? candidate.username.trim().replace(/^@+/, "").toLowerCase()
+          : "";
+        const displayName = typeof candidate.displayName === "string" ? candidate.displayName.trim() : "";
+        const normalizedDisplayName = displayName.toLowerCase().replace(/\s+/g, " ").trim();
+        const normalizedStudentName = studentInfo.name.toLowerCase().replace(/\s+/g, " ").trim();
+        const nameParts = normalizedStudentName.split(/\s+/).filter(Boolean);
+        const evidence = [candidate.snippet, candidate.title, displayName].map(function (value) {
+          return typeof value === "string" ? value.trim() : "";
+        }).join(" ").toLowerCase();
+        const mentionsTezpur = evidence.indexOf("tezpur") !== -1;
+        const snippet = typeof candidate.snippet === "string" ? candidate.snippet.toLowerCase() : "";
+        const snippetMentionsTezpurUniversity = snippet.indexOf("tezpur university") !== -1;
+        const exactDisplayName = normalizedDisplayName === normalizedStudentName;
+        const compactStudentName = normalizedStudentName.replace(/[\s.]/g, "");
+        const exactUsername = username === compactStudentName;
+        const displayContainsEveryNamePart = Boolean(normalizedDisplayName) && nameParts.length > 0 && nameParts.every(function (part) {
+          return normalizedDisplayName.indexOf(part) !== -1;
+        });
+        const lettersOnlyUsername = username.replace(/[^a-z]/g, "");
+        const firstName = nameParts.length ? nameParts[0].replace(/[^a-z]/g, "") : "";
+        const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1].replace(/[^a-z]/g, "") : "";
+        const firstAndLastName = firstName + lastName;
+        const usernameContainsFirstAndLast = Boolean(firstName && lastName) && lettersOnlyUsername.indexOf(firstAndLastName) !== -1;
+        let badgeLabel = "Low confidence";
+        let badgeClass = "low";
+
+        if (exactDisplayName || (exactUsername && mentionsTezpur)) {
+          badgeLabel = "Strong match";
+          badgeClass = "strong";
+        } else if (displayContainsEveryNamePart || usernameContainsFirstAndLast || snippetMentionsTezpurUniversity) {
+          badgeLabel = "Possible match";
+          badgeClass = "possible";
+        }
+
+        let reason = "Name similarity";
+        if (exactDisplayName || displayContainsEveryNamePart) {
+          reason = "Matching display name";
+        } else if (exactUsername || usernameContainsFirstAndLast) {
+          reason = "Username matches name";
+        } else if (mentionsTezpur) {
+          reason = "Mentions Tezpur University in bio/snippet";
+        }
+
+        return {
+          username: username,
+          displayName: displayName,
+          badgeLabel: badgeLabel,
+          badgeClass: badgeClass,
+          reason: reason
+        };
+      }
+
+      function createInstagramCandidateCard(candidate, studentInfo, profileURL) {
+        const details = getInstagramCandidateDetails(candidate, studentInfo);
+        const card = document.createElement("article");
+        card.className = "instagram-candidate";
+
+        const header = document.createElement("div");
+        header.className = "instagram-candidate-head";
+        const name = document.createElement("h3");
+        name.className = "instagram-display-name";
+        name.textContent = details.displayName || "@" + details.username;
+        const badge = document.createElement("span");
+        badge.className = "instagram-badge " + details.badgeClass;
+        badge.textContent = details.badgeLabel;
+        header.append(name, badge);
+        card.appendChild(header);
+
+        const username = document.createElement("a");
+        username.className = "instagram-username";
+        username.href = profileURL;
+        username.target = "_blank";
+        username.rel = "noopener";
+        username.textContent = "@" + details.username;
+        card.appendChild(username);
+
+        const reason = document.createElement("p");
+        reason.className = "instagram-reason";
+        reason.textContent = details.reason;
+        card.appendChild(reason);
+
+        const profileLink = document.createElement("a");
+        profileLink.className = "instagram-profile-link";
+        profileLink.href = profileURL;
+        profileLink.target = "_blank";
+        profileLink.rel = "noopener";
+        profileLink.textContent = "View Instagram Profile";
+        card.appendChild(profileLink);
+        return card;
+      }
+
+      function findInstagram(studentInfo, requestNumber) {
+        if (requestNumber !== studentNameRequestNumber) return;
+        instagramCandidates.replaceChildren();
+        instagramStatus.textContent = "Searching Instagram…";
+        instagramSection.hidden = false;
+
+        const instagramURL = loggingEndpoint + "?action=instagram&name=" + encodeURIComponent(studentInfo.name) +
+          "&programme=" + encodeURIComponent(studentInfo.programme) +
+          "&department=" + encodeURIComponent(studentInfo.department);
+
+        fetch(instagramURL, { cache: "no-store" })
+          .then(function (response) {
+            if (!response.ok) throw new Error("Instagram search request failed");
+            return response.json();
+          })
+          .then(function (data) {
+            if (requestNumber !== studentNameRequestNumber) return;
+            if (!data || data.ok !== true || !Array.isArray(data.candidates) || !data.candidates.length) {
+              addInstagramFallback(studentInfo, data && data.query, requestNumber);
+              return;
+            }
+
+            const rankedCandidates = [];
+            data.candidates.forEach(function (candidate) {
+              if (!candidate || typeof candidate !== "object") return;
+              const profileURL = getInstagramProfileURL(candidate.profileUrl);
+              if (!profileURL) return;
+              const details = getInstagramCandidateDetails(candidate, studentInfo);
+              const rank = details.badgeClass === "strong" ? 0 : (details.badgeClass === "possible" ? 1 : 2);
+              rankedCandidates.push({ candidate: candidate, profileURL: profileURL, rank: rank });
+            });
+
+            if (!rankedCandidates.length) {
+              addInstagramFallback(studentInfo, data.query, requestNumber);
+              return;
+            }
+
+            rankedCandidates.sort(function (first, second) {
+              return first.rank - second.rank;
+            });
+
+            const cards = rankedCandidates.slice(0, 5).map(function (entry) {
+              return createInstagramCandidateCard(entry.candidate, studentInfo, entry.profileURL);
+            });
+
+            instagramCandidates.replaceChildren.apply(instagramCandidates, cards);
+            instagramStatus.textContent = "Instagram results for " + studentInfo.name + ":";
+            instagramSection.hidden = false;
+          })
+          .catch(function () {
+            addInstagramFallback(studentInfo, "", requestNumber);
+          });
+      }
+
       function findStudentName(rollNumber) {
         const requestNumber = ++studentNameRequestNumber;
         studentNameStatus.textContent = "Finding student name…";
@@ -1911,6 +2273,7 @@
             studentNameStatus.classList.remove("loading");
             studentNameStatus.hidden = false;
             findLinkedIn(studentInfo, requestNumber);
+            findInstagram(studentInfo, requestNumber);
           })
           .catch(function () {
             hideStudentName(requestNumber);
@@ -2302,6 +2665,7 @@
         event.preventDefault();
         studentNameRequestNumber += 1;
         resetLinkedIn();
+        resetInstagram();
         batchResults.replaceChildren();
         const entries = batchRollNumbers.value.split(/[\s,]+/).filter(function (entry) {
           return entry.trim().length > 0;
