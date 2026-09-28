@@ -592,8 +592,8 @@
     .result-panel {
       position: relative;
       z-index: 1;
-      margin-top: 14px;
-      padding: 15px;
+      margin-top: 10px;
+      padding: 12px;
       border: 1px solid var(--line);
       border-radius: 13px;
       background: color-mix(in srgb, var(--surface-strong) 78%, transparent);
@@ -603,9 +603,9 @@
 
     .result-label {
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 5px;
       color: var(--muted);
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
@@ -625,16 +625,22 @@
     .result-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 9px;
-      margin-top: 10px;
+      gap: 7px;
+      margin-top: 7px;
+    }
+
+    .result-actions .secondary-action {
+      min-height: 34px;
+      padding-inline: 11px;
+      font-size: 0.76rem;
     }
 
     .student-name-status {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      margin: 11px 0 0;
-      padding: 7px 10px;
+      gap: 7px;
+      margin: 8px 0 0;
+      padding: 5px 8px;
       border: 1px solid var(--line);
       border-radius: 9px;
       background: color-mix(in srgb, var(--surface-strong) 72%, transparent);
@@ -661,286 +667,172 @@
       to { transform: rotate(360deg); }
     }
 
-    .linkedin-section {
-      margin-top: 15px;
-      padding-top: 15px;
+    .social-columns {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .social-profile-section {
+      min-width: 0;
+      padding-top: 10px;
       border-top: 1px solid var(--line);
     }
 
-    .linkedin-section[hidden] { display: none; }
+    .social-profile-section[hidden] { display: none; }
 
-    .linkedin-heading {
+    .linkedin-heading,
+    .instagram-heading {
       margin: 0;
       color: var(--ink);
-      font-size: 1rem;
-      line-height: 1.35;
+      font-size: 0.9rem;
+      line-height: 1.3;
     }
 
-    .linkedin-status {
-      margin: 6px 0 0;
+    .linkedin-status,
+    .instagram-status {
+      min-height: 1.25em;
+      margin: 3px 0 0;
       color: var(--muted);
-      font-size: 0.86rem;
+      font-size: 0.76rem;
       font-weight: 600;
-      line-height: 1.5;
-    }
-
-    .linkedin-candidates {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .linkedin-candidate {
-      min-width: 0;
-      padding: 13px;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      background: color-mix(in srgb, var(--surface-strong) 78%, transparent);
-    }
-
-    .linkedin-candidate-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .linkedin-profile-name {
-      min-width: 0;
-      margin: 0;
-      overflow-wrap: anywhere;
-      color: var(--ink);
-      font-size: 0.95rem;
       line-height: 1.35;
     }
 
-    .linkedin-badge {
-      flex: 0 0 auto;
-      padding: 4px 7px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      font-size: 0.68rem;
+    .linkedin-candidates,
+    .instagram-candidates {
+      display: grid;
+      margin-top: 6px;
+    }
+
+    .social-candidate-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 9px;
+      min-width: 0;
+      min-height: 56px;
+      padding: 7px 2px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .social-candidate-row:first-child {
+      border-top: 1px solid var(--line);
+    }
+
+    .social-candidate-copy {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .social-profile-handle {
+      display: block;
+      min-width: 0;
+      overflow: hidden;
+      color: var(--focus);
+      font-size: 0.82rem;
       font-weight: 700;
-      line-height: 1.25;
+      line-height: 1.3;
+      text-decoration-thickness: 1.5px;
+      text-overflow: ellipsis;
+      text-underline-offset: 3px;
       white-space: nowrap;
     }
 
-    .linkedin-badge.strong {
-      border-color: color-mix(in srgb, var(--success) 28%, transparent);
-      background: var(--success-soft);
-      color: var(--success);
-    }
-
-    .linkedin-badge.possible {
-      border-color: color-mix(in srgb, var(--amber) 32%, transparent);
-      background: color-mix(in srgb, var(--amber) 14%, transparent);
-      color: color-mix(in srgb, var(--amber) 78%, var(--ink));
-    }
-
-    .linkedin-badge.low {
-      background: color-mix(in srgb, var(--muted) 9%, transparent);
-      color: var(--muted);
-    }
-
-    .linkedin-headline {
-      display: -webkit-box;
-      margin: 8px 0 0;
+    .social-candidate-meta {
+      margin: 2px 0 0;
       overflow: hidden;
       color: var(--muted);
-      font-size: 0.82rem;
-      line-height: 1.45;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-    }
-
-    .linkedin-url {
-      display: block;
-      margin-top: 9px;
-      overflow: hidden;
-      color: var(--muted);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 0.69rem;
-      line-height: 1.35;
+      font-size: 0.7rem;
+      line-height: 1.3;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .linkedin-profile-link,
-    .linkedin-search-link {
-      display: inline-flex;
+    .social-candidate-actions {
+      display: flex;
+      flex: 0 0 auto;
       align-items: center;
-      justify-content: center;
-      min-height: 38px;
-      margin-top: 11px;
-      padding: 0 12px;
-      border: 1px solid var(--line-strong);
-      border-radius: 9px;
-      background: var(--surface-strong);
-      color: var(--ink);
-      font-size: 0.78rem;
-      font-weight: 700;
-      line-height: 1.25;
-      text-decoration: none;
+      gap: 7px;
     }
 
-    .linkedin-profile-link:hover,
-    .linkedin-search-link:hover {
-      border-color: color-mix(in srgb, var(--teal) 52%, var(--line-strong));
-      background: color-mix(in srgb, var(--teal) 9%, var(--surface-strong));
-      color: var(--focus);
-    }
-
-    .linkedin-fallback-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .instagram-section {
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid var(--line);
-    }
-
-    .instagram-section[hidden] { display: none; }
-
-    .instagram-heading {
-      margin: 0;
-      color: var(--ink);
-      font-size: 1rem;
-      line-height: 1.35;
-    }
-
-    .instagram-status {
-      margin: 6px 0 0;
-      color: var(--muted);
-      font-size: 0.86rem;
-      font-weight: 600;
-      line-height: 1.5;
-    }
-
-    .instagram-candidates {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .instagram-candidate {
-      min-width: 0;
-      padding: 13px;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      background: color-mix(in srgb, var(--surface-strong) 78%, transparent);
-    }
-
-    .instagram-candidate-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .instagram-display-name {
-      min-width: 0;
-      margin: 0;
-      overflow-wrap: anywhere;
-      color: var(--ink);
-      font-size: 0.95rem;
-      line-height: 1.35;
-    }
-
+    .linkedin-badge,
     .instagram-badge {
       flex: 0 0 auto;
-      padding: 4px 7px;
+      padding: 3px 6px;
       border: 1px solid var(--line);
       border-radius: 999px;
-      font-size: 0.68rem;
+      font-size: 0.6rem;
       font-weight: 700;
-      line-height: 1.25;
+      line-height: 1.2;
       white-space: nowrap;
     }
 
+    .linkedin-badge.strong,
     .instagram-badge.strong {
       border-color: color-mix(in srgb, var(--success) 28%, transparent);
       background: var(--success-soft);
       color: var(--success);
     }
 
+    .linkedin-badge.possible,
     .instagram-badge.possible {
       border-color: color-mix(in srgb, var(--amber) 32%, transparent);
       background: color-mix(in srgb, var(--amber) 14%, transparent);
       color: color-mix(in srgb, var(--amber) 78%, var(--ink));
     }
 
+    .linkedin-badge.low,
     .instagram-badge.low {
       background: color-mix(in srgb, var(--muted) 9%, transparent);
       color: var(--muted);
     }
 
-    .instagram-username {
-      display: inline-block;
-      margin-top: 9px;
-      overflow-wrap: anywhere;
-      color: var(--focus);
-      font-size: 0.84rem;
+    .social-profile-link {
+      flex: 0 0 auto;
+      color: var(--ink);
+      font-size: 0.68rem;
       font-weight: 700;
-      line-height: 1.4;
-      text-decoration-thickness: 1.5px;
-      text-underline-offset: 3px;
-    }
-
-    .instagram-reason {
-      display: -webkit-box;
-      margin: 8px 0 0;
-      overflow: hidden;
-      color: var(--muted);
-      font-size: 0.82rem;
-      line-height: 1.45;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-    }
-
-    .instagram-url {
-      display: block;
-      margin-top: 9px;
-      overflow: hidden;
-      color: var(--muted);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 0.69rem;
-      line-height: 1.35;
-      text-overflow: ellipsis;
+      line-height: 1.2;
+      text-decoration: none;
       white-space: nowrap;
     }
 
-    .instagram-profile-link,
-    .instagram-search-link {
+    .social-profile-handle:hover,
+    .social-profile-link:hover {
+      color: var(--focus);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .social-fallback-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    .social-search-link {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 38px;
-      margin-top: 11px;
-      padding: 0 12px;
+      min-height: 28px;
+      padding: 0 9px;
       border: 1px solid var(--line-strong);
-      border-radius: 9px;
+      border-radius: 999px;
       background: var(--surface-strong);
       color: var(--ink);
-      font-size: 0.78rem;
+      font-size: 0.68rem;
       font-weight: 700;
-      line-height: 1.25;
+      line-height: 1.2;
       text-decoration: none;
     }
 
-    .instagram-profile-link:hover,
-    .instagram-search-link:hover {
+    .social-search-link:hover {
       border-color: color-mix(in srgb, var(--teal) 52%, var(--line-strong));
       background: color-mix(in srgb, var(--teal) 9%, var(--surface-strong));
       color: var(--focus);
-    }
-
-    .instagram-fallback-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
     }
 
     .secondary-action {
@@ -1176,6 +1068,13 @@
       cursor: pointer;
     }
 
+    @media (min-width: 900px) {
+      .social-columns {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+    }
+
     @media (max-width: 680px) {
       .page {
         width: min(100% - 22px, 900px);
@@ -1295,16 +1194,18 @@
           <span class="copy-status" id="copyStatus" role="status" aria-live="polite"></span>
         </div>
         <p class="student-name-status" id="studentNameStatus" role="status" aria-live="polite" hidden></p>
-        <section class="instagram-section" id="instagramSection" aria-labelledby="instagramHeading" hidden>
-          <h2 class="instagram-heading" id="instagramHeading">Instagram Profile</h2>
-          <p class="instagram-status" id="instagramStatus" role="status" aria-live="polite"></p>
-          <div class="instagram-candidates" id="instagramCandidates"></div>
-        </section>
-        <section class="linkedin-section" id="linkedinSection" aria-labelledby="linkedinHeading" hidden>
-          <h2 class="linkedin-heading" id="linkedinHeading">LinkedIn Profile</h2>
-          <p class="linkedin-status" id="linkedinStatus" role="status" aria-live="polite"></p>
-          <div class="linkedin-candidates" id="linkedinCandidates"></div>
-        </section>
+        <div class="social-columns">
+          <section class="social-profile-section linkedin-section" id="linkedinSection" aria-labelledby="linkedinHeading" hidden>
+            <h2 class="linkedin-heading" id="linkedinHeading">LinkedIn Profile</h2>
+            <p class="linkedin-status" id="linkedinStatus" role="status" aria-live="polite"></p>
+            <div class="linkedin-candidates" id="linkedinCandidates"></div>
+          </section>
+          <section class="social-profile-section instagram-section" id="instagramSection" aria-labelledby="instagramHeading" hidden>
+            <h2 class="instagram-heading" id="instagramHeading">Instagram Profile</h2>
+            <p class="instagram-status" id="instagramStatus" role="status" aria-live="polite"></p>
+            <div class="instagram-candidates" id="instagramCandidates"></div>
+          </section>
+        </div>
       </div>
     </section>
 
@@ -1836,11 +1737,11 @@
           { label: "Search DuckDuckGo", url: "https://duckduckgo.com/?q=" }
         ];
         const actions = document.createElement("div");
-        actions.className = "linkedin-fallback-actions";
+        actions.className = "social-fallback-actions";
 
         searchEngines.forEach(function (engine) {
           const link = document.createElement("a");
-          link.className = "linkedin-search-link";
+          link.className = "social-search-link";
           link.href = engine.url + encodeURIComponent(query);
           link.target = "_blank";
           link.rel = "noopener";
@@ -1901,41 +1802,45 @@
 
       function createLinkedInCandidateCard(candidate, studentInfo, profileURL) {
         const details = getLinkedInCandidateDetails(candidate, studentInfo);
-        const card = document.createElement("article");
-        card.className = "linkedin-candidate";
+        const row = document.createElement("article");
+        row.className = "social-candidate-row";
 
-        const header = document.createElement("div");
-        header.className = "linkedin-candidate-head";
-        const name = document.createElement("h3");
-        name.className = "linkedin-profile-name";
+        const copy = document.createElement("div");
+        copy.className = "social-candidate-copy";
+
+        const name = document.createElement("a");
+        name.className = "social-profile-handle";
+        name.href = profileURL;
+        name.target = "_blank";
+        name.rel = "noopener";
         name.textContent = details.profileName;
-        const badge = document.createElement("span");
-        badge.className = "linkedin-badge " + details.badgeClass;
-        badge.textContent = details.badgeLabel;
-        header.append(name, badge);
-        card.appendChild(header);
+        copy.appendChild(name);
 
         if (details.headline) {
           const headline = document.createElement("p");
-          headline.className = "linkedin-headline";
+          headline.className = "social-candidate-meta";
+          headline.title = details.headline;
           headline.textContent = details.headline;
-          card.appendChild(headline);
+          copy.appendChild(headline);
         }
 
-        const url = document.createElement("span");
-        url.className = "linkedin-url";
-        url.title = profileURL;
-        url.textContent = profileURL;
-        card.appendChild(url);
+        const actions = document.createElement("div");
+        actions.className = "social-candidate-actions";
+
+        const badge = document.createElement("span");
+        badge.className = "linkedin-badge " + details.badgeClass;
+        badge.textContent = details.badgeLabel;
 
         const profileLink = document.createElement("a");
-        profileLink.className = "linkedin-profile-link";
+        profileLink.className = "social-profile-link";
         profileLink.href = profileURL;
         profileLink.target = "_blank";
         profileLink.rel = "noopener";
-        profileLink.textContent = "View LinkedIn Profile";
-        card.appendChild(profileLink);
-        return card;
+        profileLink.textContent = "View ↗";
+
+        actions.append(badge, profileLink);
+        row.append(copy, actions);
+        return row;
       }
 
       function findLinkedIn(studentInfo, requestNumber) {
@@ -2005,11 +1910,11 @@
           { label: "Search DuckDuckGo", url: "https://duckduckgo.com/?q=" }
         ];
         const actions = document.createElement("div");
-        actions.className = "instagram-fallback-actions";
+        actions.className = "social-fallback-actions";
 
         searchEngines.forEach(function (engine) {
           const link = document.createElement("a");
-          link.className = "instagram-search-link";
+          link.className = "social-search-link";
           link.href = engine.url + encodeURIComponent(query);
           link.target = "_blank";
           link.rel = "noopener";
@@ -2100,41 +2005,48 @@
       }
 
       function createInstagramCandidateCard(candidate, studentInfo, profileURL, details) {
-        const card = document.createElement("article");
-        card.className = "instagram-candidate";
+        const row = document.createElement("article");
+        row.className = "social-candidate-row";
 
-        const header = document.createElement("div");
-        header.className = "instagram-candidate-head";
-        const name = document.createElement("h3");
-        name.className = "instagram-display-name";
-        name.textContent = details.displayName || "@" + details.username;
-        const badge = document.createElement("span");
-        badge.className = "instagram-badge " + details.badgeClass;
-        badge.textContent = details.badgeLabel;
-        header.append(name, badge);
-        card.appendChild(header);
+        const copy = document.createElement("div");
+        copy.className = "social-candidate-copy";
 
         const username = document.createElement("a");
-        username.className = "instagram-username";
+        username.className = "social-profile-handle";
         username.href = profileURL;
         username.target = "_blank";
         username.rel = "noopener";
         username.textContent = "@" + details.username;
-        card.appendChild(username);
+        copy.appendChild(username);
 
-        const reason = document.createElement("p");
-        reason.className = "instagram-reason";
-        reason.textContent = details.reason;
-        card.appendChild(reason);
+        const metaParts = [details.displayName, details.reason].filter(function (value) {
+          return typeof value === "string" && value.trim();
+        });
+        if (metaParts.length) {
+          const meta = document.createElement("p");
+          meta.className = "social-candidate-meta";
+          meta.title = metaParts.join(" · ");
+          meta.textContent = metaParts.join(" · ");
+          copy.appendChild(meta);
+        }
+
+        const actions = document.createElement("div");
+        actions.className = "social-candidate-actions";
+
+        const badge = document.createElement("span");
+        badge.className = "instagram-badge " + details.badgeClass;
+        badge.textContent = details.badgeLabel;
 
         const profileLink = document.createElement("a");
-        profileLink.className = "instagram-profile-link";
+        profileLink.className = "social-profile-link";
         profileLink.href = profileURL;
         profileLink.target = "_blank";
         profileLink.rel = "noopener";
-        profileLink.textContent = "View Instagram Profile";
-        card.appendChild(profileLink);
-        return card;
+        profileLink.textContent = "View ↗";
+
+        actions.append(badge, profileLink);
+        row.append(copy, actions);
+        return row;
       }
 
       function findInstagram(studentInfo, requestNumber) {
