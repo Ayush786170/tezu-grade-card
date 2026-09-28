@@ -776,6 +776,12 @@
       color: var(--success);
     }
 
+    .instagram-badge.high {
+      border-color: color-mix(in srgb, var(--teal) 30%, transparent);
+      background: color-mix(in srgb, var(--teal) 13%, transparent);
+      color: var(--teal);
+    }
+
     .linkedin-badge.possible,
     .instagram-badge.possible {
       border-color: color-mix(in srgb, var(--amber) 32%, transparent);
@@ -783,8 +789,15 @@
       color: color-mix(in srgb, var(--amber) 78%, var(--ink));
     }
 
+    .instagram-badge.weak {
+      border-color: color-mix(in srgb, var(--amber) 20%, var(--line));
+      background: color-mix(in srgb, var(--amber) 8%, transparent);
+      color: color-mix(in srgb, var(--amber) 46%, var(--muted));
+    }
+
     .linkedin-badge.low,
-    .instagram-badge.low {
+    .instagram-badge.low,
+    .instagram-badge.poor {
       background: color-mix(in srgb, var(--muted) 9%, transparent);
       color: var(--muted);
     }
@@ -1946,21 +1959,30 @@
         }
       }
 
-      function hasTuEvidence(text) {
-        const normalizedText = typeof text === "string" ? text.toLowerCase() : "";
-        return normalizedText.indexOf("tezpur university") !== -1 ||
-          normalizedText.indexOf("tezpur uni") !== -1 ||
-          normalizedText.indexOf("tezpur.uni") !== -1 ||
-          normalizedText.indexOf("tezu") !== -1 ||
-          /\btezpur\b/.test(normalizedText) ||
-          /\btu\b/.test(normalizedText);
+      function normIG(value) {
+        return String(value || "")
+          .toLowerCase()
+          .replace(/[._\-]+/g, " ")
+          .replace(/[^a-z0-9 ]+/g, "")
+          .replace(/\s+/g, " ")
+          .trim();
+      }
+
+      function compactIG(value) {
+        return normIG(value).replace(/\s+/g, "");
+      }
+
+      function tokenMatchIG(first, second) {
+        return first === second ||
+          (Math.min(first.length, second.length) >= 4 &&
+            (first.indexOf(second) !== -1 || second.indexOf(first) !== -1));
       }
 
       function getTuEvidenceReason(text) {
         const normalizedText = typeof text === "string" ? text.toLowerCase() : "";
         if (normalizedText.indexOf("tezpur university") !== -1) return "Bio mentions Tezpur University";
         if (normalizedText.indexOf("tezpur.uni") !== -1) return "Bio tags @tezpur.uni";
-        if (normalizedText.indexOf("tezu") !== -1) return "Bio mentions Tezu";
+        if (/\btezu\b/.test(normalizedText)) return "Bio mentions Tezu";
         if (/\btezpur\b/.test(normalizedText)) return "Bio mentions Tezpur";
         if (/\btu\b/.test(normalizedText)) return "Bio mentions TU";
         return "";
@@ -1971,54 +1993,203 @@
           ? candidate.username.trim().replace(/^@+/, "").toLowerCase()
           : "";
         const displayName = typeof candidate.displayName === "string" ? candidate.displayName.trim() : "";
-        const normalizedDisplayName = displayName.toLowerCase().replace(/\s+/g, " ").trim();
-        const normalizedStudentName = studentInfo.name.toLowerCase().replace(/\s+/g, " ").trim();
-        const nameParts = normalizedStudentName.split(/\s+/).filter(Boolean);
-        const evidence = [candidate.title, candidate.snippet].map(function (value) {
+        const normalizedStudentName = normIG(studentInfo.name);
+        const studentTokens = normalizedStudentName.split(" ").filter(Boolean);
+        const displayNameNormalized = normIG(displayName);
+        const displayTokens = displayNameNormalized.split(" ").filter(Boolean);
+        const bio = [candidate.title, candidate.snippet].map(function (value) {
           return typeof value === "string" ? value.trim() : "";
-        }).join(" ");
-        const tuEvidence = hasTuEvidence(evidence);
-        const snippet = typeof candidate.snippet === "string" ? candidate.snippet.toLowerCase() : "";
-        const snippetMentionsTezpurUniversity = snippet.indexOf("tezpur university") !== -1;
-        const exactDisplayName = normalizedDisplayName === normalizedStudentName;
-        const compactStudentName = normalizedStudentName.replace(/[\s.]/g, "");
-        const exactUsername = username === compactStudentName;
-        const displayContainsEveryNamePart = Boolean(normalizedDisplayName) && nameParts.length > 0 && nameParts.every(function (part) {
-          return normalizedDisplayName.indexOf(part) !== -1;
-        });
-        const lettersOnlyUsername = username.replace(/[^a-z]/g, "");
-        const firstName = nameParts.length ? nameParts[0].replace(/[^a-z]/g, "") : "";
-        const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1].replace(/[^a-z]/g, "") : "";
-        const firstAndLastName = firstName + lastName;
-        const usernameContainsFirstAndLast = Boolean(firstName && lastName) && lettersOnlyUsername.indexOf(firstAndLastName) !== -1;
-        let badgeLabel = "Low confidence";
-        let badgeClass = "low";
+        }).join(" ").toLowerCase();
+        const firstToken = studentTokens.length ? studentTokens[0] : "";
+        const lastToken = studentTokens.length ? studentTokens[studentTokens.length - 1] : "";
+        let nameScore = 0;
+        let nameReason = "";
 
-        if (exactDisplayName && tuEvidence) {
-          badgeLabel = "Strong match";
+        let nextDisplayIndex = 0;
+        const fullNameInOrder = studentTokens.length > 0 && studentTokens.every(function (studentToken) {
+          for (let index = nextDisplayIndex; index < displayTokens.length; index += 1) {
+            if (tokenMatchIG(studentToken, displayTokens[index])) {
+              nextDisplayIndex = index + 1;
+              return true;
+            }
+          }
+          return false;
+        });
+        const fullNameAnyOrder = studentTokens.length > 0 && studentTokens.every(function (studentToken) {
+          return displayTokens.some(function (displayToken) {
+            return tokenMatchIG(studentToken, displayToken);
+          });
+        });
+        const firstTokenMatches = Boolean(firstToken) && displayTokens.some(function (displayToken) {
+          return tokenMatchIG(firstToken, displayToken);
+        });
+        const lastTokenMatches = Boolean(lastToken) && displayTokens.some(function (displayToken) {
+          return tokenMatchIG(lastToken, displayToken);
+        });
+
+        if (displayNameNormalized && displayNameNormalized === normalizedStudentName) {
+          nameScore = 40;
+          nameReason = "Exact name match";
+        } else if (fullNameInOrder) {
+          nameScore = 35;
+          nameReason = "Full name match";
+        } else if (fullNameAnyOrder) {
+          nameScore = 30;
+          nameReason = "Full name match";
+        } else if (firstTokenMatches && lastTokenMatches) {
+          nameScore = 25;
+          nameReason = "First & last name match";
+        } else if (firstTokenMatches) {
+          nameScore = 8;
+          nameReason = "Partial name match";
+        } else if (lastTokenMatches) {
+          nameScore = 5;
+          nameReason = "Partial name match";
+        }
+
+        const usernameAlnum = username.replace(/[^a-z0-9]/g, "");
+        const compactStudentName = compactIG(studentInfo.name);
+        const usernameWithoutEdgeDigits = usernameAlnum.replace(/^[0-9_]+|[0-9_]+$/g, "");
+        const firstPlusLastInitial = firstToken && lastToken ? firstToken + lastToken.charAt(0) : "";
+        const firstInitialPlusLast = firstToken && lastToken ? firstToken.charAt(0) + lastToken : "";
+        let usernameScore = 0;
+
+        if (usernameAlnum && usernameAlnum === compactStudentName) {
+          usernameScore = 35;
+        } else if (usernameWithoutEdgeDigits && usernameWithoutEdgeDigits === compactStudentName) {
+          usernameScore = 30;
+        } else if (compactStudentName && usernameAlnum.indexOf(compactStudentName) !== -1) {
+          usernameScore = 25;
+        } else if ((firstPlusLastInitial && usernameAlnum.indexOf(firstPlusLastInitial) !== -1) ||
+          (firstInitialPlusLast && usernameAlnum.indexOf(firstInitialPlusLast) !== -1)) {
+          usernameScore = 12;
+        } else if (firstToken.length >= 3 && usernameAlnum.indexOf(firstToken) !== -1) {
+          usernameScore = 8;
+        } else if (lastToken.length >= 3 && usernameAlnum.indexOf(lastToken) !== -1) {
+          usernameScore = 5;
+        }
+
+        let uniScore = 0;
+        if (bio.indexOf("tezpur university") !== -1) uniScore = Math.max(uniScore, 25);
+        if (bio.indexOf("tezpur.uni") !== -1) uniScore = Math.max(uniScore, 22);
+        if (/\btezu\b/.test(bio)) uniScore = Math.max(uniScore, 22);
+        if (/\btu\b/.test(bio) && (/\btezpur\b/.test(bio) || /\bassam\b/.test(bio) || /\bnapaam\b/.test(bio))) {
+          uniScore = Math.max(uniScore, 15);
+        } else if (/\btu\b/.test(bio)) {
+          uniScore = Math.max(uniScore, 8);
+        }
+        if (/\bnapaam\b/.test(bio)) uniScore = Math.max(uniScore, 10);
+        if (/\btezpur\b/.test(bio)) uniScore = Math.max(uniScore, 5);
+
+        let deptScore = 0;
+        let departmentReason = "";
+        if (typeof studentInfo.department === "string" && studentInfo.department.trim()) {
+          const department = studentInfo.department.trim();
+          const departmentLower = department.toLowerCase().replace(/\s+/g, " ");
+          const departmentWords = departmentLower.match(/[a-z]+/g) || [];
+          const departmentInitials = departmentWords.map(function (word) {
+            return word.charAt(0);
+          }).join("");
+
+          if (bio.indexOf(departmentLower) !== -1) {
+            deptScore = 15;
+          } else if (departmentInitials && new RegExp("\\b" + departmentInitials + "\\b").test(bio)) {
+            deptScore = 10;
+          } else if (bio.indexOf("engineer") !== -1) {
+            deptScore = 5;
+          }
+          if (deptScore > 0) departmentReason = "✓ " + toTitleCase(department) + " in bio";
+        }
+
+        let batchScore = 0;
+        let batchReason = "";
+        if (typeof studentInfo.batch === "number" && Number.isFinite(studentInfo.batch)) {
+          const batchText = String(studentInfo.batch);
+          const batchShort = batchText.slice(2);
+          if (bio.indexOf(batchText) !== -1) {
+            batchScore = 10;
+          } else if (bio.indexOf("'" + batchShort) !== -1 || bio.indexOf("’" + batchShort) !== -1 || bio.indexOf("‘" + batchShort) !== -1) {
+            batchScore = 8;
+          } else if (new RegExp("\\b" + batchShort + "\\b").test(bio)) {
+            batchScore = 4;
+          }
+          if (batchScore > 0) batchReason = "✓ Batch '" + batchShort + " in bio";
+        }
+
+        let negatives = 0;
+        const usernameForOfficialCheck = username.replace(/[._]/g, "");
+        const negativeText = [bio, displayName.toLowerCase(), username.replace(/[._\-]+/g, " ")].join(" ");
+        if (displayNameNormalized === "tezpur university" ||
+          ["tezpuruniversity", "tezuofficial", "tezpuruniofficial"].indexOf(usernameForOfficialCheck) !== -1 ||
+          bio.indexOf("official account") !== -1) {
+          negatives -= 40;
+        }
+        if (/\bofficial\b/.test(displayName.toLowerCase() + " " + username.replace(/[._\-]+/g, " "))) negatives -= 30;
+        if (/\bmemes?\b/.test(negativeText) || negativeText.indexOf("confession") !== -1 || /\btroll\b/.test(negativeText) ||
+          negativeText.indexOf("fan page") !== -1 || negativeText.indexOf("fanpage") !== -1) {
+          negatives -= 30;
+        }
+        if (/\b(club|society|chapter|association|committee|cell)\b/.test(negativeText)) negatives -= 25;
+        if (/\bfest\b/.test(negativeText) || negativeText.indexOf("hackathon") !== -1) negatives -= 20;
+        if (/\b(store|shop|boutique)\b/.test(negativeText) || negativeText.indexOf("price list") !== -1 ||
+          negativeText.indexOf("order now") !== -1 || negativeText.indexOf("cod available") !== -1) {
+          negatives -= 20;
+        }
+
+        const anyDisplayNameRelationship = displayTokens.some(function (displayToken) {
+          return studentTokens.some(function (studentToken) {
+            return tokenMatchIG(displayToken, studentToken);
+          });
+        });
+        const anyUsernameRelationship = studentTokens.some(function (studentToken) {
+          return studentToken.length >= 3 && usernameAlnum.indexOf(studentToken) !== -1;
+        });
+        const alphabeticDisplayTokens = displayTokens.filter(function (token) {
+          return /^[a-z]+$/.test(token);
+        });
+        const clearlyDifferentName = alphabeticDisplayTokens.length >= 2 && !anyDisplayNameRelationship && !anyUsernameRelationship;
+        if (clearlyDifferentName) {
+          negatives -= 30;
+        } else if (!anyDisplayNameRelationship && !anyUsernameRelationship) {
+          negatives -= 20;
+        }
+
+        let score = Math.max(0, Math.min(100, nameScore + usernameScore + uniScore + deptScore + batchScore + negatives));
+        if (score >= 85 && !(uniScore > 0 && nameScore >= 25)) score = 84;
+
+        let badgeLabel = "Poor Match";
+        let badgeClass = "poor";
+        if (score >= 85) {
+          badgeLabel = "Strong Match";
           badgeClass = "strong";
-        } else if (exactDisplayName || displayContainsEveryNamePart || usernameContainsFirstAndLast || snippetMentionsTezpurUniversity) {
-          badgeLabel = "Possible match";
+        } else if (score >= 70) {
+          badgeLabel = "High Match";
+          badgeClass = "high";
+        } else if (score >= 50) {
+          badgeLabel = "Possible Match";
           badgeClass = "possible";
+        } else if (score >= 30) {
+          badgeLabel = "Weak Match";
+          badgeClass = "weak";
         }
 
         const reasons = [];
-        if (exactDisplayName || displayContainsEveryNamePart) {
-          reasons.push("Matching display name");
-        } else if (exactUsername || usernameContainsFirstAndLast) {
-          reasons.push("Username matches name");
-        }
-        const tuReason = getTuEvidenceReason(evidence);
-        if (tuReason) reasons.push(tuReason);
-        if (!reasons.length) reasons.push("Name similarity");
+        if (nameReason) reasons.push("✓ " + nameReason);
+        if (usernameScore >= 25) reasons.push("✓ Username matches name");
+        const tuReason = getTuEvidenceReason(bio);
+        if (tuReason) reasons.push("✓ " + tuReason);
+        if (departmentReason) reasons.push(departmentReason);
+        if (batchReason) reasons.push(batchReason);
 
         return {
           username: username,
           displayName: displayName,
+          score: score,
+          nameScore: nameScore,
+          uniScore: uniScore,
           badgeLabel: badgeLabel,
           badgeClass: badgeClass,
-          reason: reasons.join(" · "),
-          hasTuEvidence: tuEvidence
+          reason: reasons.slice(0, 4).join(" · ") || "Name similarity"
         };
       }
 
@@ -2095,12 +2266,11 @@
               const profileURL = getInstagramProfileURL(candidate.profileUrl);
               if (!profileURL) return;
               const details = getInstagramCandidateDetails(candidate, studentInfo);
-              const rank = details.badgeClass === "strong" ? 0 : (details.badgeClass === "possible" ? 1 : 2);
+              if (details.score < 20) return;
               rankedCandidates.push({
                 candidate: candidate,
                 profileURL: profileURL,
                 details: details,
-                rank: rank,
                 sourceIndex: sourceIndex
               });
             });
@@ -2111,26 +2281,9 @@
             }
 
             rankedCandidates.sort(function (first, second) {
-              return first.rank - second.rank || first.sourceIndex - second.sourceIndex;
-            });
-
-            let strongMatchKept = false;
-            rankedCandidates.forEach(function (entry) {
-              if (entry.details.badgeClass !== "strong") return;
-              if (!strongMatchKept) {
-                strongMatchKept = true;
-                return;
-              }
-              entry.details = Object.assign({}, entry.details, {
-                badgeLabel: "Possible match",
-                badgeClass: "possible"
-              });
-              entry.rank = 1;
-            });
-
-            rankedCandidates.sort(function (first, second) {
-              return first.rank - second.rank ||
-                Number(second.details.hasTuEvidence) - Number(first.details.hasTuEvidence) ||
+              return second.details.score - first.details.score ||
+                second.details.uniScore - first.details.uniScore ||
+                second.details.nameScore - first.details.nameScore ||
                 first.sourceIndex - second.sourceIndex;
             });
 
@@ -2221,11 +2374,19 @@
             const branch = branchMatch && branchMatch[1].trim()
               ? toTitleCase(branchMatch[1].trim())
               : (department ? toTitleCase(department) : "");
+            const rollMatch = rollNumber.match(/^([A-Z]+)(\d{2})(\d+)$/);
+            let batch = null;
+            if (rollMatch) {
+              const yy = parseInt(rollMatch[2], 10);
+              if (/b\.?\s*tech/i.test(programme)) batch = 2000 + yy + 4;
+              else if (/m\.?\s*tech/i.test(programme)) batch = 2000 + yy + 2;
+            }
             const studentInfo = {
               name: studentName,
               programme: programme,
               department: department,
-              branch: branch
+              branch: branch,
+              batch: batch
             };
 
             studentNameStatus.textContent = "Student: " + studentName;
