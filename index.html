@@ -2049,10 +2049,14 @@
         const normalizedDisplayName = displayName.toLowerCase().replace(/\s+/g, " ").trim();
         const normalizedStudentName = studentInfo.name.toLowerCase().replace(/\s+/g, " ").trim();
         const nameParts = normalizedStudentName.split(/\s+/).filter(Boolean);
-        const evidence = [candidate.snippet, candidate.title, displayName].map(function (value) {
+        const evidence = [candidate.snippet, candidate.title].map(function (value) {
           return typeof value === "string" ? value.trim() : "";
         }).join(" ").toLowerCase();
         const mentionsTezpur = evidence.indexOf("tezpur") !== -1;
+        const normalizedBranch = typeof studentInfo.branch === "string"
+          ? studentInfo.branch.toLowerCase().replace(/\s+/g, " ").trim()
+          : "";
+        const mentionsBranch = Boolean(normalizedBranch) && evidence.indexOf(normalizedBranch) !== -1;
         const snippet = typeof candidate.snippet === "string" ? candidate.snippet.toLowerCase() : "";
         const snippetMentionsTezpurUniversity = snippet.indexOf("tezpur university") !== -1;
         const exactDisplayName = normalizedDisplayName === normalizedStudentName;
@@ -2069,10 +2073,10 @@
         let badgeLabel = "Low confidence";
         let badgeClass = "low";
 
-        if (exactDisplayName || (exactUsername && mentionsTezpur)) {
+        if (exactDisplayName && (mentionsTezpur || mentionsBranch)) {
           badgeLabel = "Strong match";
           badgeClass = "strong";
-        } else if (displayContainsEveryNamePart || usernameContainsFirstAndLast || snippetMentionsTezpurUniversity) {
+        } else if (exactDisplayName || displayContainsEveryNamePart || usernameContainsFirstAndLast || snippetMentionsTezpurUniversity) {
           badgeLabel = "Possible match";
           badgeClass = "possible";
         }
@@ -2095,8 +2099,7 @@
         };
       }
 
-      function createInstagramCandidateCard(candidate, studentInfo, profileURL) {
-        const details = getInstagramCandidateDetails(candidate, studentInfo);
+      function createInstagramCandidateCard(candidate, studentInfo, profileURL, details) {
         const card = document.createElement("article");
         card.className = "instagram-candidate";
 
@@ -2163,7 +2166,7 @@
               if (!profileURL) return;
               const details = getInstagramCandidateDetails(candidate, studentInfo);
               const rank = details.badgeClass === "strong" ? 0 : (details.badgeClass === "possible" ? 1 : 2);
-              rankedCandidates.push({ candidate: candidate, profileURL: profileURL, rank: rank });
+              rankedCandidates.push({ candidate: candidate, profileURL: profileURL, details: details, rank: rank });
             });
 
             if (!rankedCandidates.length) {
@@ -2175,8 +2178,26 @@
               return first.rank - second.rank;
             });
 
+            let strongMatchKept = false;
+            rankedCandidates.forEach(function (entry) {
+              if (entry.details.badgeClass !== "strong") return;
+              if (!strongMatchKept) {
+                strongMatchKept = true;
+                return;
+              }
+              entry.details = Object.assign({}, entry.details, {
+                badgeLabel: "Possible match",
+                badgeClass: "possible"
+              });
+              entry.rank = 1;
+            });
+
+            rankedCandidates.sort(function (first, second) {
+              return first.rank - second.rank;
+            });
+
             const cards = rankedCandidates.slice(0, 5).map(function (entry) {
-              return createInstagramCandidateCard(entry.candidate, studentInfo, entry.profileURL);
+              return createInstagramCandidateCard(entry.candidate, studentInfo, entry.profileURL, entry.details);
             });
 
             instagramCandidates.replaceChildren.apply(instagramCandidates, cards);
