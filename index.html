@@ -848,6 +848,31 @@
       color: var(--focus);
     }
 
+    button.social-search-link {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button.social-search-link:disabled {
+      opacity: 0.56;
+      cursor: default;
+    }
+
+    .social-optin-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .social-optin-hint {
+      color: var(--muted);
+      font-size: 0.68rem;
+      line-height: 1.35;
+    }
+
     .secondary-action {
       min-height: 42px;
       padding: 0 15px;
@@ -1253,6 +1278,7 @@
   </dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
   <script>
     (function () {
       "use strict";
@@ -1906,6 +1932,32 @@
         instagramCandidates.replaceChildren();
       }
 
+      function showInstagramIdle(studentInfo, requestNumber) {
+        if (requestNumber !== studentNameRequestNumber) return;
+
+        const row = document.createElement("div");
+        row.className = "social-optin-row";
+
+        const searchButton = document.createElement("button");
+        searchButton.className = "social-search-link";
+        searchButton.type = "button";
+        searchButton.textContent = "Find Instagram ID";
+        searchButton.addEventListener("click", function () {
+          if (requestNumber !== studentNameRequestNumber) return;
+          searchButton.disabled = true;
+          findInstagram(studentInfo, requestNumber);
+        });
+
+        const hint = document.createElement("span");
+        hint.className = "social-optin-hint";
+        hint.textContent = "Searches public Instagram profiles for this student";
+
+        row.append(searchButton, hint);
+        instagramStatus.textContent = "";
+        instagramCandidates.replaceChildren(row);
+        instagramSection.hidden = false;
+      }
+
       function buildInstagramQuery(studentInfo) {
         let query = 'site:instagram.com "' + studentInfo.name + '" "Tezpur University"';
         if (studentInfo.branch) query += ' "' + studentInfo.branch + '"';
@@ -2393,7 +2445,7 @@
             studentNameStatus.classList.remove("loading");
             studentNameStatus.hidden = false;
             findLinkedIn(studentInfo, requestNumber);
-            findInstagram(studentInfo, requestNumber);
+            showInstagramIdle(studentInfo, requestNumber);
           })
           .catch(function () {
             hideStudentName(requestNumber);
@@ -2407,38 +2459,7 @@
         return "Use letters, numbers, and at most one hyphen";
       }
 
-      function fetchPublicIP() {
-        let timeoutId;
-
-        try {
-          const controller = new AbortController();
-          timeoutId = window.setTimeout(function () {
-            controller.abort();
-          }, 2500);
-
-          return fetch("https://api.ipify.org?format=json", { signal: controller.signal })
-            .then(function (response) {
-              if (!response.ok) throw new Error("IP lookup failed");
-              return response.json();
-            })
-            .then(function (data) {
-              return data && typeof data.ip === "string" ? data.ip : "";
-            })
-            .catch(function () {
-              return "";
-            })
-            .finally(function () {
-              window.clearTimeout(timeoutId);
-            });
-        } catch (error) {
-          if (timeoutId) window.clearTimeout(timeoutId);
-          return Promise.resolve("");
-        }
-      }
-
-      const publicIPPromise = fetchPublicIP();
-
-      function postAnalytics(eventName, rollNumber, ipAddress, timeToConversion) {
+      function postAnalytics(eventName, rollNumber, timeToConversion) {
         try {
           fetch(loggingEndpoint, {
             method: "POST",
@@ -2448,7 +2469,6 @@
               event: eventName,
               roll: rollNumber,
               ua: navigator.userAgent,
-              ip: ipAddress,
               device: deviceType,
               referrer: document.referrer,
               ttc: timeToConversion
@@ -2459,15 +2479,11 @@
         }
       }
 
-      publicIPPromise.then(function (ipAddress) {
-        postAnalytics("view", "", ipAddress, "");
-      });
+      postAnalytics("view", "", "");
 
       function logSubmission(rollNumber) {
         const timeToConversion = Math.round((Date.now() - pageLoadTime) / 1000);
-        publicIPPromise.then(function (ipAddress) {
-          postAnalytics("submit", rollNumber, ipAddress, timeToConversion);
-        });
+        postAnalytics("submit", rollNumber, timeToConversion);
       }
 
       function pulseHaptic() {
@@ -2745,26 +2761,24 @@
           qrDialog.setAttribute("open", "");
         }
 
-        const qrEndpoint = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" + encodeURIComponent(pdfURL);
-        fetch(qrEndpoint)
-          .then(function (response) {
-            if (!response.ok) throw new Error("QR request failed");
-            return response.blob();
-          })
-          .then(function (blob) {
-            if (requestNumber !== qrRequestNumber) return;
-            if (qrObjectURL) URL.revokeObjectURL(qrObjectURL);
-            qrObjectURL = URL.createObjectURL(blob);
-            qrImage.src = qrObjectURL;
-            qrImage.hidden = false;
-            qrLoading.hidden = true;
-          })
-          .catch(function () {
-            if (requestNumber !== qrRequestNumber) return;
-            qrImage.hidden = true;
-            qrImage.removeAttribute("src");
-            qrLoading.textContent = "QR code could not be generated. Copy the link instead.";
-          });
+        try {
+          if (typeof window.qrcode !== "function") throw new Error("QR library unavailable");
+          const qrCode = window.qrcode(0, "M");
+          qrCode.addData(pdfURL);
+          qrCode.make();
+          const qrBlob = new Blob([qrCode.createSvgTag({ cellSize: 5, margin: 4 })], { type: "image/svg+xml" });
+          if (requestNumber !== qrRequestNumber) return;
+          if (qrObjectURL) URL.revokeObjectURL(qrObjectURL);
+          qrObjectURL = URL.createObjectURL(qrBlob);
+          qrImage.src = qrObjectURL;
+          qrImage.hidden = false;
+          qrLoading.hidden = true;
+        } catch (error) {
+          if (requestNumber !== qrRequestNumber) return;
+          qrImage.hidden = true;
+          qrImage.removeAttribute("src");
+          qrLoading.textContent = "QR code could not be generated. Copy the link instead.";
+        }
       }
 
       function closeQrDialog() {
