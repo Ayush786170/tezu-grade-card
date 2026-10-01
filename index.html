@@ -3,1281 +3,327 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="color-scheme" content="light dark" />
-  <meta name="theme-color" content="#0a0a12" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#1f3a5f" />
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="icon" href="data:," />
   <title>Tezpur University Grade Card Portal</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@700&display=swap');
-
     :root {
-      color-scheme: light dark;
-      --page: #f3f2f8;
-      --page-deep: #e8e7f1;
-      --surface: rgba(255, 255, 255, 0.66);
-      --surface-strong: rgba(255, 255, 255, 0.88);
-      --ink: #171629;
-      --muted: #5d5a72;
-      --line: rgba(57, 49, 91, 0.16);
-      --line-strong: rgba(57, 49, 91, 0.27);
-      --violet: #7657d6;
-      --teal: #0e9b94;
-      --magenta: #d9467d;
-      --amber: #e4a33b;
-      --button-start: #7052d7;
-      --button-end: #b93c83;
-      --button-hover-start: #6144c5;
-      --button-hover-end: #a52f73;
-      --danger: #a6234e;
-      --danger-soft: rgba(255, 227, 237, 0.84);
-      --success: #116c5f;
-      --success-soft: rgba(218, 248, 241, 0.84);
-      --focus: #087f79;
-      --shadow: 0 28px 80px rgba(43, 32, 80, 0.16);
-      --glow-opacity: 0.32;
+      color-scheme: light;
+      --page: #f7f6f3;
+      --surface: #ffffff;
+      --surface-muted: #f1f0ec;
+      --ink: #1c1c1c;
+      --muted: #5a5a5a;
+      --line: #e2e0da;
+      --line-strong: #c9c6be;
+      --navy: #1f3a5f;
+      --navy-hover: #18304e;
+      --navy-soft: #e9eef4;
+      --danger: #9f2d2d;
+      --danger-soft: #f8eceb;
+      --success: #356b4b;
+      --success-soft: #edf5ef;
+      --warning: #7b5b22;
+      --warning-soft: #f6f1e7;
+      --focus-ring: rgba(31, 58, 95, 0.18);
     }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --page: #090a17;
-        --page-deep: #101122;
-        --surface: rgba(20, 21, 43, 0.72);
-        --surface-strong: rgba(24, 25, 49, 0.93);
-        --ink: #f7f6ff;
-        --muted: #bebad3;
-        --line: rgba(224, 220, 255, 0.16);
-        --line-strong: rgba(224, 220, 255, 0.27);
-        --violet: #9075f0;
-        --teal: #2dd4bf;
-        --magenta: #f05b98;
-        --amber: #f2b755;
-        --button-start: #8466ee;
-        --button-end: #db4c91;
-        --button-hover-start: #957af5;
-        --button-hover-end: #e65ea0;
-        --danger: #ffabc5;
-        --danger-soft: rgba(91, 24, 48, 0.72);
-        --success: #9be8d6;
-        --success-soft: rgba(16, 76, 66, 0.64);
-        --focus: #61e6d7;
-        --shadow: 0 32px 100px rgba(0, 0, 0, 0.44);
-        --glow-opacity: 0.5;
-      }
-    }
-
     * { box-sizing: border-box; }
-
-    html {
-      min-width: 320px;
-      background: var(--page);
-    }
-
-    body {
-      position: relative;
-      isolation: isolate;
-      margin: 0;
-      min-height: 100vh;
-      overflow-x: hidden;
-      font-family: "DM Sans", sans-serif;
-      color: var(--ink);
-      background:
-        radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--teal) calc(var(--glow-opacity) * 100%), transparent) 0, transparent 34%),
-        radial-gradient(circle at 86% 14%, color-mix(in srgb, var(--magenta) calc(var(--glow-opacity) * 100%), transparent) 0, transparent 31%),
-        radial-gradient(circle at 76% 86%, color-mix(in srgb, var(--amber) 24%, transparent) 0, transparent 29%),
-        radial-gradient(circle at 18% 86%, color-mix(in srgb, var(--violet) 28%, transparent) 0, transparent 34%),
-        linear-gradient(145deg, var(--page), var(--page-deep));
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      opacity: 0.18;
-      background-image: radial-gradient(circle, currentColor 0.55px, transparent 0.75px);
-      background-size: 5px 5px;
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,.55), transparent 82%);
-    }
-
+    html { min-width: 320px; color-scheme: light; scroll-behavior: smooth; background: var(--page); }
+    body { margin: 0; min-height: 100vh; overflow-x: hidden; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: var(--ink); background: var(--page); }
     button, input, textarea { font: inherit; }
-
-    .motion-field {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    .gradient-blob {
-      --blob-opacity: 0.2;
-      position: absolute;
-      border-radius: 50%;
-      opacity: calc(var(--blob-opacity) + var(--proximity-lift, 0));
-      filter: blur(42px);
-      transform: translate3d(
-        calc(var(--parallax-x, 0px) + var(--ambient-x, 0px) + var(--repel-x, 0px)),
-        calc(var(--parallax-y, 0px) + var(--ambient-y, 0px) + var(--repel-y, 0px)),
-        0
-      ) scale(var(--blob-scale, 1));
-      transform-origin: center;
-      will-change: transform, opacity;
-    }
-
-    .gradient-blob.teal {
-      top: 5%;
-      left: -8%;
-      width: clamp(240px, 34vw, 480px);
-      aspect-ratio: 1;
-      background: var(--teal);
-    }
-
-    .gradient-blob.magenta {
-      top: -12%;
-      right: -7%;
-      width: clamp(220px, 31vw, 430px);
-      aspect-ratio: 1;
-      background: var(--magenta);
-    }
-
-    .gradient-blob.amber {
-      --blob-opacity: 0.13;
-      right: 5%;
-      bottom: -16%;
-      width: clamp(180px, 27vw, 360px);
-      aspect-ratio: 1;
-      background: var(--amber);
-    }
-
-    .gradient-blob.violet {
-      --blob-opacity: 0.16;
-      bottom: -13%;
-      left: 2%;
-      width: clamp(210px, 30vw, 410px);
-      aspect-ratio: 1;
-      background: var(--violet);
-    }
-
-    .page {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      align-content: center;
-      width: min(900px, calc(100% - 36px));
-      min-height: 100vh;
-      margin: 0 auto;
-      padding: clamp(54px, 8vw, 92px) 0;
-    }
-
-    .page::before,
-    .page::after {
-      content: "";
-      position: absolute;
-      z-index: -1;
-      border-radius: 48% 52% 62% 38% / 44% 38% 62% 56%;
-      filter: blur(2px);
-      opacity: 0.82;
-    }
-
-    .page::before {
-      top: 8%;
-      right: -14%;
-      width: clamp(150px, 25vw, 250px);
-      aspect-ratio: 1;
-      border: 1px solid color-mix(in srgb, var(--magenta) 38%, transparent);
-      background: linear-gradient(145deg, color-mix(in srgb, var(--magenta) 14%, transparent), transparent 60%);
-      transform: translate3d(0, 0, 0) rotate(18deg);
-      animation: float-shape-a 16s ease-in-out infinite alternate;
-      will-change: transform;
-    }
-
-    .page::after {
-      bottom: 5%;
-      left: -17%;
-      width: clamp(130px, 21vw, 215px);
-      aspect-ratio: 1;
-      border: 1px solid color-mix(in srgb, var(--teal) 34%, transparent);
-      background: linear-gradient(145deg, color-mix(in srgb, var(--teal) 12%, transparent), transparent 64%);
-      transform: translate3d(0, 0, 0) rotate(-24deg);
-      animation: float-shape-b 19s ease-in-out infinite alternate;
-      will-change: transform;
-    }
-
-    @keyframes float-shape-a {
-      from { transform: translate3d(-4px, 1px, 0) rotate(16deg); }
-      to { transform: translate3d(7px, -10px, 0) rotate(23deg); }
-    }
-
-    @keyframes float-shape-b {
-      from { transform: translate3d(3px, 4px, 0) rotate(-27deg); }
-      to { transform: translate3d(-8px, -7px, 0) rotate(-20deg); }
-    }
-
-    .intro {
-      max-width: 760px;
-      margin: 0 auto 30px;
-      text-align: center;
-    }
-
-    .context {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      margin: 0 0 18px;
-      color: var(--muted);
-      font-weight: 700;
-      font-size: 0.78rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .context::before,
-    .context::after {
-      content: "";
-      width: 28px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--teal));
-    }
-
-    .context::after {
-      background: linear-gradient(90deg, var(--magenta), transparent);
-    }
-
-    h1 {
-      margin: 0 auto;
-      max-width: 760px;
-      font-family: "Libre Baskerville", serif;
-      font-size: clamp(2.25rem, 6.6vw, 4.8rem);
-      line-height: 1.06;
-      letter-spacing: -0.045em;
-      color: var(--ink);
-      background: linear-gradient(105deg, var(--ink) 14%, var(--violet) 48%, var(--magenta) 78%, var(--ink));
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .subtitle {
-      margin: 20px auto 0;
-      max-width: 610px;
-      color: var(--muted);
-      font-size: clamp(1rem, 2.1vw, 1.15rem);
-      line-height: 1.65;
-    }
-
-    .search-card {
-      --tilt-x: 0deg;
-      --tilt-y: 0deg;
-      --glare-shift-x: 0px;
-      --glare-shift-y: 0px;
-      --glare-opacity: 0;
-      position: relative;
-      overflow: hidden;
-      padding: clamp(24px, 4.5vw, 40px);
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(24px) saturate(125%);
-      -webkit-backdrop-filter: blur(24px) saturate(125%);
-      transform: perspective(1050px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
-      transform-style: preserve-3d;
-      transform-origin: center;
-    }
-
-    .search-card::before {
-      content: "";
-      position: absolute;
-      top: -86px;
-      right: -70px;
-      width: 190px;
-      height: 190px;
-      border-radius: 50%;
-      background: radial-gradient(circle, color-mix(in srgb, var(--magenta) 20%, transparent), transparent 68%);
-      pointer-events: none;
-    }
-
-    .search-card::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      padding: 1px;
-      background: linear-gradient(125deg, color-mix(in srgb, var(--teal) 36%, transparent), transparent 38%, color-mix(in srgb, var(--magenta) 25%, transparent));
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
-    }
-
-    .card-glare {
-      position: absolute;
-      top: -42%;
-      left: -34%;
-      z-index: 0;
-      width: 78%;
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.08) 32%, transparent 70%);
-      opacity: var(--glare-opacity);
-      transform: translate3d(var(--glare-shift-x), var(--glare-shift-y), 0);
-      pointer-events: none;
-      will-change: transform, opacity;
-    }
-
-    #gradeCardForm {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 13px;
-      align-items: end;
-    }
-
+    button, a { -webkit-tap-highlight-color: transparent; }
+    .site-header { background: var(--surface); border-bottom: 1px solid var(--line); }
+    .header-inner, .page, .footer-inner { width: min(820px, calc(100% - 40px)); margin: 0 auto; }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 68px; padding: 12px 0; }
+    .identity { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+    .university-name { font-family: Georgia, "Times New Roman", Times, serif; color: var(--navy); font-size: 1.15rem; font-weight: 700; white-space: nowrap; }
+    .portal-name { padding-left: 10px; border-left: 1px solid var(--line-strong); color: var(--muted); font-size: 0.82rem; font-weight: 600; white-space: nowrap; }
+    .site-nav { display: flex; align-items: center; gap: 18px; }
+    .site-nav a { color: var(--muted); font-size: 0.82rem; font-weight: 600; text-decoration: none; }
+    .site-nav a:hover { color: var(--navy); }
+    .page { padding: 54px 0 64px; }
+    .intro { max-width: 640px; margin: 0 0 24px; }
+    h1, .section-title, .qr-inner h2 { font-family: Georgia, "Times New Roman", Times, serif; color: var(--ink); }
+    h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.45rem); line-height: 1.2; letter-spacing: -0.02em; }
+    .subtitle { margin: 11px 0 0; color: var(--muted); font-size: 1rem; line-height: 1.6; }
+    .search-card, .batch-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+    .search-card { padding: 28px; }
+    #gradeCardForm { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: start; }
+    #gradeCardForm > .primary { margin-top: 27px; }
     .field { min-width: 0; }
-
-    label {
-      display: block;
-      margin: 0 0 10px;
-      color: var(--ink);
-      font-weight: 700;
-      font-size: 0.92rem;
-    }
-
+    label { display: block; margin: 0 0 8px; color: var(--ink); font-size: 0.9rem; font-weight: 650; }
+    .label-example { margin-left: 6px; color: var(--muted); font-size: 0.78rem; font-weight: 400; }
     .input-wrap { position: relative; }
-
-    input {
-      width: 100%;
-      min-height: 58px;
-      padding: 0 54px 0 18px;
-      border: 1px solid var(--line-strong);
-      border-radius: 13px;
-      outline: 0;
-      background: var(--surface-strong);
-      color: var(--ink);
-      font-size: 1.05rem;
-      font-weight: 600;
-      letter-spacing: 0.035em;
-      text-transform: uppercase;
-      transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease, background 160ms ease;
-    }
-
-    input::placeholder {
-      color: var(--muted);
-      font-weight: 400;
-      letter-spacing: normal;
-      text-transform: none;
-      opacity: 0.86;
-    }
-
-    input:focus {
-      border-color: var(--focus);
-      background: var(--surface-strong);
-      box-shadow: 0 0 0 4px color-mix(in srgb, var(--focus) 20%, transparent), 0 10px 28px color-mix(in srgb, var(--focus) 12%, transparent);
-    }
-
-    .input-tag {
-      position: absolute;
-      top: 50%;
-      right: 15px;
-      transform: translateY(-50%);
-      color: var(--violet);
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      pointer-events: none;
-    }
-
-    .input-wrap.voice-enabled input { padding-right: 58px; }
-    .input-wrap.voice-enabled .input-tag { display: none; }
-
-    .voice-input {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
-      width: 42px;
-      height: 42px;
-      padding: 0;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: color-mix(in srgb, var(--surface-strong) 88%, transparent);
-      color: var(--violet);
-      cursor: pointer;
-      transition: width 160ms ease, border-color 160ms ease, background 160ms ease, color 160ms ease;
-    }
-
+    input, textarea { width: 100%; border: 1px solid var(--line-strong); border-radius: 6px; outline: none; background: var(--surface); color: var(--ink); transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease; }
+    input { min-height: 48px; padding: 0 14px; font-size: 1rem; font-weight: 600; letter-spacing: 0.025em; text-transform: uppercase; }
+    input::placeholder, textarea::placeholder { color: #77736c; font-weight: 400; letter-spacing: normal; text-transform: none; opacity: 1; }
+    input:focus, textarea:focus { border-color: var(--navy); box-shadow: 0 0 0 3px var(--focus-ring); }
+    .input-wrap.voice-enabled input { padding-right: 52px; }
+    .voice-input { position: absolute; top: 5px; right: 5px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 38px; height: 38px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-muted); color: var(--navy); cursor: pointer; transition: width 140ms ease, border-color 140ms ease, background-color 140ms ease; }
     .voice-input[hidden] { display: none; }
-    .voice-input svg { width: 18px; height: 18px; flex: 0 0 auto; }
-    .voice-input .voice-state { display: none; white-space: nowrap; font-size: 0.78rem; font-weight: 700; }
-    .voice-input.listening {
-      width: 106px;
-      border-color: color-mix(in srgb, var(--teal) 56%, var(--line));
-      background: color-mix(in srgb, var(--teal) 12%, var(--surface-strong));
-      color: var(--teal);
-    }
+    .voice-input svg { width: 17px; height: 17px; flex: 0 0 auto; }
+    .voice-input .voice-state { display: none; white-space: nowrap; font-size: 0.76rem; font-weight: 650; }
+    .voice-input.listening { width: 102px; border-color: var(--navy); background: var(--navy-soft); }
     .voice-input.listening .voice-state { display: inline; }
-    .input-wrap.voice-listening input { padding-right: 120px; }
-
-    .inline-hint {
-      min-height: 1.35em;
-      margin: 8px 2px 0;
-      font-size: 0.82rem;
-      font-weight: 700;
-      line-height: 1.35;
-    }
-
+    .input-wrap.voice-listening input { padding-right: 116px; }
+    .inline-hint { min-height: 1.25em; margin: 7px 1px 0; font-size: 0.8rem; font-weight: 600; line-height: 1.35; }
     .inline-hint:empty { min-height: 0; margin-top: 0; }
     .inline-hint.valid { color: var(--success); }
     .inline-hint.invalid { color: var(--danger); }
-
-    .example-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 7px;
-      margin-top: 11px;
-    }
-
-    .example-label {
-      margin-right: 2px;
-      color: var(--muted);
-      font-size: 0.78rem;
-      font-weight: 600;
-    }
-
-    .example-chip {
-      min-height: 30px;
-      padding: 0 10px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--surface-strong) 76%, transparent);
-      color: var(--ink);
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.025em;
-      cursor: pointer;
-      transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
-    }
-
-    .example-chip:hover {
-      border-color: color-mix(in srgb, var(--teal) 58%, var(--line));
-      background: color-mix(in srgb, var(--teal) 10%, var(--surface-strong));
-      color: var(--focus);
-    }
-
-    .primary {
-      --magnetic-x: 0px;
-      --magnetic-y: 0px;
-      --magnetic-scale: 1;
-      --press-scale: 1;
-      position: relative;
-      min-height: 58px;
-      padding: 0 25px;
-      overflow: hidden;
-      border: 0;
-      border-radius: 13px;
-      background: linear-gradient(118deg, var(--button-start), var(--button-end));
-      color: #fff;
-      box-shadow: 0 12px 28px color-mix(in srgb, var(--magenta) 23%, transparent);
-      font-weight: 700;
-      cursor: pointer;
-      transform: translate3d(var(--magnetic-x), var(--magnetic-y), 0) scale(calc(var(--magnetic-scale) * var(--press-scale)));
-      transition: box-shadow 220ms ease, background 220ms ease;
-      will-change: transform;
-    }
-
-    .primary::before {
-      content: "";
-      position: absolute;
-      top: -80%;
-      left: -44%;
-      width: 30%;
-      height: 260%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.34), transparent);
-      opacity: 0;
-      transform: translate3d(-220%, 0, 0) rotate(18deg);
-      pointer-events: none;
-    }
-
-    .primary::after {
-      content: "";
-      position: absolute;
-      inset: 1px;
-      border-radius: 12px;
-      background: linear-gradient(120deg, rgba(255,255,255,.2), transparent 38%);
-      pointer-events: none;
-    }
-
-    .primary:hover {
-      background: linear-gradient(118deg, var(--button-hover-start), var(--button-hover-end));
-      box-shadow: 0 17px 38px color-mix(in srgb, var(--magenta) 34%, transparent);
-    }
-
-    .primary:hover::before {
-      opacity: 1;
-      transform: translate3d(560%, 0, 0) rotate(18deg);
-      transition: transform 720ms cubic-bezier(.22,.61,.36,1), opacity 120ms ease;
-    }
-
-    .primary:active { --press-scale: 0.985; }
-
-    .primary:focus-visible,
-    a:focus-visible {
-      outline: 3px solid var(--focus);
-      outline-offset: 3px;
-    }
-
-    .hint {
-      position: relative;
-      z-index: 1;
-      margin: 14px 0 0;
-      color: var(--muted);
-      font-size: 0.88rem;
-      line-height: 1.55;
-    }
-
-    .destination-note {
-      margin-top: 7px;
-      color: var(--ink);
-      font-weight: 600;
-    }
-
-    .privacy-note {
-      margin-top: 7px;
-      font-size: 0.78rem;
-      opacity: 0.82;
-    }
-
-    .message,
-    .confirmation {
-      position: relative;
-      z-index: 1;
-      display: none;
-      margin: 16px 0 0;
-      padding: 13px 15px;
-      border: 1px solid transparent;
-      border-radius: 10px;
-      font-weight: 600;
-      line-height: 1.5;
-    }
-
-    .message {
-      background: var(--danger-soft);
-      border-color: color-mix(in srgb, var(--danger) 22%, transparent);
-      color: var(--danger);
-    }
-
-    .confirmation {
-      background: var(--success-soft);
-      border-color: color-mix(in srgb, var(--success) 22%, transparent);
-      color: var(--success);
-    }
-
-    .message.visible,
-    .confirmation.visible { display: block; }
-
-    .confirmation a {
-      color: inherit;
-      font-weight: 700;
-      text-decoration-thickness: 1.5px;
-      text-underline-offset: 3px;
-    }
-
-    .result-panel {
-      position: relative;
-      z-index: 1;
-      margin-top: 10px;
-      padding: 12px;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      background: color-mix(in srgb, var(--surface-strong) 78%, transparent);
-    }
-
+    .example-row { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 12px; }
+    .example-label { color: var(--muted); font-size: 0.78rem; font-weight: 500; }
+    .example-chip { min-height: 30px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface); color: var(--navy); font-size: 0.75rem; font-weight: 650; cursor: pointer; transition: border-color 140ms ease, background-color 140ms ease; }
+    .example-chip:hover { border-color: var(--navy); background: var(--navy-soft); }
+    .primary, .primary-action, .secondary-action, .social-search-link { display: inline-flex; align-items: center; justify-content: center; gap: 7px; border-radius: 6px; font-weight: 650; text-decoration: none; cursor: pointer; transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease; }
+    .primary, .primary-action { min-height: 48px; padding: 0 20px; border: 1px solid var(--navy); background: var(--navy); color: #fff; }
+    .primary:hover, .primary-action:hover { border-color: var(--navy-hover); background: var(--navy-hover); }
+    .primary:disabled { opacity: 0.66; cursor: wait; }
+    .primary-action svg, .secondary-action svg, .social-profile-link svg { width: 15px; height: 15px; flex: 0 0 auto; }
+    :is(button, a, input, textarea):focus-visible { outline: 2px solid var(--navy); outline-offset: 3px; }
+    .hint { margin: 13px 0 0; color: var(--muted); font-size: 0.84rem; line-height: 1.5; }
+    .destination-note { margin-top: 5px; color: var(--ink); }
+    .message, .confirmation { display: none; margin: 16px 0 0; padding: 12px 14px; border: 1px solid transparent; border-radius: 6px; font-size: 0.9rem; font-weight: 600; line-height: 1.5; }
+    .message { background: var(--danger-soft); border-color: #e2b9b5; color: var(--danger); }
+    .confirmation { background: var(--success-soft); border-color: #b8d2c1; color: var(--success); }
+    .message.visible, .confirmation.visible { display: block; }
+    .confirmation a { color: inherit; font-weight: 700; text-underline-offset: 3px; }
+    .result-panel { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); }
     .result-panel[hidden] { display: none; }
-
-    .result-label {
-      display: block;
-      margin-bottom: 5px;
-      color: var(--muted);
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    .result-url {
-      min-height: 45px;
-      padding: 0 13px;
-      border-radius: 9px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 0.76rem;
-      font-weight: 500;
-      letter-spacing: 0;
-      text-transform: none;
-    }
-
-    .result-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin-top: 7px;
-    }
-
-    .result-actions .secondary-action {
-      min-height: 34px;
-      padding-inline: 11px;
-      font-size: 0.76rem;
-    }
-
-    .student-name-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      margin: 8px 0 0;
-      padding: 5px 8px;
-      border: 1px solid var(--line);
-      border-radius: 9px;
-      background: color-mix(in srgb, var(--surface-strong) 72%, transparent);
-      color: var(--muted);
-      font-size: 0.82rem;
-      font-weight: 700;
-      line-height: 1.35;
-    }
-
+    .result-heading { margin: 0 0 16px; font-family: Georgia, "Times New Roman", Times, serif; font-size: 1.25rem; line-height: 1.3; }
+    .student-info { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0 0 18px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .student-info-row { min-width: 0; padding: 13px 14px; border-bottom: 1px solid var(--line); }
+    .student-info-row:nth-child(odd) { border-right: 1px solid var(--line); }
+    .student-info-row:nth-last-child(-n + 2) { border-bottom: 0; }
+    .student-info-row[hidden] { display: none; }
+    .student-info dt { color: var(--muted); font-size: 0.72rem; font-weight: 650; text-transform: uppercase; letter-spacing: 0.045em; }
+    .student-info dd { margin: 4px 0 0; color: var(--ink); font-size: 0.94rem; font-weight: 650; overflow-wrap: anywhere; }
+    .result-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .secondary-action { min-height: 42px; padding: 0 14px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); }
+    .secondary-action:hover { border-color: var(--navy); background: var(--navy-soft); color: var(--navy); }
+    .direct-link-field { margin-top: 14px; }
+    .result-label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 0.75rem; font-weight: 650; }
+    .result-url { min-height: 40px; padding: 0 11px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.72rem; font-weight: 500; letter-spacing: 0; text-transform: none; }
+    .copy-status { align-self: center; color: var(--muted); font-size: 0.8rem; font-weight: 600; }
+    .student-name-status { display: inline-flex; align-items: center; gap: 7px; margin: 14px 0 0; color: var(--muted); font-size: 0.82rem; font-weight: 600; line-height: 1.35; }
     .student-name-status[hidden] { display: none; }
-
-    .student-name-status.loading::before {
-      content: "";
-      width: 12px;
-      height: 12px;
-      flex: 0 0 auto;
-      border: 2px solid color-mix(in srgb, var(--teal) 24%, var(--line));
-      border-top-color: var(--teal);
-      border-radius: 50%;
-      animation: student-name-spin 780ms linear infinite;
-    }
-
-    @keyframes student-name-spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .social-columns {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .social-profile-section {
-      min-width: 0;
-      padding-top: 10px;
-      border-top: 1px solid var(--line);
-    }
-
+    .student-name-status.loading::before { content: ""; width: 12px; height: 12px; flex: 0 0 auto; border: 2px solid var(--line-strong); border-top-color: var(--navy); border-radius: 50%; animation: student-name-spin 780ms linear infinite; }
+    @keyframes student-name-spin { to { transform: rotate(360deg); } }
+    .social-columns { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; margin-top: 18px; }
+    .social-profile-section { min-width: 0; padding-top: 16px; border-top: 1px solid var(--line); }
     .social-profile-section[hidden] { display: none; }
-
-    .linkedin-heading,
-    .instagram-heading {
-      margin: 0;
-      color: var(--ink);
-      font-size: 0.9rem;
-      line-height: 1.3;
-    }
-
-    .linkedin-status,
-    .instagram-status {
-      min-height: 1.25em;
-      margin: 3px 0 0;
-      color: var(--muted);
-      font-size: 0.76rem;
-      font-weight: 600;
-      line-height: 1.35;
-    }
-
-    .linkedin-candidates,
-    .instagram-candidates {
-      display: grid;
-      margin-top: 6px;
-    }
-
-    .social-candidate-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 9px;
-      min-width: 0;
-      min-height: 56px;
-      padding: 7px 2px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .social-candidate-row:first-child {
-      border-top: 1px solid var(--line);
-    }
-
-    .social-candidate-copy {
-      min-width: 0;
-      flex: 1 1 auto;
-    }
-
-    .social-profile-handle {
-      display: block;
-      min-width: 0;
-      overflow: hidden;
-      color: var(--focus);
-      font-size: 0.82rem;
-      font-weight: 700;
-      line-height: 1.3;
-      text-decoration-thickness: 1.5px;
-      text-overflow: ellipsis;
-      text-underline-offset: 3px;
-      white-space: nowrap;
-    }
-
-    .social-candidate-meta {
-      margin: 2px 0 0;
-      overflow: hidden;
-      color: var(--muted);
-      font-size: 0.7rem;
-      line-height: 1.3;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .social-candidate-actions {
-      display: flex;
-      flex: 0 0 auto;
-      align-items: center;
-      gap: 7px;
-    }
-
-    .linkedin-badge,
-    .instagram-badge {
-      flex: 0 0 auto;
-      padding: 3px 6px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      font-size: 0.6rem;
-      font-weight: 700;
-      line-height: 1.2;
-      white-space: nowrap;
-    }
-
-    .linkedin-badge.strong,
-    .instagram-badge.strong {
-      border-color: color-mix(in srgb, var(--success) 28%, transparent);
-      background: var(--success-soft);
-      color: var(--success);
-    }
-
-    .instagram-badge.high {
-      border-color: color-mix(in srgb, var(--teal) 30%, transparent);
-      background: color-mix(in srgb, var(--teal) 13%, transparent);
-      color: var(--teal);
-    }
-
-    .linkedin-badge.possible,
-    .instagram-badge.possible {
-      border-color: color-mix(in srgb, var(--amber) 32%, transparent);
-      background: color-mix(in srgb, var(--amber) 14%, transparent);
-      color: color-mix(in srgb, var(--amber) 78%, var(--ink));
-    }
-
-    .instagram-badge.weak {
-      border-color: color-mix(in srgb, var(--amber) 20%, var(--line));
-      background: color-mix(in srgb, var(--amber) 8%, transparent);
-      color: color-mix(in srgb, var(--amber) 46%, var(--muted));
-    }
-
-    .linkedin-badge.low,
-    .instagram-badge.low,
-    .instagram-badge.poor {
-      background: color-mix(in srgb, var(--muted) 9%, transparent);
-      color: var(--muted);
-    }
-
-    .social-profile-link {
-      flex: 0 0 auto;
-      color: var(--ink);
-      font-size: 0.68rem;
-      font-weight: 700;
-      line-height: 1.2;
-      text-decoration: none;
-      white-space: nowrap;
-    }
-
-    .social-profile-handle:hover,
-    .social-profile-link:hover {
-      color: var(--focus);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-
-    .social-fallback-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin-top: 5px;
-    }
-
-    .social-search-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 28px;
-      padding: 0 9px;
-      border: 1px solid var(--line-strong);
-      border-radius: 999px;
-      background: var(--surface-strong);
-      color: var(--ink);
-      font-size: 0.68rem;
-      font-weight: 700;
-      line-height: 1.2;
-      text-decoration: none;
-    }
-
-    .social-search-link:hover {
-      border-color: color-mix(in srgb, var(--teal) 52%, var(--line-strong));
-      background: color-mix(in srgb, var(--teal) 9%, var(--surface-strong));
-      color: var(--focus);
-    }
-
-    button.social-search-link {
-      font: inherit;
-      cursor: pointer;
-    }
-
-    button.social-search-link:disabled {
-      opacity: 0.56;
-      cursor: default;
-    }
-
-    .social-optin-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 7px;
-      padding: 7px 0;
-      border-top: 1px solid var(--line);
-    }
-
-    .social-optin-hint {
-      color: var(--muted);
-      font-size: 0.68rem;
-      line-height: 1.35;
-    }
-
-    .secondary-action {
-      min-height: 42px;
-      padding: 0 15px;
-      border: 1px solid var(--line-strong);
-      border-radius: 10px;
-      background: var(--surface-strong);
-      color: var(--ink);
-      font-weight: 700;
-      cursor: pointer;
-      transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
-    }
-
-    .secondary-action:hover {
-      border-color: color-mix(in srgb, var(--violet) 58%, var(--line-strong));
-      background: color-mix(in srgb, var(--violet) 10%, var(--surface-strong));
-    }
-
-    .secondary-action:focus-visible,
-    textarea:focus-visible,
-    button:focus-visible {
-      outline: 3px solid var(--focus);
-      outline-offset: 3px;
-    }
-
-    .copy-status {
-      align-self: center;
-      color: var(--muted);
-      font-size: 0.84rem;
-      font-weight: 600;
-    }
-
-    .batch-card {
-      position: relative;
-      margin-top: 20px;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: color-mix(in srgb, var(--surface) 88%, transparent);
-      box-shadow: 0 18px 48px rgba(43, 32, 80, 0.09);
-      backdrop-filter: blur(20px) saturate(120%);
-      -webkit-backdrop-filter: blur(20px) saturate(120%);
-    }
-
-    .batch-header {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      padding: 20px 22px;
-    }
-
-    .batch-heading {
-      display: block;
-      color: var(--ink);
-      font-size: 1.05rem;
-      font-weight: 700;
-    }
-
-    .batch-subtitle {
-      display: block;
-      margin-top: 3px;
-      color: var(--muted);
-      font-size: 0.88rem;
-      line-height: 1.45;
-    }
-
-    .batch-content {
-      padding: 0 22px 22px;
-      border-top: 1px solid var(--line);
-    }
-
-    .batch-form {
-      padding-top: 19px;
-    }
-
-    .batch-form textarea {
-      display: block;
-      width: 100%;
-      min-height: 128px;
-      resize: vertical;
-      padding: 14px 16px;
-      border: 1px solid var(--line-strong);
-      border-radius: 12px;
-      outline: 0;
-      background: var(--surface-strong);
-      color: var(--ink);
-      font-size: 0.96rem;
-      line-height: 1.5;
-      transition: border-color 160ms ease, box-shadow 160ms ease;
-    }
-
-    .batch-form textarea::placeholder { color: var(--muted); opacity: 0.86; }
-
-    .batch-form textarea:focus {
-      border-color: var(--focus);
-      box-shadow: 0 0 0 4px color-mix(in srgb, var(--focus) 20%, transparent);
-    }
-
-    .batch-form .primary {
-      width: 100%;
-      margin-top: 12px;
-    }
-
-    .batch-results {
-      display: grid;
-      gap: 9px;
-      margin-top: 16px;
-    }
-
+    .linkedin-heading, .instagram-heading { margin: 0; font-family: Georgia, "Times New Roman", Times, serif; color: var(--ink); font-size: 1rem; line-height: 1.3; }
+    .linkedin-status, .instagram-status { min-height: 1.25em; margin: 4px 0 0; color: var(--muted); font-size: 0.76rem; font-weight: 500; line-height: 1.4; }
+    .linkedin-candidates, .instagram-candidates { display: grid; gap: 7px; margin-top: 9px; }
+    .social-candidate-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; padding: 11px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+    .social-candidate-copy { min-width: 0; flex: 1 1 auto; }
+    .social-profile-handle { display: block; min-width: 0; overflow: hidden; color: var(--navy); font-size: 0.84rem; font-weight: 700; line-height: 1.35; text-overflow: ellipsis; text-underline-offset: 3px; white-space: nowrap; }
+    .social-candidate-meta { margin: 3px 0 0; overflow: hidden; color: var(--muted); font-size: 0.72rem; line-height: 1.4; text-overflow: ellipsis; white-space: nowrap; }
+    .social-candidate-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
+    .linkedin-badge, .instagram-badge { flex: 0 0 auto; padding: 3px 7px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--surface-muted); color: var(--muted); font-size: 0.62rem; font-weight: 700; line-height: 1.2; white-space: nowrap; }
+    .linkedin-badge.strong, .instagram-badge.strong, .instagram-badge.high { border-color: #a9c7b3; background: var(--success-soft); color: var(--success); }
+    .linkedin-badge.possible, .instagram-badge.possible { border-color: #d8c69f; background: var(--warning-soft); color: var(--warning); }
+    .linkedin-badge.low, .instagram-badge.low, .instagram-badge.weak, .instagram-badge.poor { background: var(--surface-muted); color: var(--muted); }
+    .social-profile-link { display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; color: var(--navy); font-size: 0.7rem; font-weight: 700; line-height: 1.2; text-decoration: none; white-space: nowrap; }
+    .social-profile-handle:hover, .social-profile-link:hover { color: var(--navy-hover); text-decoration: underline; text-underline-offset: 3px; }
+    .social-fallback-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .social-search-link { min-height: 34px; padding: 0 10px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--navy); font-size: 0.7rem; }
+    .social-search-link:hover { border-color: var(--navy); background: var(--navy-soft); }
+    button.social-search-link { font: inherit; }
+    button.social-search-link:disabled { opacity: 0.56; cursor: wait; }
+    .social-optin-row { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; padding-top: 8px; }
+    .social-optin-hint { color: var(--muted); font-size: 0.7rem; line-height: 1.4; }
+    .how-to { padding: 34px 0; }
+    .section-title { margin: 0 0 13px; font-size: 1.35rem; line-height: 1.3; }
+    .how-to ol { margin: 0; padding-left: 1.4rem; color: var(--ink); }
+    .how-to li { padding: 4px 0 4px 5px; line-height: 1.5; }
+    .batch-card { overflow: hidden; }
+    .batch-header { padding: 21px 22px 18px; }
+    .batch-heading { display: block; font-family: Georgia, "Times New Roman", Times, serif; color: var(--ink); font-size: 1.25rem; font-weight: 700; }
+    .batch-subtitle { display: block; margin-top: 4px; color: var(--muted); font-size: 0.86rem; line-height: 1.45; }
+    .batch-content { padding: 20px 22px 22px; border-top: 1px solid var(--line); }
+    .batch-form textarea { display: block; min-height: 126px; resize: vertical; padding: 12px 14px; font-size: 0.95rem; line-height: 1.5; }
+    .batch-form .primary { width: 100%; margin-top: 12px; }
+    .batch-results { display: grid; gap: 8px; margin-top: 16px; }
     .batch-results[hidden] { display: none; }
-
-    .batch-summary {
-      margin: 0 0 2px;
-      color: var(--muted);
-      font-size: 0.84rem;
-      font-weight: 600;
-    }
-
-    .batch-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 12px 13px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: var(--surface-strong);
-    }
-
-    .batch-roll {
-      min-width: 0;
-      overflow-wrap: anywhere;
-      font-weight: 700;
-    }
-
-    .batch-row a {
-      flex: 0 0 auto;
-      color: var(--violet);
-      font-weight: 700;
-      text-decoration-thickness: 1.5px;
-      text-underline-offset: 3px;
-    }
-
-    .batch-row.skipped {
-      align-items: flex-start;
-      color: var(--muted);
-    }
-
-    .batch-reason {
-      flex: 0 1 auto;
-      text-align: right;
-      font-size: 0.82rem;
-    }
-
-    .qr-dialog {
-      width: min(340px, calc(100% - 28px));
-      padding: 0;
-      border: 1px solid var(--line-strong);
-      border-radius: 18px;
-      background: var(--surface-strong);
-      color: var(--ink);
-      box-shadow: 0 28px 90px rgba(9, 8, 25, 0.38);
-    }
-
-    .qr-dialog::backdrop {
-      background: rgba(7, 7, 18, 0.7);
-      backdrop-filter: blur(5px);
-    }
-
-    .qr-inner {
-      position: relative;
-      display: grid;
-      justify-items: center;
-      gap: 13px;
-      padding: 26px;
-      text-align: center;
-    }
-
-    .qr-inner h2 {
-      margin: 0;
-      font-family: "Libre Baskerville", serif;
-      font-size: 1.35rem;
-      letter-spacing: -0.02em;
-    }
-
-    .qr-inner p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.9rem;
-      line-height: 1.45;
-    }
-
-    .qr-image-wrap {
-      display: grid;
-      place-items: center;
-      width: 236px;
-      min-height: 236px;
-      padding: 8px;
-      border-radius: 14px;
-      background: #fff;
-    }
-
-    .qr-image-wrap img {
-      display: block;
-      width: 220px;
-      height: 220px;
-    }
-
+    .batch-summary { margin: 0 0 2px; color: var(--muted); font-size: 0.84rem; font-weight: 600; }
+    .batch-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 13px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+    .batch-roll { min-width: 0; overflow-wrap: anywhere; font-weight: 700; }
+    .batch-row a { flex: 0 0 auto; color: var(--navy); font-weight: 700; text-underline-offset: 3px; }
+    .batch-row.skipped { align-items: flex-start; color: var(--muted); }
+    .batch-reason { flex: 0 1 auto; text-align: right; font-size: 0.82rem; }
+    .qr-dialog { width: min(340px, calc(100% - 28px)); padding: 0; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--surface); color: var(--ink); box-shadow: 0 18px 50px rgba(28, 28, 28, 0.16); }
+    .qr-dialog::backdrop { background: rgba(18, 24, 31, 0.58); }
+    .qr-inner { position: relative; display: grid; justify-items: center; gap: 13px; padding: 26px; text-align: center; }
+    .qr-inner h2 { margin: 0; font-size: 1.25rem; }
+    .qr-inner p { margin: 0; color: var(--muted); font-size: 0.88rem; line-height: 1.45; }
+    .qr-image-wrap { display: grid; place-items: center; width: 236px; min-height: 236px; padding: 8px; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
+    .qr-image-wrap img { display: block; width: 220px; height: 220px; }
     .qr-image-wrap img[hidden] { display: none; }
-
-    .qr-loading {
-      color: #28263a;
-      font-size: 0.85rem;
-      font-weight: 700;
-    }
-
-    .qr-close {
-      position: absolute;
-      top: 11px;
-      right: 11px;
-      width: 36px;
-      height: 36px;
-      padding: 0;
-      border: 1px solid var(--line);
-      border-radius: 50%;
-      background: var(--surface-strong);
-      color: var(--ink);
-      font-size: 1.25rem;
-      line-height: 1;
-      cursor: pointer;
-    }
-
-    @media (min-width: 900px) {
-      .social-columns {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
-      }
-    }
-
+    .qr-loading { color: var(--muted); font-size: 0.84rem; font-weight: 650; }
+    .qr-close { position: absolute; top: 10px; right: 10px; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); cursor: pointer; }
+    .qr-close svg { width: 17px; height: 17px; }
+    .site-footer { margin-top: 64px; padding: 24px 0 30px; border-top: 1px solid var(--line); background: var(--surface); }
+    .footer-inner { color: var(--muted); font-size: 0.78rem; line-height: 1.6; }
+    .footer-title { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", Times, serif; font-weight: 700; }
+    .footer-note, .footer-copy { margin: 3px 0 0; }
+    @media (min-width: 760px) { .social-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     @media (max-width: 680px) {
-      .page {
-        width: min(100% - 22px, 900px);
-        align-content: start;
-        padding-top: clamp(48px, 14vh, 86px);
-      }
-
-      h1 {
-        font-size: clamp(2.2rem, 12vw, 3.15rem);
-        letter-spacing: -0.04em;
-      }
-
-      .intro { margin-bottom: 26px; }
-      .subtitle { margin-top: 16px; }
-      .search-card { padding: 23px 18px 24px; border-radius: 20px; }
+      .header-inner, .page, .footer-inner { width: min(100% - 28px, 820px); }
+      .header-inner { align-items: flex-start; flex-direction: column; gap: 10px; padding: 14px 0; }
+      .identity { flex-wrap: wrap; gap: 5px 8px; }
+      .portal-name { padding-left: 8px; }
+      .site-nav { width: 100%; gap: 16px; overflow: visible; }
+      .site-nav a { font-size: 0.78rem; }
+      .page { padding: 38px 0 48px; }
+      .search-card { padding: 21px 17px; }
       #gradeCardForm { grid-template-columns: 1fr; }
+      #gradeCardForm > .primary { margin-top: 0; }
       .primary { width: 100%; }
-      .batch-header { padding: 18px; }
-      .batch-content { padding: 0 18px 18px; }
+      .student-info { grid-template-columns: 1fr; }
+      .student-info-row, .student-info-row:nth-child(odd), .student-info-row:nth-last-child(-n + 2) { border-right: 0; border-bottom: 1px solid var(--line); }
+      .student-info-row:last-child { border-bottom: 0; }
+      .result-actions > :is(a, button) { flex: 1 1 calc(50% - 4px); }
+      .copy-status { flex-basis: 100%; }
+      .social-candidate-row { align-items: flex-start; flex-direction: column; }
+      .social-candidate-actions { width: 100%; justify-content: space-between; }
+      .social-candidate-meta { white-space: normal; }
+      .batch-header { padding: 18px 17px 15px; }
+      .batch-content { padding: 17px; }
       .batch-row { align-items: flex-start; flex-direction: column; gap: 6px; }
       .batch-reason { text-align: left; }
-      .result-actions .secondary-action { flex: 1 1 calc(50% - 5px); }
-      .copy-status { flex-basis: 100%; }
-      .page::before { right: -28%; }
-      .page::after { left: -26%; }
+      .site-footer { margin-top: 48px; }
     }
-
-    @media (max-width: 380px) {
-      .context::before,
-      .context::after { width: 18px; }
-      .search-card { padding-inline: 15px; }
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .search-card { will-change: transform; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        scroll-behavior: auto !important;
-        transition: none !important;
-        animation: none !important;
-      }
-
-      .search-card,
-      .gradient-blob,
-      .primary { transform: none !important; }
-
-      .card-glare,
-      .primary::before { display: none !important; }
-    }
+    @media (max-width: 390px) { .site-nav { flex-wrap: wrap; row-gap: 8px; } .result-actions > :is(a, button) { flex-basis: 100%; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; animation: none !important; } }
   </style>
 </head>
 <body>
-  <div class="motion-field" aria-hidden="true">
-    <span class="gradient-blob teal" data-depth="7"></span>
-    <span class="gradient-blob magenta" data-depth="11"></span>
-    <span class="gradient-blob amber" data-depth="15"></span>
-    <span class="gradient-blob violet" data-depth="9"></span>
-  </div>
-  <main class="page">
-    <header class="intro">
-      <p class="context">Student records</p>
-      <h1>Tezpur University Grade Card</h1>
-      <p class="subtitle">Enter your Roll Number / Enrollment ID to view your Grade Card.</p>
-    </header>
-
-    <section class="search-card" aria-labelledby="lookup-label">
-      <span class="card-glare" aria-hidden="true"></span>
-      <form id="gradeCardForm" novalidate>
-        <div class="field">
-          <label id="lookup-label" for="rollNumber">Roll Number / Enrollment ID</label>
-          <div class="input-wrap">
-            <input
-              id="rollNumber"
-              name="rollNumber"
-              type="text"
-              inputmode="text"
-              autocomplete="off"
-              autocapitalize="characters"
-              spellcheck="false"
-              placeholder="Enter your Roll Number"
-              aria-describedby="inlineHint inputHint destinationNote formMessage confirmationMessage"
-              maxlength="28"
-            />
-            <span class="input-tag" aria-hidden="true">PDF</span>
-            <button class="voice-input" id="voiceInputButton" type="button" aria-label="Speak roll number" hidden>
-              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="9" y="2" width="6" height="12" rx="3"></rect>
-                <path d="M5 10a7 7 0 0 0 14 0"></path>
-                <path d="M12 17v5"></path>
-                <path d="M8 22h8"></path>
-              </svg>
-              <span class="voice-state">Listening…</span>
-            </button>
-          </div>
-          <p class="inline-hint" id="inlineHint" role="status" aria-live="polite"></p>
-          <div class="example-row" aria-label="Sample roll numbers">
-            <span class="example-label">Try an example:</span>
-            <button class="example-chip" type="button" data-roll="EEB22026">EEB22026</button>
-            <button class="example-chip" type="button" data-roll="CSB22014">CSB22014</button>
-            <button class="example-chip" type="button" data-roll="CEB22103">CEB22103</button>
-          </div>
-        </div>
-        <button class="primary" id="submitButton" type="submit">Get My Grade Card</button>
-      </form>
-      <p class="hint" id="inputHint">Example: EEB22026. You can type in lowercase; it will be converted automatically.</p>
-      <p class="hint destination-note" id="destinationNote">Get My Grade Card opens your PDF directly in a new tab.</p>
-      <p class="message" id="formMessage" role="alert"></p>
-      <p class="confirmation" id="confirmationMessage" role="status" aria-live="polite"></p>
-      <div class="result-panel" id="singleResult" hidden>
-        <label class="result-label" for="directPdfUrl">Direct PDF link</label>
-        <input class="result-url" id="directPdfUrl" type="text" readonly />
-        <div class="result-actions">
-          <button class="secondary-action" id="copyLinkButton" type="button">Copy PDF URL</button>
-          <button class="secondary-action" id="qrCodeButton" type="button">QR code</button>
-          <span class="copy-status" id="copyStatus" role="status" aria-live="polite"></span>
-        </div>
-        <p class="student-name-status" id="studentNameStatus" role="status" aria-live="polite" hidden></p>
-        <div class="social-columns">
-          <section class="social-profile-section linkedin-section" id="linkedinSection" aria-labelledby="linkedinHeading" hidden>
-            <h2 class="linkedin-heading" id="linkedinHeading">LinkedIn Profile</h2>
-            <p class="linkedin-status" id="linkedinStatus" role="status" aria-live="polite"></p>
-            <div class="linkedin-candidates" id="linkedinCandidates"></div>
-          </section>
-          <section class="social-profile-section instagram-section" id="instagramSection" aria-labelledby="instagramHeading" hidden>
-            <h2 class="instagram-heading" id="instagramHeading">Instagram Profile</h2>
-            <p class="instagram-status" id="instagramStatus" role="status" aria-live="polite"></p>
-            <div class="instagram-candidates" id="instagramCandidates"></div>
-          </section>
-        </div>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="identity" aria-label="Tezpur University Grade Card Portal">
+        <span class="university-name">Tezpur University</span>
+        <span class="portal-name">Grade Card Portal</span>
       </div>
+      <nav class="site-nav" aria-label="Portal navigation">
+        <a href="#grade-card">Grade Card</a>
+        <a href="#how-to-use">How to Use</a>
+        <a href="#batch-lookup">Batch Lookup</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <section id="grade-card" aria-labelledby="pageTitle">
+      <header class="intro">
+        <h1 id="pageTitle">Enter your roll number to view your grade card.</h1>
+        <p class="subtitle">Use your university-issued Roll Number or Enrollment ID.</p>
+      </header>
+
+      <section class="search-card" aria-labelledby="lookup-label">
+        <form id="gradeCardForm" novalidate>
+          <div class="field">
+            <label id="lookup-label" for="rollNumber">Roll Number / Enrollment ID <span class="label-example">e.g. EEB22026</span></label>
+            <div class="input-wrap">
+              <input id="rollNumber" name="rollNumber" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. EEB22026" aria-describedby="inlineHint inputHint destinationNote formMessage confirmationMessage" maxlength="28" />
+              <button class="voice-input" id="voiceInputButton" type="button" aria-label="Speak roll number" hidden>
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><path d="M12 17v5"></path><path d="M8 22h8"></path></svg>
+                <span class="voice-state">Listening…</span>
+              </button>
+            </div>
+            <p class="inline-hint" id="inlineHint" role="status" aria-live="polite"></p>
+            <div class="example-row" aria-label="Sample roll numbers">
+              <span class="example-label">Examples:</span>
+              <button class="example-chip" type="button" data-roll="EEB22026">EEB22026</button>
+              <button class="example-chip" type="button" data-roll="CSB22014">CSB22014</button>
+              <button class="example-chip" type="button" data-roll="CEB22103">CEB22103</button>
+            </div>
+          </div>
+          <button class="primary" id="submitButton" type="submit">View Grade Card</button>
+        </form>
+        <p class="hint" id="inputHint">Letters and numbers only. Lowercase entries are converted automatically.</p>
+        <p class="hint destination-note" id="destinationNote">View Grade Card opens the university PDF in a new tab.</p>
+        <p class="message" id="formMessage" role="alert"></p>
+        <p class="confirmation" id="confirmationMessage" role="status" aria-live="polite"></p>
+
+        <section class="result-panel" id="singleResult" aria-labelledby="resultHeading" hidden>
+          <h2 class="result-heading" id="resultHeading">Grade card result</h2>
+          <dl class="student-info" id="studentInfo" aria-label="Student information">
+            <div class="student-info-row" id="studentNameRow" hidden><dt>Name</dt><dd id="studentNameValue"></dd></div>
+            <div class="student-info-row"><dt>Roll Number</dt><dd id="studentRollValue"></dd></div>
+            <div class="student-info-row" id="studentProgrammeRow" hidden><dt>Programme</dt><dd id="studentProgrammeValue"></dd></div>
+            <div class="student-info-row" id="studentDepartmentRow" hidden><dt>Department</dt><dd id="studentDepartmentValue"></dd></div>
+          </dl>
+          <div class="result-actions" aria-label="Grade card actions">
+            <a class="primary-action" id="openGradeCardLink" target="_blank" rel="noopener noreferrer">Open Grade Card</a>
+            <a class="secondary-action" id="downloadGradeCardLink" target="_blank" rel="noopener noreferrer" download>
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
+              Download Grade Card
+            </a>
+            <button class="secondary-action" id="copyLinkButton" type="button">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"></path></svg>
+              <span class="copy-label">Copy Link</span>
+            </button>
+            <button class="secondary-action" id="qrCodeButton" type="button">QR Code</button>
+            <span class="copy-status" id="copyStatus" role="status" aria-live="polite"></span>
+          </div>
+          <div class="direct-link-field">
+            <label class="result-label" for="directPdfUrl">Direct PDF link</label>
+            <input class="result-url" id="directPdfUrl" type="text" readonly />
+          </div>
+          <p class="student-name-status" id="studentNameStatus" role="status" aria-live="polite" hidden></p>
+          <div class="social-columns">
+            <section class="social-profile-section linkedin-section" id="linkedinSection" aria-labelledby="linkedinHeading" hidden>
+              <h2 class="linkedin-heading" id="linkedinHeading">LinkedIn Profile</h2>
+              <p class="linkedin-status" id="linkedinStatus" role="status" aria-live="polite"></p>
+              <div class="linkedin-candidates" id="linkedinCandidates"></div>
+            </section>
+            <section class="social-profile-section instagram-section" id="instagramSection" aria-labelledby="instagramHeading" hidden>
+              <h2 class="instagram-heading" id="instagramHeading">Instagram Profile</h2>
+              <p class="instagram-status" id="instagramStatus" role="status" aria-live="polite"></p>
+              <div class="instagram-candidates" id="instagramCandidates"></div>
+            </section>
+          </div>
+        </section>
+      </section>
     </section>
 
-    <section class="batch-card" aria-labelledby="batchHeading">
-      <div class="batch-header">
-        <span>
-          <span class="batch-heading" id="batchHeading">Batch lookup</span>
-          <span class="batch-subtitle">For class reps: check multiple roll numbers at once.</span>
-        </span>
-      </div>
+    <section class="how-to" id="how-to-use" aria-labelledby="howToHeading">
+      <h2 class="section-title" id="howToHeading">How to Use</h2>
+      <ol><li>Enter your roll number.</li><li>Select “View Grade Card”.</li><li>Review your grade card.</li><li>Download it if needed.</li></ol>
+    </section>
+
+    <section class="batch-card" id="batch-lookup" aria-labelledby="batchHeading">
+      <div class="batch-header"><span><span class="batch-heading" id="batchHeading">Batch Lookup</span><span class="batch-subtitle">For class representatives checking multiple roll numbers.</span></span></div>
       <div class="batch-content">
         <form class="batch-form" id="batchForm" novalidate>
-          <label for="batchRollNumbers">Roll numbers / Enrollment IDs</label>
+          <label for="batchRollNumbers">Roll Numbers / Enrollment IDs</label>
           <textarea id="batchRollNumbers" placeholder="One roll number per line; comma or space separated also works" spellcheck="false" autocapitalize="characters"></textarea>
-          <button class="primary" type="submit">Look up all</button>
+          <button class="primary" type="submit">View Grade Cards</button>
         </form>
         <div class="batch-results" id="batchResults" aria-live="polite" hidden></div>
       </div>
     </section>
   </main>
 
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="footer-title">Tezpur University Grade Card Portal</p>
+      <p class="footer-note">A student-built utility. Not an official Tezpur University service.</p>
+      <p class="footer-copy">© 2026</p>
+    </div>
+  </footer>
+
   <dialog class="qr-dialog" id="qrDialog" aria-labelledby="qrTitle">
     <div class="qr-inner">
-      <button class="qr-close" id="qrCloseButton" type="button" aria-label="Close QR code">×</button>
-      <h2 id="qrTitle">Grade card QR code</h2>
+      <button class="qr-close" id="qrCloseButton" type="button" aria-label="Close QR code"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+      <h2 id="qrTitle">Grade Card QR Code</h2>
       <p>Scan to open the direct PDF.</p>
-      <div class="qr-image-wrap" id="qrImageWrap">
-        <span class="qr-loading" id="qrLoading">Generating QR code…</span>
-        <img id="qrImage" alt="QR code for the direct grade card PDF" hidden />
-      </div>
+      <div class="qr-image-wrap" id="qrImageWrap"><span class="qr-loading" id="qrLoading">Generating QR code…</span><img id="qrImage" alt="QR code for the direct grade card PDF" hidden /></div>
     </div>
   </dialog>
 
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
   <script>
     (function () {
@@ -1295,11 +341,20 @@
       const exampleChips = Array.from(document.querySelectorAll(".example-chip"));
       const formMessage = document.getElementById("formMessage");
       const confirmationMessage = document.getElementById("confirmationMessage");
-      const searchCard = document.querySelector(".search-card");
       const submitButton = document.getElementById("submitButton");
       const singleResult = document.getElementById("singleResult");
       const directPdfUrl = document.getElementById("directPdfUrl");
+      const openGradeCardLink = document.getElementById("openGradeCardLink");
+      const downloadGradeCardLink = document.getElementById("downloadGradeCardLink");
+      const studentNameRow = document.getElementById("studentNameRow");
+      const studentNameValue = document.getElementById("studentNameValue");
+      const studentRollValue = document.getElementById("studentRollValue");
+      const studentProgrammeRow = document.getElementById("studentProgrammeRow");
+      const studentProgrammeValue = document.getElementById("studentProgrammeValue");
+      const studentDepartmentRow = document.getElementById("studentDepartmentRow");
+      const studentDepartmentValue = document.getElementById("studentDepartmentValue");
       const copyLinkButton = document.getElementById("copyLinkButton");
+      const copyLabel = copyLinkButton.querySelector(".copy-label");
       const copyStatus = document.getElementById("copyStatus");
       const qrCodeButton = document.getElementById("qrCodeButton");
       const studentNameStatus = document.getElementById("studentNameStatus");
@@ -1317,283 +372,9 @@
       const batchRollNumbers = document.getElementById("batchRollNumbers");
       const batchResults = document.getElementById("batchResults");
       const batchSubmitButton = batchForm.querySelector(".primary");
-      const gradientBlobs = Array.from(document.querySelectorAll(".gradient-blob"));
-      const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-      const hoverQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
       let pdfJsLoadPromise = null;
       let studentNameRequestNumber = 0;
 
-      function createMotionLayer() {
-        if (reducedMotionQuery.matches) return function () {};
-
-        const pointerEnabled = hoverQuery.matches;
-        const floatProfiles = [
-          { x: 13, y: 10, period: 17600, phase: 0.35 },
-          { x: 10, y: 14, period: 21100, phase: 2.1 },
-          { x: 16, y: 9, period: 23800, phase: 4.25 },
-          { x: 11, y: 13, period: 19400, phase: 5.4 }
-        ];
-        const state = {
-          pointerX: 0,
-          pointerY: 0,
-          pointerTargetX: 0,
-          pointerTargetY: 0,
-          pointerClientX: window.innerWidth / 2,
-          pointerClientY: window.innerHeight / 2,
-          pointerActive: false,
-          tiltX: 0,
-          tiltY: 0,
-          tiltTargetX: 0,
-          tiltTargetY: 0,
-          glareX: 0,
-          glareY: 0,
-          glareTargetX: 0,
-          glareTargetY: 0,
-          glareOpacity: 0,
-          glareTargetOpacity: 0,
-          buttonX: 0,
-          buttonY: 0,
-          buttonTargetX: 0,
-          buttonTargetY: 0,
-          buttonScale: 1,
-          buttonTargetScale: 1,
-          elapsed: 0,
-          lastFrameTime: 0
-        };
-        const blobStates = gradientBlobs.map(function (blob, index) {
-          const profile = floatProfiles[index % floatProfiles.length];
-          return {
-            element: blob,
-            depth: Number(blob.dataset.depth) || 8,
-            amplitudeX: profile.x,
-            amplitudeY: profile.y,
-            period: profile.period,
-            phase: profile.phase,
-            centerX: 0,
-            centerY: 0,
-            influence: 260,
-            repelX: 0,
-            repelY: 0,
-            scale: 1,
-            lift: 0
-          };
-        });
-
-        let animationFrame = 0;
-
-        function ease(current, target, amount) {
-          return current + (target - current) * amount;
-        }
-
-        function measureBlobs() {
-          blobStates.forEach(function (blobState) {
-            const element = blobState.element;
-            blobState.centerX = element.offsetLeft + element.offsetWidth / 2;
-            blobState.centerY = element.offsetTop + element.offsetHeight / 2;
-            blobState.influence = Math.max(element.offsetWidth, element.offsetHeight) * 0.72 + 150;
-          });
-        }
-
-        function renderMotion(frameTime) {
-          animationFrame = 0;
-          if (document.hidden) return;
-
-          if (!state.lastFrameTime) state.lastFrameTime = frameTime;
-          state.elapsed += Math.min(40, frameTime - state.lastFrameTime);
-          state.lastFrameTime = frameTime;
-
-          state.pointerX = ease(state.pointerX, state.pointerTargetX, 0.075);
-          state.pointerY = ease(state.pointerY, state.pointerTargetY, 0.075);
-          state.tiltX = ease(state.tiltX, state.tiltTargetX, 0.11);
-          state.tiltY = ease(state.tiltY, state.tiltTargetY, 0.11);
-          state.glareX = ease(state.glareX, state.glareTargetX, 0.1);
-          state.glareY = ease(state.glareY, state.glareTargetY, 0.1);
-          state.glareOpacity = ease(state.glareOpacity, state.glareTargetOpacity, 0.1);
-          state.buttonX = ease(state.buttonX, state.buttonTargetX, 0.16);
-          state.buttonY = ease(state.buttonY, state.buttonTargetY, 0.16);
-          state.buttonScale = ease(state.buttonScale, state.buttonTargetScale, 0.16);
-
-          if (pointerEnabled) {
-            searchCard.style.setProperty("--tilt-x", state.tiltX.toFixed(3) + "deg");
-            searchCard.style.setProperty("--tilt-y", state.tiltY.toFixed(3) + "deg");
-            searchCard.style.setProperty("--glare-shift-x", state.glareX.toFixed(2) + "px");
-            searchCard.style.setProperty("--glare-shift-y", state.glareY.toFixed(2) + "px");
-            searchCard.style.setProperty("--glare-opacity", state.glareOpacity.toFixed(3));
-            submitButton.style.setProperty("--magnetic-x", state.buttonX.toFixed(2) + "px");
-            submitButton.style.setProperty("--magnetic-y", state.buttonY.toFixed(2) + "px");
-            submitButton.style.setProperty("--magnetic-scale", state.buttonScale.toFixed(4));
-          }
-
-          blobStates.forEach(function (blobState, index) {
-            const time = state.elapsed / blobState.period * Math.PI * 2 + blobState.phase;
-            const ambientX = Math.sin(time) * blobState.amplitudeX;
-            const ambientY = Math.cos(time * 0.83 + blobState.phase * 0.7) * blobState.amplitudeY;
-            let targetRepelX = 0;
-            let targetRepelY = 0;
-            let targetScale = 1;
-            let targetLift = 0;
-
-            if (pointerEnabled && state.pointerActive) {
-              let deltaX = blobState.centerX - state.pointerClientX;
-              let deltaY = blobState.centerY - state.pointerClientY;
-              let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-              const proximity = Math.max(0, 1 - distance / blobState.influence);
-
-              if (proximity > 0) {
-                if (distance < 1) {
-                  deltaX = Math.cos(blobState.phase);
-                  deltaY = Math.sin(blobState.phase);
-                  distance = 1;
-                }
-                const easedProximity = proximity * proximity * (3 - 2 * proximity);
-                const maxPush = 20 + index * 3;
-                targetRepelX = deltaX / distance * maxPush * easedProximity;
-                targetRepelY = deltaY / distance * maxPush * easedProximity;
-                targetScale = 1 + 0.024 * easedProximity;
-                targetLift = 0.045 * easedProximity;
-              }
-            }
-
-            blobState.repelX = ease(blobState.repelX, targetRepelX, 0.055);
-            blobState.repelY = ease(blobState.repelY, targetRepelY, 0.055);
-            blobState.scale = ease(blobState.scale, targetScale, 0.06);
-            blobState.lift = ease(blobState.lift, targetLift, 0.06);
-
-            blobState.element.style.setProperty("--parallax-x", (-state.pointerX * blobState.depth).toFixed(2) + "px");
-            blobState.element.style.setProperty("--parallax-y", (-state.pointerY * blobState.depth).toFixed(2) + "px");
-            blobState.element.style.setProperty("--ambient-x", ambientX.toFixed(2) + "px");
-            blobState.element.style.setProperty("--ambient-y", ambientY.toFixed(2) + "px");
-            blobState.element.style.setProperty("--repel-x", blobState.repelX.toFixed(2) + "px");
-            blobState.element.style.setProperty("--repel-y", blobState.repelY.toFixed(2) + "px");
-            blobState.element.style.setProperty("--blob-scale", blobState.scale.toFixed(4));
-            blobState.element.style.setProperty("--proximity-lift", blobState.lift.toFixed(4));
-          });
-
-          animationFrame = window.requestAnimationFrame(renderMotion);
-        }
-
-        function startMotion() {
-          if (!animationFrame && !document.hidden) {
-            animationFrame = window.requestAnimationFrame(renderMotion);
-          }
-        }
-
-        function handleViewportPointer(event) {
-          state.pointerClientX = event.clientX;
-          state.pointerClientY = event.clientY;
-          state.pointerActive = true;
-          state.pointerTargetX = (event.clientX / window.innerWidth - 0.5) * 2;
-          state.pointerTargetY = (event.clientY / window.innerHeight - 0.5) * 2;
-        }
-
-        function resetViewportMotion() {
-          state.pointerActive = false;
-          state.pointerTargetX = 0;
-          state.pointerTargetY = 0;
-        }
-
-        function handleCardPointer(event) {
-          const rect = searchCard.getBoundingClientRect();
-          const localX = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width - 0.5) * 2));
-          const localY = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height - 0.5) * 2));
-          state.tiltTargetX = -localY * 5.2;
-          state.tiltTargetY = localX * 5.8;
-          state.glareTargetX = ((localX + 1) / 2) * rect.width * 0.62;
-          state.glareTargetY = ((localY + 1) / 2) * rect.height * 0.5;
-          state.glareTargetOpacity = 0.72;
-        }
-
-        function resetCardMotion() {
-          state.tiltTargetX = 0;
-          state.tiltTargetY = 0;
-          state.glareTargetOpacity = 0;
-        }
-
-        function handleButtonPointer(event) {
-          const rect = submitButton.getBoundingClientRect();
-          const localX = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width - 0.5) * 2));
-          const localY = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height - 0.5) * 2));
-          state.buttonTargetX = localX * 3.5;
-          state.buttonTargetY = localY * 2.5;
-          state.buttonTargetScale = 1.025;
-        }
-
-        function resetButtonMotion() {
-          state.buttonTargetX = 0;
-          state.buttonTargetY = 0;
-          state.buttonTargetScale = 1;
-        }
-
-        function handleVisibilityChange() {
-          if (document.hidden) {
-            if (animationFrame) window.cancelAnimationFrame(animationFrame);
-            animationFrame = 0;
-            state.lastFrameTime = 0;
-          } else {
-            measureBlobs();
-            startMotion();
-          }
-        }
-
-        measureBlobs();
-        window.addEventListener("resize", measureBlobs, { passive: true });
-        document.addEventListener("visibilitychange", handleVisibilityChange);
-
-        if (pointerEnabled) {
-          document.addEventListener("pointermove", handleViewportPointer, { passive: true });
-          document.documentElement.addEventListener("mouseleave", resetViewportMotion);
-          window.addEventListener("blur", resetViewportMotion);
-          searchCard.addEventListener("pointermove", handleCardPointer, { passive: true });
-          searchCard.addEventListener("pointerleave", resetCardMotion);
-          submitButton.addEventListener("pointermove", handleButtonPointer, { passive: true });
-          submitButton.addEventListener("pointerenter", handleButtonPointer, { passive: true });
-          submitButton.addEventListener("pointerleave", resetButtonMotion);
-        }
-
-        startMotion();
-
-        return function destroyMotion() {
-          if (animationFrame) window.cancelAnimationFrame(animationFrame);
-          window.removeEventListener("resize", measureBlobs);
-          document.removeEventListener("visibilitychange", handleVisibilityChange);
-          document.removeEventListener("pointermove", handleViewportPointer);
-          document.documentElement.removeEventListener("mouseleave", resetViewportMotion);
-          window.removeEventListener("blur", resetViewportMotion);
-          searchCard.removeEventListener("pointermove", handleCardPointer);
-          searchCard.removeEventListener("pointerleave", resetCardMotion);
-          submitButton.removeEventListener("pointermove", handleButtonPointer);
-          submitButton.removeEventListener("pointerenter", handleButtonPointer);
-          submitButton.removeEventListener("pointerleave", resetButtonMotion);
-          searchCard.style.removeProperty("--tilt-x");
-          searchCard.style.removeProperty("--tilt-y");
-          searchCard.style.removeProperty("--glare-shift-x");
-          searchCard.style.removeProperty("--glare-shift-y");
-          searchCard.style.removeProperty("--glare-opacity");
-          submitButton.style.removeProperty("--magnetic-x");
-          submitButton.style.removeProperty("--magnetic-y");
-          submitButton.style.removeProperty("--magnetic-scale");
-          gradientBlobs.forEach(function (blob) {
-            blob.style.removeProperty("--parallax-x");
-            blob.style.removeProperty("--parallax-y");
-            blob.style.removeProperty("--ambient-x");
-            blob.style.removeProperty("--ambient-y");
-            blob.style.removeProperty("--repel-x");
-            blob.style.removeProperty("--repel-y");
-            blob.style.removeProperty("--blob-scale");
-            blob.style.removeProperty("--proximity-lift");
-          });
-        };
-      }
-
-      let destroyMotion = createMotionLayer();
-
-      function refreshMotionPreference() {
-        destroyMotion();
-        destroyMotion = createMotionLayer();
-      }
-
-      reducedMotionQuery.addEventListener("change", refreshMotionPreference);
-      hoverQuery.addEventListener("change", refreshMotionPreference);
 
       function showMessage(message) {
         confirmationMessage.replaceChildren();
@@ -1610,7 +391,16 @@
         singleResult.hidden = true;
         directPdfUrl.value = "";
         copyStatus.textContent = "";
-        copyLinkButton.textContent = "Copy PDF URL";
+        copyLabel.textContent = "Copy Link";
+        openGradeCardLink.removeAttribute("href");
+        downloadGradeCardLink.removeAttribute("href");
+        studentNameRow.hidden = true;
+        studentNameValue.textContent = "";
+        studentRollValue.textContent = "";
+        studentProgrammeRow.hidden = true;
+        studentProgrammeValue.textContent = "";
+        studentDepartmentRow.hidden = true;
+        studentDepartmentValue.textContent = "";
         studentNameRequestNumber += 1;
         studentNameStatus.hidden = true;
         studentNameStatus.textContent = "";
@@ -1648,7 +438,7 @@
 
         const normalized = normalizeRollNumber(rawValue);
         if (isValidRollNumber(normalized)) {
-          setInlineHint("Looks good ✓", "valid");
+          setInlineHint("Looks good", "valid");
         } else {
           setInlineHint("Roll numbers use letters and numbers only.", "invalid");
         }
@@ -1665,8 +455,12 @@
         confirmationMessage.classList.add("visible");
       }
 
-      function showSingleResult(pdfURL) {
+      function showSingleResult(pdfURL, rollNumber) {
         directPdfUrl.value = pdfURL;
+        openGradeCardLink.href = pdfURL;
+        downloadGradeCardLink.href = pdfURL;
+        downloadGradeCardLink.setAttribute("download", rollNumber + ".pdf");
+        studentRollValue.textContent = rollNumber;
         singleResult.hidden = false;
       }
 
@@ -1751,6 +545,25 @@
         return name.toLowerCase().replace(/(^|[\s.'-])([a-z])/g, function (match, boundary, letter) {
           return boundary + letter.toUpperCase();
         });
+      }
+
+      function setExternalLinkLabel(link) {
+        const label = document.createElement("span");
+        label.textContent = "View";
+        const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        icon.setAttribute("viewBox", "0 0 24 24");
+        icon.setAttribute("fill", "none");
+        icon.setAttribute("stroke", "currentColor");
+        icon.setAttribute("stroke-width", "2");
+        icon.setAttribute("stroke-linecap", "round");
+        icon.setAttribute("stroke-linejoin", "round");
+        icon.setAttribute("aria-hidden", "true");
+        [["M14 5h5v5"], ["M10 14 19 5"], ["M19 13v6H5V5h6"]].forEach(function (entry) {
+          const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          path.setAttribute("d", entry[0]);
+          icon.appendChild(path);
+        });
+        link.replaceChildren(label, icon);
       }
 
       function resetLinkedIn() {
@@ -1875,7 +688,7 @@
         profileLink.href = profileURL;
         profileLink.target = "_blank";
         profileLink.rel = "noopener";
-        profileLink.textContent = "View ↗";
+        setExternalLinkLabel(profileLink);
 
         actions.append(badge, profileLink);
         row.append(copy, actions);
@@ -2150,7 +963,7 @@
           } else if (bio.indexOf("engineer") !== -1) {
             deptScore = 5;
           }
-          if (deptScore > 0) departmentReason = "✓ " + toTitleCase(department) + " in bio";
+          if (deptScore > 0) departmentReason = toTitleCase(department) + " in bio";
         }
 
         let batchScore = 0;
@@ -2165,7 +978,7 @@
           } else if (new RegExp("\\b" + batchShort + "\\b").test(bio)) {
             batchScore = 4;
           }
-          if (batchScore > 0) batchReason = "✓ Batch '" + batchShort + " in bio";
+          if (batchScore > 0) batchReason = "Batch '" + batchShort + " in bio";
         }
 
         let negatives = 0;
@@ -2226,10 +1039,10 @@
         }
 
         const reasons = [];
-        if (nameReason) reasons.push("✓ " + nameReason);
-        if (usernameScore >= 25) reasons.push("✓ Username matches name");
+        if (nameReason) reasons.push(nameReason);
+        if (usernameScore >= 25) reasons.push("Username matches name");
         const tuReason = getTuEvidenceReason(bio);
-        if (tuReason) reasons.push("✓ " + tuReason);
+        if (tuReason) reasons.push(tuReason);
         if (departmentReason) reasons.push(departmentReason);
         if (batchReason) reasons.push(batchReason);
 
@@ -2283,7 +1096,7 @@
         profileLink.href = profileURL;
         profileLink.target = "_blank";
         profileLink.rel = "noopener";
-        profileLink.textContent = "View ↗";
+        setExternalLinkLabel(profileLink);
 
         actions.append(badge, profileLink);
         row.append(copy, actions);
@@ -2441,7 +1254,17 @@
               batch: batch
             };
 
-            studentNameStatus.textContent = "Student: " + studentName;
+            studentNameValue.textContent = studentName;
+            studentNameRow.hidden = false;
+            if (programme) {
+              studentProgrammeValue.textContent = programme;
+              studentProgrammeRow.hidden = false;
+            }
+            if (department) {
+              studentDepartmentValue.textContent = department;
+              studentDepartmentRow.hidden = false;
+            }
+            studentNameStatus.textContent = "Student information found.";
             studentNameStatus.classList.remove("loading");
             studentNameStatus.hidden = false;
             findLinkedIn(studentInfo, requestNumber);
@@ -2496,46 +1319,6 @@
         }
       }
 
-      function celebrateSuccess(anchorButton) {
-        pulseHaptic();
-
-        if (reducedMotionQuery.matches || typeof window.confetti !== "function") return;
-
-        const rect = anchorButton.getBoundingClientRect();
-        const viewportWidth = Math.max(window.innerWidth, 1);
-        const viewportHeight = Math.max(window.innerHeight, 1);
-        const styles = window.getComputedStyle(document.documentElement);
-        const colors = ["--teal", "--violet", "--magenta", "--amber"].map(function (token) {
-          return styles.getPropertyValue(token).trim();
-        });
-        const originY = Math.max(0.08, Math.min(0.92, (rect.top + rect.height * 0.55) / viewportHeight));
-        const sharedOptions = {
-          particleCount: 36,
-          spread: 42,
-          startVelocity: 27,
-          gravity: 1.15,
-          decay: 0.9,
-          scalar: 0.78,
-          ticks: 88,
-          colors: colors,
-          disableForReducedMotion: true
-        };
-
-        window.confetti(Object.assign({}, sharedOptions, {
-          angle: 62,
-          origin: {
-            x: Math.max(0.03, Math.min(0.97, (rect.left + rect.width * 0.16) / viewportWidth)),
-            y: originY
-          }
-        }));
-        window.confetti(Object.assign({}, sharedOptions, {
-          angle: 118,
-          origin: {
-            x: Math.max(0.03, Math.min(0.97, (rect.right - rect.width * 0.16) / viewportWidth)),
-            y: originY
-          }
-        }));
-      }
 
       function writeGradeCardInterstitial(newTab, pdfURL) {
         const safePdfURL = JSON.stringify(pdfURL).replace(/</g, "\\u003c");
@@ -2544,36 +1327,18 @@
           "<html lang=\"en\"><head>",
           "<meta charset=\"utf-8\">",
           "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
-          "<meta name=\"color-scheme\" content=\"dark\">",
-          "<meta name=\"theme-color\" content=\"#0a0a12\">",
+          "<meta name=\"color-scheme\" content=\"light\">",
+          "<meta name=\"theme-color\" content=\"#1f3a5f\">",
           "<title>Opening grade card…</title>",
           "<style>",
-          "html,body{height:100%;margin:0;background:#0a0a12;color:#f7f6ff;color-scheme:dark}",
-          "body{display:grid;place-items:center;font-family:system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif}",
-          ".status{display:grid;justify-items:center;gap:16px;padding:24px;text-align:center}",
-          ".spinner{width:28px;height:28px;border:2px solid rgba(247,246,255,.18);border-top-color:#2dd4bf;border-right-color:#f05b98;border-radius:50%;animation:spin .8s linear infinite}",
-          "p{margin:0;font-size:15px;font-weight:600;letter-spacing:.01em}",
-          "@keyframes spin{to{transform:rotate(360deg)}}",
-          "@media(prefers-reduced-motion:reduce){.spinner{animation:none;border-color:#2dd4bf}}",
+          "html,body{height:100%;margin:0;background:#f7f6f3;color:#1c1c1c;color-scheme:light}",
+          "body{display:grid;place-items:center;font-family:system-ui,-apple-system,\"Segoe UI\",Roboto,Arial,sans-serif}",
+          "main{padding:24px;text-align:center}",
+          "p{margin:0;font-size:15px;font-weight:600}",
           "</style></head><body>",
-          "<main class=\"status\"><span class=\"spinner\" aria-hidden=\"true\"></span><p>Opening your grade card…</p></main>",
-          "<script src=\"https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js\"><\/script>",
-          "<script>",
-          "(function(){",
-          "var pdfURL=" + safePdfURL + ";",
-          "var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;",
-          "function openPdf(){window.location.replace(pdfURL);}",
-          "function celebrate(){",
-          "if(!reduced&&typeof window.confetti==='function'){",
-          "var options={particleCount:36,spread:42,startVelocity:27,gravity:1.15,decay:.9,scalar:.78,ticks:88,colors:['#2dd4bf','#9075f0','#f05b98','#f2b755'],disableForReducedMotion:true};",
-          "window.confetti(Object.assign({},options,{angle:62,origin:{x:.28,y:.58}}));",
-          "window.confetti(Object.assign({},options,{angle:118,origin:{x:.72,y:.58}}));",
-          "}",
-          "window.setTimeout(openPdf,reduced?220:1400);",
-          "}",
-          "if(document.readyState==='complete'){celebrate();}else{window.addEventListener('load',celebrate,{once:true});}",
-          "})();",
-          "<\/script></body></html>"
+          "<main><p>Opening your grade card…</p></main>",
+          "<script>window.addEventListener('load',function(){window.location.replace(" + safePdfURL + ");},{once:true});<\/script>",
+          "</body></html>"
         ].join("");
 
         try {
@@ -2602,6 +1367,13 @@
           return;
         }
 
+        submitButton.disabled = true;
+        submitButton.textContent = "Fetching grade card…";
+        window.setTimeout(function () {
+          submitButton.disabled = false;
+          submitButton.textContent = "View Grade Card";
+        }, 800);
+
         // The fixed university directory is never editable. Only the validated
         // Roll Number is encoded and inserted as the PDF filename.
         const fileName = rollNumber + ".pdf";
@@ -2610,14 +1382,14 @@
 
         if (newTab === null) {
           showConfirmation(fileName, pdfURL);
-          celebrateSuccess(submitButton);
+          pulseHaptic();
         } else {
           writeGradeCardInterstitial(newTab, pdfURL);
           pulseHaptic();
         }
 
         logSubmission(rollNumber);
-        showSingleResult(pdfURL);
+        showSingleResult(pdfURL, rollNumber);
         findStudentName(rollNumber);
       }
 
@@ -2715,10 +1487,10 @@
       });
 
       function setCopiedFeedback() {
-        copyLinkButton.textContent = "Copied";
+        copyLabel.textContent = "Copied";
         copyStatus.textContent = "Link copied to clipboard.";
         window.setTimeout(function () {
-          copyLinkButton.textContent = "Copy PDF URL";
+          copyLabel.textContent = "Copy Link";
         }, 1800);
       }
 
@@ -2871,7 +1643,7 @@
 
         batchResults.hidden = false;
         if (validEntries.length) {
-          celebrateSuccess(batchSubmitButton);
+          pulseHaptic();
         }
       });
     })();
