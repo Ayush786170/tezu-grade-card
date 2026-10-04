@@ -1,201 +1,338 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <!-- Institutional redesign build — October 2026 -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="color-scheme" content="light" />
-  <meta name="theme-color" content="#1f3a5f" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#1b3a6b" />
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="icon" href="data:," />
   <title>Tezpur University Grade Card Portal</title>
   <style>
     :root {
-      color-scheme: light;
-      --page: #f7f6f3;
+      color-scheme: light dark;
+      --page: #f5f8fc;
       --surface: #ffffff;
-      --surface-muted: #f1f0ec;
-      --ink: #1c1c1c;
-      --muted: #5a5a5a;
-      --line: #e2e0da;
-      --line-strong: #c9c6be;
-      --navy: #1f3a5f;
-      --navy-hover: #18304e;
-      --navy-soft: #e9eef4;
-      --danger: #9f2d2d;
-      --danger-soft: #f8eceb;
-      --success: #356b4b;
-      --success-soft: #edf5ef;
-      --warning: #7b5b22;
-      --warning-soft: #f6f1e7;
-      --focus-ring: rgba(31, 58, 95, 0.18);
+      --surface-muted: #f7f9fc;
+      --ink: #10233f;
+      --muted: #5b6b82;
+      --line: #dfe7f2;
+      --line-strong: #c6d3e3;
+      --navy: #1b3a6b;
+      --navy-hover: #122f5e;
+      --navy-soft: #eef4fc;
+      --blue-soft: #e4effc;
+      --danger: #9d3036;
+      --danger-soft: #fff2f2;
+      --success: #2f694b;
+      --success-soft: #eef8f2;
+      --warning: #765a1d;
+      --warning-soft: #fff8e8;
+      --focus-ring: rgba(27, 58, 107, 0.18);
+      --shadow: 0 8px 24px rgba(27, 58, 107, 0.08);
+      --document-shadow: 0 22px 54px rgba(28, 55, 91, 0.18);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --page: #0e1725;
+        --surface: #162235;
+        --surface-muted: #1d2b40;
+        --ink: #eef4fc;
+        --muted: #b6c3d5;
+        --line: #304159;
+        --line-strong: #435772;
+        --navy: #8eb7ef;
+        --navy-hover: #aacbf6;
+        --navy-soft: #203754;
+        --blue-soft: #243d5d;
+        --danger: #ffb5b7;
+        --danger-soft: #3a2228;
+        --success: #99ddb3;
+        --success-soft: #1d362a;
+        --warning: #e6ca85;
+        --warning-soft: #3b321d;
+        --focus-ring: rgba(142, 183, 239, 0.28);
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+        --document-shadow: 0 22px 54px rgba(0, 0, 0, 0.35);
+      }
     }
     * { box-sizing: border-box; }
-    html { min-width: 320px; color-scheme: light; scroll-behavior: smooth; background: var(--page); }
-    body { margin: 0; min-height: 100vh; overflow-x: hidden; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; color: var(--ink); background: var(--page); }
+    html { min-width: 320px; scroll-behavior: smooth; background: var(--page); }
+    body { margin: 0; min-height: 100vh; overflow-x: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color: var(--ink); background: var(--page); }
     button, input, textarea { font: inherit; }
     button, a { -webkit-tap-highlight-color: transparent; }
-    .site-header { background: var(--surface); border-bottom: 1px solid var(--line); }
-    .header-inner, .page, .footer-inner { width: min(820px, calc(100% - 40px)); margin: 0 auto; }
-    .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 68px; padding: 12px 0; }
-    .identity { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
-    .university-name { font-family: Georgia, "Times New Roman", Times, serif; color: var(--navy); font-size: 1.15rem; font-weight: 700; white-space: nowrap; }
-    .portal-name { padding-left: 10px; border-left: 1px solid var(--line-strong); color: var(--muted); font-size: 0.82rem; font-weight: 600; white-space: nowrap; }
-    .site-nav { display: flex; align-items: center; gap: 18px; }
-    .site-nav a { color: var(--muted); font-size: 0.82rem; font-weight: 600; text-decoration: none; }
+    .site-header { position: relative; z-index: 10; background: var(--surface); border-bottom: 1px solid var(--line); }
+    .header-inner, .page, .footer-inner { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 36px; min-height: 82px; padding: 12px 0; }
+    .identity { display: flex; align-items: center; min-width: 0; }
+    .tu-mark { display: grid; place-items: center; width: 48px; height: 48px; flex: 0 0 auto; margin-right: 14px; border: 2px solid var(--navy); border-radius: 50%; color: var(--navy); font-family: Georgia, "Times New Roman", Times, serif; font-size: 0.95rem; font-weight: 700; letter-spacing: -0.04em; }
+    .identity-copy { min-width: 0; }
+    .university-name { display: block; font-family: Georgia, "Times New Roman", Times, serif; color: var(--navy); font-size: 1.42rem; font-weight: 700; line-height: 1.1; white-space: nowrap; }
+    .university-tagline { display: block; margin-top: 5px; color: var(--muted); font-size: 0.59rem; font-weight: 650; letter-spacing: 0.18em; line-height: 1.2; white-space: nowrap; }
+    .portal-name { margin-left: 18px; padding: 7px 0 7px 18px; border-left: 1px solid var(--line-strong); color: var(--ink); font-family: Georgia, "Times New Roman", Times, serif; font-size: 1rem; font-weight: 700; white-space: nowrap; }
+    .site-nav { display: flex; align-items: stretch; align-self: stretch; gap: 30px; }
+    .site-nav a { position: relative; display: inline-flex; align-items: center; color: var(--muted); font-family: Georgia, "Times New Roman", Times, serif; font-size: 0.92rem; font-weight: 700; text-decoration: none; }
     .site-nav a:hover { color: var(--navy); }
-    .page { padding: 54px 0 64px; }
-    .intro { max-width: 640px; margin: 0 0 24px; }
-    h1, .section-title, .qr-inner h2 { font-family: Georgia, "Times New Roman", Times, serif; color: var(--ink); }
-    h1 { margin: 0; font-size: clamp(1.8rem, 4vw, 2.45rem); line-height: 1.2; letter-spacing: -0.02em; }
-    .subtitle { margin: 11px 0 0; color: var(--muted); font-size: 1rem; line-height: 1.6; }
-    .search-card, .batch-card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
-    .search-card { padding: 28px; }
+    .site-nav a[aria-current="page"] { color: var(--navy); }
+    .site-nav a[aria-current="page"]::after { content: ""; position: absolute; right: 0; bottom: 7px; left: 0; height: 2px; background: var(--navy); }
+    .page { padding: 0 0 72px; }
+    .hero-wrap { margin-inline: calc(50% - 50vw); padding: 52px max(24px, calc((100vw - 1180px) / 2)) 58px; background: var(--page); border-bottom: 1px solid var(--line); }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(410px, 0.92fr); gap: clamp(46px, 6vw, 84px); align-items: center; max-width: 1180px; margin: 0 auto; }
+    .hero-copy { min-width: 0; }
+    .intro { max-width: 650px; margin: 0 0 24px; }
+    .eyebrow { display: flex; align-items: center; gap: 12px; margin: 0 0 15px; color: var(--navy); font-size: 0.72rem; font-weight: 750; letter-spacing: 0.22em; }
+    .eyebrow::after { content: ""; width: 28px; height: 2px; background: var(--navy); }
+    h1, .section-title, .batch-heading, .qr-inner h2 { font-family: Georgia, "Times New Roman", Times, serif; color: var(--ink); }
+    h1 { max-width: 620px; margin: 0; font-size: clamp(2.45rem, 4.45vw, 3.35rem); line-height: 1.08; letter-spacing: -0.035em; }
+    .subtitle { margin: 14px 0 0; color: var(--muted); font-family: Georgia, "Times New Roman", Times, serif; font-size: 1.04rem; line-height: 1.55; }
+    .search-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); }
+    .search-card { padding: 24px 25px 21px; }
     #gradeCardForm { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: start; }
-    #gradeCardForm > .primary { margin-top: 27px; }
+    #gradeCardForm > .primary { margin-top: 29px; }
     .field { min-width: 0; }
-    label { display: block; margin: 0 0 8px; color: var(--ink); font-size: 0.9rem; font-weight: 650; }
-    .label-example { margin-left: 6px; color: var(--muted); font-size: 0.78rem; font-weight: 400; }
+    .form-label-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+    label { display: block; margin: 0 0 9px; color: var(--ink); font-size: 0.86rem; font-weight: 700; }
+    .label-example { flex: 0 0 auto; color: var(--muted); font-size: 0.75rem; font-weight: 500; }
     .input-wrap { position: relative; }
-    input, textarea { width: 100%; border: 1px solid var(--line-strong); border-radius: 6px; outline: none; background: var(--surface); color: var(--ink); transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease; }
-    input { min-height: 48px; padding: 0 14px; font-size: 1rem; font-weight: 600; letter-spacing: 0.025em; text-transform: uppercase; }
-    input::placeholder, textarea::placeholder { color: #77736c; font-weight: 400; letter-spacing: normal; text-transform: none; opacity: 1; }
+    input, textarea { width: 100%; border: 1px solid var(--line-strong); border-radius: 7px; outline: none; background: var(--surface); color: var(--ink); transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease; }
+    input { min-height: 50px; padding: 0 15px; font-size: 0.98rem; font-weight: 650; letter-spacing: 0.025em; text-transform: uppercase; }
+    input::placeholder, textarea::placeholder { color: var(--muted); font-weight: 400; letter-spacing: normal; text-transform: none; opacity: 0.85; }
     input:focus, textarea:focus { border-color: var(--navy); box-shadow: 0 0 0 3px var(--focus-ring); }
     .input-wrap.voice-enabled input { padding-right: 52px; }
-    .voice-input { position: absolute; top: 5px; right: 5px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 38px; height: 38px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: var(--surface-muted); color: var(--navy); cursor: pointer; transition: width 140ms ease, border-color 140ms ease, background-color 140ms ease; }
+    .voice-input { position: absolute; top: 6px; right: 6px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 38px; height: 38px; padding: 0; border: 0; border-left: 1px solid var(--line); border-radius: 0 5px 5px 0; background: var(--surface-muted); color: var(--navy); cursor: pointer; transition: width 140ms ease, background-color 140ms ease; }
     .voice-input[hidden] { display: none; }
     .voice-input svg { width: 17px; height: 17px; flex: 0 0 auto; }
-    .voice-input .voice-state { display: none; white-space: nowrap; font-size: 0.76rem; font-weight: 650; }
-    .voice-input.listening { width: 102px; border-color: var(--navy); background: var(--navy-soft); }
+    .voice-input .voice-state { display: none; white-space: nowrap; font-size: 0.74rem; font-weight: 700; }
+    .voice-input.listening { width: 102px; background: var(--navy-soft); }
     .voice-input.listening .voice-state { display: inline; }
     .input-wrap.voice-listening input { padding-right: 116px; }
-    .inline-hint { min-height: 1.25em; margin: 7px 1px 0; font-size: 0.8rem; font-weight: 600; line-height: 1.35; }
+    .inline-hint { min-height: 1.25em; margin: 7px 1px 0; font-size: 0.78rem; font-weight: 650; line-height: 1.35; }
     .inline-hint:empty { min-height: 0; margin-top: 0; }
     .inline-hint.valid { color: var(--success); }
     .inline-hint.invalid { color: var(--danger); }
-    .example-row { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 12px; }
-    .example-label { color: var(--muted); font-size: 0.78rem; font-weight: 500; }
-    .example-chip { min-height: 30px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface); color: var(--navy); font-size: 0.75rem; font-weight: 650; cursor: pointer; transition: border-color 140ms ease, background-color 140ms ease; }
-    .example-chip:hover { border-color: var(--navy); background: var(--navy-soft); }
-    .primary, .primary-action, .secondary-action, .social-search-link { display: inline-flex; align-items: center; justify-content: center; gap: 7px; border-radius: 6px; font-weight: 650; text-decoration: none; cursor: pointer; transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease; }
-    .primary, .primary-action { min-height: 48px; padding: 0 20px; border: 1px solid var(--navy); background: var(--navy); color: #fff; }
-    .primary:hover, .primary-action:hover { border-color: var(--navy-hover); background: var(--navy-hover); }
+    .example-row { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 11px; }
+    .example-label { color: var(--muted); font-size: 0.77rem; font-weight: 500; }
+    .example-chip { min-height: 28px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 5px; background: var(--navy-soft); color: var(--navy); font-size: 0.72rem; font-weight: 700; cursor: pointer; transition: border-color 140ms ease, background-color 140ms ease; }
+    .example-chip:hover { border-color: var(--navy); background: var(--blue-soft); }
+    .primary, .primary-action, .secondary-action, .social-search-link { display: inline-flex; align-items: center; justify-content: center; gap: 7px; border-radius: 6px; font-weight: 700; text-decoration: none; cursor: pointer; transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease; }
+    .primary, .primary-action { min-height: 50px; padding: 0 22px; border: 1px solid #1b3a6b; background: #1b3a6b; color: #ffffff; box-shadow: 0 4px 12px rgba(27, 58, 107, 0.12); }
+    .primary:hover, .primary-action:hover { border-color: #122f5e; background: #122f5e; }
     .primary:disabled { opacity: 0.66; cursor: wait; }
     .primary-action svg, .secondary-action svg, .social-profile-link svg { width: 15px; height: 15px; flex: 0 0 auto; }
+    .button-arrow { font-size: 1.08rem; line-height: 1; }
     :is(button, a, input, textarea):focus-visible { outline: 2px solid var(--navy); outline-offset: 3px; }
-    .hint { margin: 13px 0 0; color: var(--muted); font-size: 0.84rem; line-height: 1.5; }
-    .destination-note { margin-top: 5px; color: var(--ink); }
-    .message, .confirmation { display: none; margin: 16px 0 0; padding: 12px 14px; border: 1px solid transparent; border-radius: 6px; font-size: 0.9rem; font-weight: 600; line-height: 1.5; }
-    .message { background: var(--danger-soft); border-color: #e2b9b5; color: var(--danger); }
-    .confirmation { background: var(--success-soft); border-color: #b8d2c1; color: var(--success); }
+    .helper-lines { margin-top: 12px; }
+    .hint { margin: 0; color: var(--muted); font-size: 0.77rem; line-height: 1.55; }
+    .destination-note { margin-top: 2px; color: var(--muted); }
+    .message, .confirmation { display: none; margin: 14px 0 0; padding: 11px 13px; border: 1px solid transparent; border-radius: 6px; font-size: 0.86rem; font-weight: 600; line-height: 1.5; }
+    .message { background: var(--danger-soft); border-color: color-mix(in srgb, var(--danger), transparent 60%); color: var(--danger); }
+    .confirmation { background: var(--success-soft); border-color: color-mix(in srgb, var(--success), transparent 60%); color: var(--success); }
     .message.visible, .confirmation.visible { display: block; }
     .confirmation a { color: inherit; font-weight: 700; text-underline-offset: 3px; }
-    .result-panel { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); }
+    .preview-stage { position: relative; min-height: 430px; padding: 26px 12px 38px 60px; }
+    .preview-annotation { position: absolute; top: 8px; left: 0; z-index: 4; width: 130px; color: var(--navy); font-family: Georgia, "Times New Roman", Times, serif; font-size: 0.83rem; font-style: italic; line-height: 1.25; transform: rotate(-6deg); }
+    .preview-annotation svg { display: block; width: 70px; height: 48px; margin: -2px 0 0 36px; overflow: visible; }
+    .preview-sheet-back { position: absolute; top: 31px; right: 4px; width: min(360px, 78%); height: 384px; border: 1px solid var(--line); border-radius: 5px; background: var(--surface); box-shadow: 0 10px 26px rgba(27, 58, 107, 0.1); transform: rotate(-4deg); }
+    .preview-sheet { position: relative; z-index: 2; width: min(390px, 88%); min-height: 400px; margin-left: auto; padding: 20px 20px 18px; border: 1px solid var(--line-strong); border-radius: 5px; background: var(--surface); color: var(--ink); box-shadow: var(--document-shadow); font-family: Georgia, "Times New Roman", Times, serif; transform: rotate(3.25deg); transform-origin: 50% 50%; }
+    .sample-tag { position: absolute; top: 17px; right: 17px; padding: 3px 7px; border: 1px solid var(--line-strong); border-radius: 3px; color: var(--muted); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 0.52rem; font-weight: 800; letter-spacing: 0.14em; }
+    .preview-head { display: grid; grid-template-columns: 45px 1fr 45px; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--line); text-align: center; }
+    .preview-seal { display: grid; place-items: center; width: 40px; height: 40px; border: 1.5px solid var(--navy); border-radius: 50%; color: var(--navy); font-size: 0.68rem; font-weight: 700; }
+    .preview-hindi { color: var(--navy); font-size: 0.67rem; font-weight: 700; line-height: 1.1; }
+    .preview-university { margin-top: 2px; color: var(--navy); font-size: 0.72rem; font-weight: 700; line-height: 1.15; }
+    .preview-central { margin-top: 2px; color: var(--muted); font-size: 0.45rem; line-height: 1.1; }
+    .preview-title { margin: 12px 0 10px; color: var(--ink); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-align: center; }
+    .preview-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 18px; margin-bottom: 12px; font-size: 0.51rem; line-height: 1.35; }
+    .preview-field { display: grid; grid-template-columns: minmax(58px, auto) 1fr; gap: 5px; min-width: 0; }
+    .preview-field span:first-child { color: var(--muted); }
+    .preview-field span:last-child { min-width: 0; font-weight: 700; }
+    .preview-placeholder { color: var(--muted); font-weight: 400 !important; }
+    .preview-table { width: 100%; border-collapse: collapse; font-size: 0.47rem; line-height: 1.25; }
+    .preview-table th, .preview-table td { padding: 5px 5px; border: 1px solid var(--line); text-align: left; }
+    .preview-table th { background: var(--navy-soft); color: var(--ink); font-weight: 700; }
+    .preview-table th:nth-child(3), .preview-table td:nth-child(3), .preview-table th:nth-child(4), .preview-table td:nth-child(4) { text-align: center; }
+    .preview-total { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 0.56rem; font-weight: 700; }
+    .preview-signoff { display: flex; justify-content: space-between; gap: 20px; margin-top: 22px; color: var(--muted); font-size: 0.48rem; }
+    .preview-signoff span:last-child { color: var(--ink); font-weight: 700; text-align: right; }
+    .pdf-pill { position: absolute; right: -10px; bottom: 18px; z-index: 5; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; width: min(330px, 82%); padding: 9px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); box-shadow: 0 8px 24px rgba(27, 58, 107, 0.12); font-size: 0.68rem; font-weight: 700; line-height: 1.25; }
+    .pdf-glyph { display: grid; place-items: center; width: 28px; height: 30px; border-radius: 4px; background: #ca3e48; color: #fff; font-size: 0.52rem; font-weight: 800; }
+    .pill-arrow { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--navy-soft); color: var(--navy); font-size: 0.92rem; }
+    .result-panel { margin-top: 30px; padding: 25px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow); }
     .result-panel[hidden] { display: none; }
-    .result-heading { margin: 0 0 16px; font-family: Georgia, "Times New Roman", Times, serif; font-size: 1.25rem; line-height: 1.3; }
-    .student-info { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0 0 18px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-    .student-info-row { min-width: 0; padding: 13px 14px; border-bottom: 1px solid var(--line); }
-    .student-info-row:nth-child(odd) { border-right: 1px solid var(--line); }
-    .student-info-row:nth-last-child(-n + 2) { border-bottom: 0; }
+    .result-heading { margin: 0 0 17px; font-family: Georgia, "Times New Roman", Times, serif; font-size: 1.35rem; line-height: 1.3; }
+    .student-info { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0 0 18px; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+    .student-info-row { min-width: 0; padding: 13px 14px; border-right: 1px solid var(--line); }
+    .student-info-row:last-child { border-right: 0; }
     .student-info-row[hidden] { display: none; }
-    .student-info dt { color: var(--muted); font-size: 0.72rem; font-weight: 650; text-transform: uppercase; letter-spacing: 0.045em; }
-    .student-info dd { margin: 4px 0 0; color: var(--ink); font-size: 0.94rem; font-weight: 650; overflow-wrap: anywhere; }
+    .student-info dt { color: var(--muted); font-size: 0.69rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .student-info dd { margin: 4px 0 0; color: var(--ink); font-size: 0.92rem; font-weight: 700; overflow-wrap: anywhere; }
     .result-actions { display: flex; flex-wrap: wrap; gap: 8px; }
     .secondary-action { min-height: 42px; padding: 0 14px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); }
     .secondary-action:hover { border-color: var(--navy); background: var(--navy-soft); color: var(--navy); }
     .direct-link-field { margin-top: 14px; }
-    .result-label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 0.75rem; font-weight: 650; }
-    .result-url { min-height: 40px; padding: 0 11px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.72rem; font-weight: 500; letter-spacing: 0; text-transform: none; }
-    .copy-status { align-self: center; color: var(--muted); font-size: 0.8rem; font-weight: 600; }
-    .student-name-status { display: inline-flex; align-items: center; gap: 7px; margin: 14px 0 0; color: var(--muted); font-size: 0.82rem; font-weight: 600; line-height: 1.35; }
+    .result-label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 0.73rem; font-weight: 700; }
+    .result-url { min-height: 40px; padding: 0 11px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.71rem; font-weight: 500; letter-spacing: 0; text-transform: none; }
+    .copy-status { align-self: center; color: var(--muted); font-size: 0.78rem; font-weight: 600; }
+    .student-name-status { display: inline-flex; align-items: center; gap: 7px; margin: 14px 0 0; color: var(--muted); font-size: 0.81rem; font-weight: 600; line-height: 1.35; }
     .student-name-status[hidden] { display: none; }
     .student-name-status.loading::before { content: ""; width: 12px; height: 12px; flex: 0 0 auto; border: 2px solid var(--line-strong); border-top-color: var(--navy); border-radius: 50%; animation: student-name-spin 780ms linear infinite; }
     @keyframes student-name-spin { to { transform: rotate(360deg); } }
-    .social-columns { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; margin-top: 18px; }
+    .social-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 18px; }
     .social-profile-section { min-width: 0; padding-top: 16px; border-top: 1px solid var(--line); }
     .social-profile-section[hidden] { display: none; }
     .linkedin-heading, .instagram-heading { margin: 0; font-family: Georgia, "Times New Roman", Times, serif; color: var(--ink); font-size: 1rem; line-height: 1.3; }
-    .linkedin-status, .instagram-status { min-height: 1.25em; margin: 4px 0 0; color: var(--muted); font-size: 0.76rem; font-weight: 500; line-height: 1.4; }
+    .linkedin-status, .instagram-status { min-height: 1.25em; margin: 4px 0 0; color: var(--muted); font-size: 0.75rem; font-weight: 500; line-height: 1.4; }
     .linkedin-candidates, .instagram-candidates { display: grid; gap: 7px; margin-top: 9px; }
     .social-candidate-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; padding: 11px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
     .social-candidate-copy { min-width: 0; flex: 1 1 auto; }
-    .social-profile-handle { display: block; min-width: 0; overflow: hidden; color: var(--navy); font-size: 0.84rem; font-weight: 700; line-height: 1.35; text-overflow: ellipsis; text-underline-offset: 3px; white-space: nowrap; }
-    .social-candidate-meta { margin: 3px 0 0; overflow: hidden; color: var(--muted); font-size: 0.72rem; line-height: 1.4; text-overflow: ellipsis; white-space: nowrap; }
+    .social-profile-handle { display: block; min-width: 0; overflow: hidden; color: var(--navy); font-size: 0.83rem; font-weight: 700; line-height: 1.35; text-overflow: ellipsis; text-underline-offset: 3px; white-space: nowrap; }
+    .social-candidate-meta { margin: 3px 0 0; overflow: hidden; color: var(--muted); font-size: 0.71rem; line-height: 1.4; text-overflow: ellipsis; white-space: nowrap; }
     .social-candidate-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
-    .linkedin-badge, .instagram-badge { flex: 0 0 auto; padding: 3px 7px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--surface-muted); color: var(--muted); font-size: 0.62rem; font-weight: 700; line-height: 1.2; white-space: nowrap; }
-    .linkedin-badge.strong, .instagram-badge.strong, .instagram-badge.high { border-color: #a9c7b3; background: var(--success-soft); color: var(--success); }
-    .linkedin-badge.possible, .instagram-badge.possible { border-color: #d8c69f; background: var(--warning-soft); color: var(--warning); }
+    .linkedin-badge, .instagram-badge { flex: 0 0 auto; padding: 3px 7px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--surface-muted); color: var(--muted); font-size: 0.61rem; font-weight: 700; line-height: 1.2; white-space: nowrap; }
+    .linkedin-badge.strong, .instagram-badge.strong, .instagram-badge.high { border-color: color-mix(in srgb, var(--success), transparent 55%); background: var(--success-soft); color: var(--success); }
+    .linkedin-badge.possible, .instagram-badge.possible { border-color: color-mix(in srgb, var(--warning), transparent 55%); background: var(--warning-soft); color: var(--warning); }
     .linkedin-badge.low, .instagram-badge.low, .instagram-badge.weak, .instagram-badge.poor { background: var(--surface-muted); color: var(--muted); }
-    .social-profile-link { display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; color: var(--navy); font-size: 0.7rem; font-weight: 700; line-height: 1.2; text-decoration: none; white-space: nowrap; }
+    .social-profile-link { display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto; color: var(--navy); font-size: 0.69rem; font-weight: 700; line-height: 1.2; text-decoration: none; white-space: nowrap; }
     .social-profile-handle:hover, .social-profile-link:hover { color: var(--navy-hover); text-decoration: underline; text-underline-offset: 3px; }
     .social-fallback-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-    .social-search-link { min-height: 34px; padding: 0 10px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--navy); font-size: 0.7rem; }
+    .social-search-link { min-height: 34px; padding: 0 10px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--navy); font-size: 0.69rem; }
     .social-search-link:hover { border-color: var(--navy); background: var(--navy-soft); }
     button.social-search-link { font: inherit; }
     button.social-search-link:disabled { opacity: 0.56; cursor: wait; }
     .social-optin-row { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; padding-top: 8px; }
-    .social-optin-hint { color: var(--muted); font-size: 0.7rem; line-height: 1.4; }
-    .how-to { padding: 34px 0; }
-    .section-title { margin: 0 0 13px; font-size: 1.35rem; line-height: 1.3; }
-    .how-to ol { margin: 0; padding-left: 1.4rem; color: var(--ink); }
-    .how-to li { padding: 4px 0 4px 5px; line-height: 1.5; }
-    .batch-card { overflow: hidden; }
-    .batch-header { padding: 21px 22px 18px; }
-    .batch-heading { display: block; font-family: Georgia, "Times New Roman", Times, serif; color: var(--ink); font-size: 1.25rem; font-weight: 700; }
-    .batch-subtitle { display: block; margin-top: 4px; color: var(--muted); font-size: 0.86rem; line-height: 1.45; }
-    .batch-content { padding: 20px 22px 22px; border-top: 1px solid var(--line); }
-    .batch-form textarea { display: block; min-height: 126px; resize: vertical; padding: 12px 14px; font-size: 0.95rem; line-height: 1.5; }
-    .batch-form .primary { width: 100%; margin-top: 12px; }
-    .batch-results { display: grid; gap: 8px; margin-top: 16px; }
+    .social-optin-hint { color: var(--muted); font-size: 0.69rem; line-height: 1.4; }
+    .how-to { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 32px; align-items: center; margin-inline: calc(50% - 50vw); padding: 42px max(24px, calc((100vw - 1180px) / 2)); border-bottom: 1px solid var(--line); background: var(--surface); }
+    .section-rule { width: 28px; height: 2px; margin-bottom: 12px; background: var(--navy); }
+    .section-title { margin: 0; font-size: 1.75rem; line-height: 1.2; }
+    .section-subtitle { margin: 9px 0 0; color: var(--muted); font-family: Georgia, "Times New Roman", Times, serif; font-size: 0.88rem; line-height: 1.5; }
+    .steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; }
+    .step { position: relative; min-width: 0; padding: 0 23px; border-left: 1px solid var(--line); }
+    .step::after { content: "›"; position: absolute; top: 46%; right: -5px; z-index: 2; color: var(--navy); font-size: 1.15rem; }
+    .step:last-child::after { display: none; }
+    .step-top { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+    .step-number { display: grid; place-items: center; width: 30px; height: 30px; flex: 0 0 auto; border-radius: 50%; background: var(--blue-soft); color: var(--navy); font-family: Georgia, "Times New Roman", Times, serif; font-size: 0.83rem; font-weight: 700; }
+    .step-icon { width: 26px; height: 26px; color: var(--navy); }
+    .step h3 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", Times, serif; font-size: 0.92rem; line-height: 1.35; }
+    .step p { margin: 4px 0 0; color: var(--muted); font-family: Georgia, "Times New Roman", Times, serif; font-size: 0.78rem; line-height: 1.45; }
+    .batch-card { display: grid; grid-template-columns: minmax(260px, 0.65fr) minmax(0, 1.35fr); gap: 24px; margin-top: 36px; padding: 20px; border: 1px solid #cfe0f3; border-radius: 9px; background: var(--navy-soft); }
+    .batch-header { display: flex; align-items: center; gap: 14px; padding: 5px 18px 5px 0; border-right: 1px solid var(--line-strong); }
+    .batch-icon { display: grid; place-items: center; width: 46px; height: 46px; flex: 0 0 auto; border-radius: 50%; background: var(--blue-soft); color: var(--navy); }
+    .batch-icon svg { width: 24px; height: 24px; }
+    .batch-heading { display: block; font-size: 1.38rem; font-weight: 700; line-height: 1.2; }
+    .batch-subtitle { display: block; margin-top: 5px; color: var(--muted); font-family: Georgia, "Times New Roman", Times, serif; font-size: 0.82rem; line-height: 1.4; }
+    .batch-content { min-width: 0; }
+    .batch-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: end; }
+    .batch-field { min-width: 0; }
+    .batch-form textarea { display: block; min-height: 72px; resize: vertical; padding: 11px 13px; font-size: 0.88rem; line-height: 1.45; }
+    .batch-form .primary { min-height: 50px; margin-bottom: 0; white-space: nowrap; }
+    .batch-results { display: grid; grid-column: 1 / -1; gap: 8px; margin-top: 14px; }
     .batch-results[hidden] { display: none; }
-    .batch-summary { margin: 0 0 2px; color: var(--muted); font-size: 0.84rem; font-weight: 600; }
-    .batch-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 13px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+    .batch-summary { margin: 0 0 2px; color: var(--muted); font-size: 0.82rem; font-weight: 600; }
+    .batch-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 11px 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
     .batch-roll { min-width: 0; overflow-wrap: anywhere; font-weight: 700; }
     .batch-row a { flex: 0 0 auto; color: var(--navy); font-weight: 700; text-underline-offset: 3px; }
     .batch-row.skipped { align-items: flex-start; color: var(--muted); }
-    .batch-reason { flex: 0 1 auto; text-align: right; font-size: 0.82rem; }
-    .qr-dialog { width: min(340px, calc(100% - 28px)); padding: 0; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--surface); color: var(--ink); box-shadow: 0 18px 50px rgba(28, 28, 28, 0.16); }
-    .qr-dialog::backdrop { background: rgba(18, 24, 31, 0.58); }
+    .batch-reason { flex: 0 1 auto; text-align: right; font-size: 0.8rem; }
+    .qr-dialog { width: min(340px, calc(100% - 28px)); padding: 0; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--surface); color: var(--ink); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.24); }
+    .qr-dialog::backdrop { background: rgba(9, 18, 31, 0.64); }
     .qr-inner { position: relative; display: grid; justify-items: center; gap: 13px; padding: 26px; text-align: center; }
     .qr-inner h2 { margin: 0; font-size: 1.25rem; }
-    .qr-inner p { margin: 0; color: var(--muted); font-size: 0.88rem; line-height: 1.45; }
+    .qr-inner p { margin: 0; color: var(--muted); font-size: 0.86rem; line-height: 1.45; }
     .qr-image-wrap { display: grid; place-items: center; width: 236px; min-height: 236px; padding: 8px; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
     .qr-image-wrap img { display: block; width: 220px; height: 220px; }
     .qr-image-wrap img[hidden] { display: none; }
-    .qr-loading { color: var(--muted); font-size: 0.84rem; font-weight: 650; }
+    .qr-loading { color: var(--muted); font-size: 0.82rem; font-weight: 650; }
     .qr-close { position: absolute; top: 10px; right: 10px; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); cursor: pointer; }
     .qr-close svg { width: 17px; height: 17px; }
-    .site-footer { margin-top: 64px; padding: 24px 0 30px; border-top: 1px solid var(--line); background: var(--surface); }
-    .footer-inner { color: var(--muted); font-size: 0.78rem; line-height: 1.6; }
+    .site-footer { padding: 22px 0 28px; border-top: 1px solid var(--line); background: var(--surface); }
+    .footer-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; color: var(--muted); font-size: 0.73rem; line-height: 1.55; }
     .footer-title { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", Times, serif; font-weight: 700; }
     .footer-note, .footer-copy { margin: 3px 0 0; }
-    @media (min-width: 760px) { .social-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .footer-copy { text-align: right; }
+    @media (max-width: 960px) {
+      .header-inner, .page, .footer-inner { width: min(100% - 40px, 1180px); }
+      .hero-wrap, .how-to { padding-inline: 20px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+      .intro { max-width: 720px; }
+      .preview-stage { width: min(600px, 100%); min-height: 410px; margin: 0 auto; }
+      .how-to { grid-template-columns: 1fr; gap: 24px; }
+      .how-to-intro { max-width: 420px; }
+      .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 24px; }
+      .step:nth-child(3) { border-top: 1px solid var(--line); padding-top: 24px; }
+      .step:nth-child(4) { border-top: 1px solid var(--line); padding-top: 24px; }
+      .step:nth-child(2)::after, .step:last-child::after { display: none; }
+      .batch-card { grid-template-columns: 1fr; }
+      .batch-header { border-right: 0; border-bottom: 1px solid var(--line-strong); padding: 0 0 18px; }
+      .batch-form { grid-template-columns: minmax(0, 1fr) auto; }
+      .student-info { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .student-info-row:nth-child(2n) { border-right: 0; }
+      .student-info-row { border-bottom: 1px solid var(--line); }
+      .student-info-row:nth-last-child(-n + 2) { border-bottom: 0; }
+    }
     @media (max-width: 680px) {
-      .header-inner, .page, .footer-inner { width: min(100% - 28px, 820px); }
-      .header-inner { align-items: flex-start; flex-direction: column; gap: 10px; padding: 14px 0; }
-      .identity { flex-wrap: wrap; gap: 5px 8px; }
-      .portal-name { padding-left: 8px; }
-      .site-nav { width: 100%; gap: 16px; overflow: visible; }
-      .site-nav a { font-size: 0.78rem; }
-      .page { padding: 38px 0 48px; }
-      .search-card { padding: 21px 17px; }
+      .header-inner, .page, .footer-inner { width: min(100% - 28px, 1180px); }
+      .header-inner { align-items: flex-start; flex-direction: column; gap: 13px; min-height: 0; padding: 14px 0 0; }
+      .identity { width: 100%; }
+      .tu-mark { width: 40px; height: 40px; margin-right: 10px; font-size: 0.78rem; }
+      .university-name { font-size: 1.12rem; }
+      .university-tagline { font-size: 0.5rem; letter-spacing: 0.1em; }
+      .portal-name { margin-left: auto; padding-left: 10px; font-size: 0.82rem; }
+      .site-nav { width: 100%; height: 42px; gap: 22px; overflow: visible; }
+      .site-nav a { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 0.76rem; }
+      .site-nav a[aria-current="page"]::after { bottom: 0; }
+      .hero-wrap { padding: 38px 14px 44px; }
+      h1 { font-size: clamp(2.1rem, 11vw, 2.75rem); }
+      .subtitle { font-size: 0.96rem; }
+      .search-card { padding: 19px 16px 18px; }
       #gradeCardForm { grid-template-columns: 1fr; }
-      #gradeCardForm > .primary { margin-top: 0; }
-      .primary { width: 100%; }
+      #gradeCardForm > .primary { width: 100%; margin-top: 0; }
+      .form-label-row { align-items: flex-start; }
+      .preview-stage { min-height: 365px; padding: 24px 0 38px 16px; }
+      .preview-annotation { position: relative; top: 0; left: 0; width: auto; margin: 0 0 12px 10px; transform: none; }
+      .preview-annotation svg { display: none; }
+      .preview-sheet-back { top: 63px; right: 10px; height: 298px; }
+      .preview-sheet { width: calc(100% - 26px); min-height: 0; padding: 15px 14px; transform: rotate(2.2deg); }
+      .preview-head { grid-template-columns: 35px 1fr 35px; }
+      .preview-seal { width: 32px; height: 32px; font-size: 0.57rem; }
+      .preview-fields { gap: 3px 10px; }
+      .preview-table th, .preview-table td { padding: 4px 3px; }
+      .pdf-pill { right: 0; bottom: 10px; width: min(320px, 94%); font-size: 0.62rem; }
+      .result-panel { margin-top: 22px; padding: 20px 16px; }
       .student-info { grid-template-columns: 1fr; }
-      .student-info-row, .student-info-row:nth-child(odd), .student-info-row:nth-last-child(-n + 2) { border-right: 0; border-bottom: 1px solid var(--line); }
+      .student-info-row, .student-info-row:nth-child(2n), .student-info-row:nth-last-child(-n + 2) { border-right: 0; border-bottom: 1px solid var(--line); }
       .student-info-row:last-child { border-bottom: 0; }
       .result-actions > :is(a, button) { flex: 1 1 calc(50% - 4px); }
       .copy-status { flex-basis: 100%; }
+      .social-columns { grid-template-columns: 1fr; }
       .social-candidate-row { align-items: flex-start; flex-direction: column; }
       .social-candidate-actions { width: 100%; justify-content: space-between; }
       .social-candidate-meta { white-space: normal; }
-      .batch-header { padding: 18px 17px 15px; }
-      .batch-content { padding: 17px; }
+      .how-to { margin-inline: calc(50% - 50vw); padding: 34px 14px 38px; }
+      .steps { grid-template-columns: 1fr; row-gap: 0; }
+      .step { padding: 19px 0; border-top: 1px solid var(--line); border-left: 0; }
+      .step:first-child { border-top: 0; }
+      .step:nth-child(3), .step:nth-child(4) { padding-top: 19px; }
+      .step::after { display: none; }
+      .batch-card { gap: 18px; margin-top: 24px; padding: 17px 15px; }
+      .batch-form { grid-template-columns: 1fr; }
+      .batch-form .primary { width: 100%; }
       .batch-row { align-items: flex-start; flex-direction: column; gap: 6px; }
       .batch-reason { text-align: left; }
-      .site-footer { margin-top: 48px; }
+      .footer-inner { align-items: flex-start; flex-direction: column; gap: 12px; }
+      .footer-copy { text-align: left; }
     }
-    @media (max-width: 390px) { .site-nav { flex-wrap: wrap; row-gap: 8px; } .result-actions > :is(a, button) { flex-basis: 100%; } }
+    @media (max-width: 390px) {
+      .portal-name { max-width: 92px; white-space: normal; line-height: 1.15; }
+      .site-nav { justify-content: space-between; gap: 8px; }
+      .site-nav a { font-size: 0.72rem; }
+      .preview-stage { min-height: 350px; padding-left: 8px; }
+      .preview-sheet { width: calc(100% - 14px); }
+      .preview-fields { grid-template-columns: 1fr; }
+      .preview-field:nth-child(n + 5) { display: none; }
+      .preview-table th:nth-child(2), .preview-table td:nth-child(2) { display: none; }
+      .pdf-pill { width: 100%; }
+      .result-actions > :is(a, button) { flex-basis: 100%; }
+    }
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; animation: none !important; } }
   </style>
 </head>
@@ -203,11 +340,15 @@
   <header class="site-header">
     <div class="header-inner">
       <div class="identity" aria-label="Tezpur University Grade Card Portal">
-        <span class="university-name">Tezpur University</span>
+        <span class="tu-mark" aria-hidden="true">TU</span>
+        <span class="identity-copy">
+          <span class="university-name">Tezpur University</span>
+          <span class="university-tagline">A CENTRAL UNIVERSITY · ESTD. 1994</span>
+        </span>
         <span class="portal-name">Grade Card Portal</span>
       </div>
       <nav class="site-nav" aria-label="Portal navigation">
-        <a href="#grade-card">Grade Card</a>
+        <a href="#grade-card" aria-current="page">Grade Card</a>
         <a href="#how-to-use">How to Use</a>
         <a href="#batch-lookup">Batch Lookup</a>
       </nav>
@@ -216,91 +357,155 @@
 
   <main class="page">
     <section id="grade-card" aria-labelledby="pageTitle">
-      <header class="intro">
-        <h1 id="pageTitle">Enter your roll number to view your grade card.</h1>
-        <p class="subtitle">Use your university-issued Roll Number or Enrollment ID.</p>
-      </header>
+      <div class="hero-wrap">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <header class="intro">
+              <p class="eyebrow">ACADEMIC RECORDS</p>
+              <h1 id="pageTitle">Enter your roll number to view your grade card.</h1>
+              <p class="subtitle">Use your university-issued Roll Number or Enrollment ID.</p>
+            </header>
 
-      <section class="search-card" aria-labelledby="lookup-label">
-        <form id="gradeCardForm" novalidate>
-          <div class="field">
-            <label id="lookup-label" for="rollNumber">Roll Number / Enrollment ID <span class="label-example">e.g. EEB22026</span></label>
-            <div class="input-wrap">
-              <input id="rollNumber" name="rollNumber" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. EEB22026" aria-describedby="inlineHint inputHint destinationNote formMessage confirmationMessage" maxlength="28" />
-              <button class="voice-input" id="voiceInputButton" type="button" aria-label="Speak roll number" hidden>
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><path d="M12 17v5"></path><path d="M8 22h8"></path></svg>
-                <span class="voice-state">Listening…</span>
-              </button>
-            </div>
-            <p class="inline-hint" id="inlineHint" role="status" aria-live="polite"></p>
-            <div class="example-row" aria-label="Sample roll numbers">
-              <span class="example-label">Examples:</span>
-              <button class="example-chip" type="button" data-roll="EEB22026">EEB22026</button>
-              <button class="example-chip" type="button" data-roll="CSB22014">CSB22014</button>
-              <button class="example-chip" type="button" data-roll="CEB22103">CEB22103</button>
-            </div>
-          </div>
-          <button class="primary" id="submitButton" type="submit">View Grade Card</button>
-        </form>
-        <p class="hint" id="inputHint">Letters and numbers only. Lowercase entries are converted automatically.</p>
-        <p class="hint destination-note" id="destinationNote">View Grade Card opens the university PDF in a new tab.</p>
-        <p class="message" id="formMessage" role="alert"></p>
-        <p class="confirmation" id="confirmationMessage" role="status" aria-live="polite"></p>
-
-        <section class="result-panel" id="singleResult" aria-labelledby="resultHeading" hidden>
-          <h2 class="result-heading" id="resultHeading">Grade card result</h2>
-          <dl class="student-info" id="studentInfo" aria-label="Student information">
-            <div class="student-info-row" id="studentNameRow" hidden><dt>Name</dt><dd id="studentNameValue"></dd></div>
-            <div class="student-info-row"><dt>Roll Number</dt><dd id="studentRollValue"></dd></div>
-            <div class="student-info-row" id="studentProgrammeRow" hidden><dt>Programme</dt><dd id="studentProgrammeValue"></dd></div>
-            <div class="student-info-row" id="studentDepartmentRow" hidden><dt>Department</dt><dd id="studentDepartmentValue"></dd></div>
-          </dl>
-          <div class="result-actions" aria-label="Grade card actions">
-            <a class="primary-action" id="openGradeCardLink" target="_blank" rel="noopener noreferrer">Open Grade Card</a>
-            <a class="secondary-action" id="downloadGradeCardLink" target="_blank" rel="noopener noreferrer" download>
-              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
-              Download Grade Card
-            </a>
-            <button class="secondary-action" id="copyLinkButton" type="button">
-              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"></path></svg>
-              <span class="copy-label">Copy Link</span>
-            </button>
-            <button class="secondary-action" id="qrCodeButton" type="button">QR Code</button>
-            <span class="copy-status" id="copyStatus" role="status" aria-live="polite"></span>
-          </div>
-          <div class="direct-link-field">
-            <label class="result-label" for="directPdfUrl">Direct PDF link</label>
-            <input class="result-url" id="directPdfUrl" type="text" readonly />
-          </div>
-          <p class="student-name-status" id="studentNameStatus" role="status" aria-live="polite" hidden></p>
-          <div class="social-columns">
-            <section class="social-profile-section linkedin-section" id="linkedinSection" aria-labelledby="linkedinHeading" hidden>
-              <h2 class="linkedin-heading" id="linkedinHeading">LinkedIn Profile</h2>
-              <p class="linkedin-status" id="linkedinStatus" role="status" aria-live="polite"></p>
-              <div class="linkedin-candidates" id="linkedinCandidates"></div>
-            </section>
-            <section class="social-profile-section instagram-section" id="instagramSection" aria-labelledby="instagramHeading" hidden>
-              <h2 class="instagram-heading" id="instagramHeading">Instagram Profile</h2>
-              <p class="instagram-status" id="instagramStatus" role="status" aria-live="polite"></p>
-              <div class="instagram-candidates" id="instagramCandidates"></div>
+            <section class="search-card" aria-labelledby="lookup-label">
+              <form id="gradeCardForm" novalidate>
+                <div class="field">
+                  <div class="form-label-row">
+                    <label id="lookup-label" for="rollNumber">Roll Number / Enrollment ID</label>
+                    <span class="label-example">e.g. EEB22026</span>
+                  </div>
+                  <div class="input-wrap">
+                    <input id="rollNumber" name="rollNumber" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. EEB22026" aria-describedby="inlineHint inputHint destinationNote formMessage confirmationMessage" maxlength="28" />
+                    <button class="voice-input" id="voiceInputButton" type="button" aria-label="Speak roll number" hidden>
+                      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0"></path><path d="M12 17v5"></path><path d="M8 22h8"></path></svg>
+                      <span class="voice-state">Listening…</span>
+                    </button>
+                  </div>
+                  <p class="inline-hint" id="inlineHint" role="status" aria-live="polite"></p>
+                  <div class="example-row" aria-label="Sample roll numbers">
+                    <span class="example-label">Examples:</span>
+                    <button class="example-chip" type="button" data-roll="EEB22026">EEB22026</button>
+                    <button class="example-chip" type="button" data-roll="CSB22014">CSB22014</button>
+                    <button class="example-chip" type="button" data-roll="CEB22103">CEB22103</button>
+                  </div>
+                </div>
+                <button class="primary" id="submitButton" type="submit">View Grade Card <span class="button-arrow" aria-hidden="true">→</span></button>
+              </form>
+              <div class="helper-lines">
+                <p class="hint" id="inputHint">Letters and numbers only. Lowercase entries are converted automatically.</p>
+                <p class="hint destination-note" id="destinationNote">View Grade Card opens the university PDF in a new tab.</p>
+              </div>
+              <p class="message" id="formMessage" role="alert"></p>
+              <p class="confirmation" id="confirmationMessage" role="status" aria-live="polite"></p>
             </section>
           </div>
-        </section>
+
+          <aside class="preview-stage" aria-label="Sample grade card preview">
+            <div class="preview-annotation">Preview of the<br />grade card format
+              <svg aria-hidden="true" viewBox="0 0 80 54" fill="none"><path d="M5 4C7 27 23 40 53 43" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M47 37L54 43L47 47" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="preview-sheet-back" aria-hidden="true"></div>
+            <article class="preview-sheet" aria-label="Sample Tezpur University grade card">
+              <span class="sample-tag">SAMPLE</span>
+              <header class="preview-head">
+                <span class="preview-seal" aria-hidden="true">TU</span>
+                <span>
+                  <span class="preview-hindi">तेजपुर विश्वविद्यालय</span>
+                  <span class="preview-university">TEZPUR UNIVERSITY</span>
+                  <span class="preview-central">(A CENTRAL UNIVERSITY)</span>
+                </span>
+                <span aria-hidden="true"></span>
+              </header>
+              <div class="preview-title">GRADE CARD</div>
+              <div class="preview-fields">
+                <div class="preview-field"><span>Roll Number</span><span class="preview-placeholder">ABC00000</span></div>
+                <div class="preview-field"><span>Name</span><span class="preview-placeholder">—</span></div>
+                <div class="preview-field"><span>Programme</span><span class="preview-placeholder">—</span></div>
+                <div class="preview-field"><span>Department</span><span class="preview-placeholder">—</span></div>
+                <div class="preview-field"><span>Semester</span><span class="preview-placeholder">—</span></div>
+                <div class="preview-field"><span>Academic Year</span><span class="preview-placeholder">—</span></div>
+              </div>
+              <table class="preview-table" aria-label="Sample course grades">
+                <thead><tr><th>Course Code</th><th>Course Title</th><th>Grade</th><th>Credits</th></tr></thead>
+                <tbody>
+                  <tr><td>XX 000</td><td>—</td><td>—</td><td>—</td></tr>
+                  <tr><td>XX 000</td><td>—</td><td>—</td><td>—</td></tr>
+                  <tr><td>XX 000</td><td>—</td><td>—</td><td>—</td></tr>
+                  <tr><td>XX 000</td><td>—</td><td>—</td><td>—</td></tr>
+                  <tr><td>XX 000</td><td>—</td><td>—</td><td>—</td></tr>
+                </tbody>
+              </table>
+              <div class="preview-total">SGPA: — &nbsp; | &nbsp; CGPA: —</div>
+              <div class="preview-signoff"><span>Date of Issue: —</span><span>Controller of Examinations</span></div>
+            </article>
+            <div class="pdf-pill" aria-hidden="true"><span class="pdf-glyph">PDF</span><span>Opens the official university PDF in a new tab</span><span class="pill-arrow">↗</span></div>
+          </aside>
+        </div>
+      </div>
+
+      <section class="result-panel" id="singleResult" aria-labelledby="resultHeading" hidden>
+        <h2 class="result-heading" id="resultHeading">Grade card result</h2>
+        <dl class="student-info" id="studentInfo" aria-label="Student information">
+          <div class="student-info-row" id="studentNameRow" hidden><dt>Name</dt><dd id="studentNameValue"></dd></div>
+          <div class="student-info-row"><dt>Roll Number</dt><dd id="studentRollValue"></dd></div>
+          <div class="student-info-row" id="studentProgrammeRow" hidden><dt>Programme</dt><dd id="studentProgrammeValue"></dd></div>
+          <div class="student-info-row" id="studentDepartmentRow" hidden><dt>Department</dt><dd id="studentDepartmentValue"></dd></div>
+        </dl>
+        <div class="result-actions" aria-label="Grade card actions">
+          <a class="primary-action" id="openGradeCardLink" target="_blank" rel="noopener noreferrer">Open Grade Card</a>
+          <a class="secondary-action" id="downloadGradeCardLink" target="_blank" rel="noopener noreferrer" download>
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
+            Download Grade Card
+          </a>
+          <button class="secondary-action" id="copyLinkButton" type="button">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"></path></svg>
+            <span class="copy-label">Copy Link</span>
+          </button>
+          <button class="secondary-action" id="qrCodeButton" type="button">QR Code</button>
+          <span class="copy-status" id="copyStatus" role="status" aria-live="polite"></span>
+        </div>
+        <div class="direct-link-field">
+          <label class="result-label" for="directPdfUrl">Direct PDF link</label>
+          <input class="result-url" id="directPdfUrl" type="text" readonly />
+        </div>
+        <p class="student-name-status" id="studentNameStatus" role="status" aria-live="polite" hidden></p>
+        <div class="social-columns">
+          <section class="social-profile-section linkedin-section" id="linkedinSection" aria-labelledby="linkedinHeading" hidden>
+            <h2 class="linkedin-heading" id="linkedinHeading">LinkedIn Profile</h2>
+            <p class="linkedin-status" id="linkedinStatus" role="status" aria-live="polite"></p>
+            <div class="linkedin-candidates" id="linkedinCandidates"></div>
+          </section>
+          <section class="social-profile-section instagram-section" id="instagramSection" aria-labelledby="instagramHeading" hidden>
+            <h2 class="instagram-heading" id="instagramHeading">Instagram Profile</h2>
+            <p class="instagram-status" id="instagramStatus" role="status" aria-live="polite"></p>
+            <div class="instagram-candidates" id="instagramCandidates"></div>
+          </section>
+        </div>
       </section>
     </section>
 
     <section class="how-to" id="how-to-use" aria-labelledby="howToHeading">
-      <h2 class="section-title" id="howToHeading">How to Use</h2>
-      <ol><li>Enter your roll number.</li><li>Select “View Grade Card”.</li><li>Review your grade card.</li><li>Download it if needed.</li></ol>
+      <div class="how-to-intro">
+        <div class="section-rule" aria-hidden="true"></div>
+        <h2 class="section-title" id="howToHeading">How to Use</h2>
+        <p class="section-subtitle">Follow these simple steps to view your grade card.</p>
+      </div>
+      <ol class="steps">
+        <li class="step"><div class="step-top"><span class="step-number">1</span><svg class="step-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5"/><path d="M9 12h6M9 16h6"/></svg></div><h3>Enter your roll number.</h3><p>Use your university-issued Roll Number or Enrollment ID.</p></li>
+        <li class="step"><div class="step-top"><span class="step-number">2</span><svg class="step-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 3 13 9-6 2-3 6z"/><path d="m13 14 4 5"/><path d="M15 3v3M20 7l-2 2M9 2l1 3"/></svg></div><h3>Select “View Grade Card”.</h3><p>Click the button to fetch your grade card.</p></li>
+        <li class="step"><div class="step-top"><span class="step-number">3</span><svg class="step-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v5h5"/><path d="M8.5 13h7M8.5 17h7"/><path d="M9 10h3"/></svg></div><h3>Review your grade card.</h3><p>Your grade card opens in a new tab (PDF).</p></li>
+        <li class="step"><div class="step-top"><span class="step-number">4</span><svg class="step-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></svg></div><h3>Download if needed.</h3><p>Save or print for your records.</p></li>
+      </ol>
     </section>
 
     <section class="batch-card" id="batch-lookup" aria-labelledby="batchHeading">
-      <div class="batch-header"><span><span class="batch-heading" id="batchHeading">Batch Lookup</span><span class="batch-subtitle">For class representatives checking multiple roll numbers.</span></span></div>
+      <div class="batch-header">
+        <span class="batch-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        <span><span class="batch-heading" id="batchHeading">Batch Lookup</span><span class="batch-subtitle">For class representatives checking multiple roll numbers.</span></span>
+      </div>
       <div class="batch-content">
         <form class="batch-form" id="batchForm" novalidate>
-          <label for="batchRollNumbers">Roll Numbers / Enrollment IDs</label>
-          <textarea id="batchRollNumbers" placeholder="One roll number per line; comma or space separated also works" spellcheck="false" autocapitalize="characters"></textarea>
-          <button class="primary" type="submit">View Grade Cards</button>
+          <div class="batch-field"><label for="batchRollNumbers">Roll Numbers / Enrollment IDs</label><textarea id="batchRollNumbers" placeholder="One roll number per line; comma or space separated also works" spellcheck="false" autocapitalize="characters"></textarea></div>
+          <button class="primary" type="submit">View Grade Cards <span class="button-arrow" aria-hidden="true">→</span></button>
         </form>
         <div class="batch-results" id="batchResults" aria-live="polite" hidden></div>
       </div>
@@ -309,8 +514,7 @@
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <p class="footer-title">Tezpur University Grade Card Portal</p>
-      <p class="footer-note">A student-built utility. Not an official Tezpur University service.</p>
+      <div><p class="footer-title">Tezpur University Grade Card Portal</p><p class="footer-note">A student-built utility. Not an official Tezpur University service.</p></div>
       <p class="footer-copy">© 2026</p>
     </div>
   </footer>
