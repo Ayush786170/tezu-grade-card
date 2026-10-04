@@ -4,14 +4,14 @@
   <!-- Institutional redesign build — October 2026 -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="color-scheme" content="light dark" />
+  <meta name="color-scheme" content="light" />
   <meta name="theme-color" content="#1b3a6b" />
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="icon" href="data:," />
   <title>Tezpur University Grade Card Portal</title>
   <style>
     :root {
-      color-scheme: light dark;
+      color-scheme: light;
       --page: #f5f8fc;
       --surface: #ffffff;
       --surface-muted: #f7f9fc;
@@ -33,30 +33,6 @@
       --shadow: 0 8px 24px rgba(27, 58, 107, 0.08);
       --document-shadow: 0 22px 54px rgba(28, 55, 91, 0.18);
     }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --page: #0e1725;
-        --surface: #162235;
-        --surface-muted: #1d2b40;
-        --ink: #eef4fc;
-        --muted: #b6c3d5;
-        --line: #304159;
-        --line-strong: #435772;
-        --navy: #8eb7ef;
-        --navy-hover: #aacbf6;
-        --navy-soft: #203754;
-        --blue-soft: #243d5d;
-        --danger: #ffb5b7;
-        --danger-soft: #3a2228;
-        --success: #99ddb3;
-        --success-soft: #1d362a;
-        --warning: #e6ca85;
-        --warning-soft: #3b321d;
-        --focus-ring: rgba(142, 183, 239, 0.28);
-        --shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
-        --document-shadow: 0 22px 54px rgba(0, 0, 0, 0.35);
-      }
-    }
     * { box-sizing: border-box; }
     html { min-width: 320px; scroll-behavior: smooth; background: var(--page); }
     body { margin: 0; min-height: 100vh; overflow-x: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color: var(--ink); background: var(--page); }
@@ -66,7 +42,7 @@
     .header-inner, .page, .footer-inner { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
     .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 36px; min-height: 82px; padding: 12px 0; }
     .identity { display: flex; align-items: center; min-width: 0; }
-    .tu-mark { display: grid; place-items: center; width: 48px; height: 48px; flex: 0 0 auto; margin-right: 14px; border: 2px solid var(--navy); border-radius: 50%; color: var(--navy); font-family: Georgia, "Times New Roman", Times, serif; font-size: 0.95rem; font-weight: 700; letter-spacing: -0.04em; }
+    .tu-mark { display: block; width: 40px; height: 40px; flex: 0 0 auto; margin-right: 14px; border: 1.5px solid var(--navy); border-radius: 50%; object-fit: cover; }
     .identity-copy { min-width: 0; }
     .university-name { display: block; font-family: Georgia, "Times New Roman", Times, serif; color: var(--navy); font-size: 1.42rem; font-weight: 700; line-height: 1.1; white-space: nowrap; }
     .university-tagline { display: block; margin-top: 5px; color: var(--muted); font-size: 0.59rem; font-weight: 650; letter-spacing: 0.18em; line-height: 1.2; white-space: nowrap; }
@@ -77,7 +53,7 @@
     .site-nav a[aria-current="page"] { color: var(--navy); }
     .site-nav a[aria-current="page"]::after { content: ""; position: absolute; right: 0; bottom: 7px; left: 0; height: 2px; background: var(--navy); }
     .page { padding: 0 0 72px; }
-    .hero-wrap { margin-inline: calc(50% - 50vw); padding: 52px max(24px, calc((100vw - 1180px) / 2)) 58px; background: var(--page); border-bottom: 1px solid var(--line); }
+    .hero-wrap { margin-inline: calc(50% - 50vw); padding: 52px max(24px, calc((100vw - 1180px) / 2)) 58px; background: radial-gradient(1100px 480px at 80% 6%, #e9f1fb 0%, rgba(233,241,251,0) 60%), radial-gradient(880px 420px at 6% 18%, #eef3fa 0%, rgba(238,243,250,0) 55%), linear-gradient(#f3f8fd, #f7fafd); border-bottom: 1px solid var(--line); }
     .hero-grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(410px, 0.92fr); gap: clamp(46px, 6vw, 84px); align-items: center; max-width: 1180px; margin: 0 auto; }
     .hero-copy { min-width: 0; }
     .intro { max-width: 650px; margin: 0 0 24px; }
@@ -135,16 +111,16 @@
     .preview-annotation svg { display: block; width: 70px; height: 48px; margin: -2px 0 0 36px; overflow: visible; }
     .preview-sheet-back { position: absolute; top: 31px; right: 4px; width: min(360px, 78%); height: 384px; border: 1px solid var(--line); border-radius: 5px; background: var(--surface); box-shadow: 0 10px 26px rgba(27, 58, 107, 0.1); transform: rotate(-4deg); }
     .preview-sheet { position: relative; z-index: 2; width: min(390px, 88%); min-height: 400px; margin-left: auto; padding: 20px 20px 18px; border: 1px solid var(--line-strong); border-radius: 5px; background: var(--surface); color: var(--ink); box-shadow: var(--document-shadow); font-family: Georgia, "Times New Roman", Times, serif; transform: rotate(3.25deg); transform-origin: 50% 50%; }
-    .sample-tag { position: absolute; top: 17px; right: 17px; padding: 3px 7px; border: 1px solid var(--line-strong); border-radius: 3px; color: var(--muted); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 0.52rem; font-weight: 800; letter-spacing: 0.14em; }
     .preview-head { display: grid; grid-template-columns: 45px 1fr 45px; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--line); text-align: center; }
-    .preview-seal { display: grid; place-items: center; width: 40px; height: 40px; border: 1.5px solid var(--navy); border-radius: 50%; color: var(--navy); font-size: 0.68rem; font-weight: 700; }
+    .preview-seal { display: block; width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
     .preview-hindi { color: var(--navy); font-size: 0.67rem; font-weight: 700; line-height: 1.1; }
     .preview-university { margin-top: 2px; color: var(--navy); font-size: 0.72rem; font-weight: 700; line-height: 1.15; }
     .preview-central { margin-top: 2px; color: var(--muted); font-size: 0.45rem; line-height: 1.1; }
     .preview-title { margin: 12px 0 10px; color: var(--ink); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-align: center; }
     .preview-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 18px; margin-bottom: 12px; font-size: 0.51rem; line-height: 1.35; }
-    .preview-field { display: grid; grid-template-columns: minmax(58px, auto) 1fr; gap: 5px; min-width: 0; }
+    .preview-field { display: grid; grid-template-columns: minmax(58px, auto) auto minmax(0, 1fr); gap: 4px; min-width: 0; }
     .preview-field span:first-child { color: var(--muted); }
+    .preview-field .preview-colon { color: var(--muted); }
     .preview-field span:last-child { min-width: 0; font-weight: 700; }
     .preview-placeholder { color: var(--muted); font-weight: 400 !important; }
     .preview-table { width: 100%; border-collapse: collapse; font-size: 0.47rem; line-height: 1.25; }
@@ -155,7 +131,7 @@
     .preview-signoff { display: flex; justify-content: space-between; gap: 20px; margin-top: 22px; color: var(--muted); font-size: 0.48rem; }
     .preview-signoff span:last-child { color: var(--ink); font-weight: 700; text-align: right; }
     .pdf-pill { position: absolute; right: -10px; bottom: 18px; z-index: 5; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; width: min(330px, 82%); padding: 9px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); box-shadow: 0 8px 24px rgba(27, 58, 107, 0.12); font-size: 0.68rem; font-weight: 700; line-height: 1.25; }
-    .pdf-glyph { display: grid; place-items: center; width: 28px; height: 30px; border-radius: 4px; background: #ca3e48; color: #fff; font-size: 0.52rem; font-weight: 800; }
+    .pdf-glyph { display: grid; place-items: center; width: 28px; height: 30px; border-radius: 4px; background: #d33a2c; color: #fff; font-size: 0.52rem; font-weight: 800; }
     .pill-arrow { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--navy-soft); color: var(--navy); font-size: 0.92rem; }
     .result-panel { margin-top: 30px; padding: 25px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow); }
     .result-panel[hidden] { display: none; }
@@ -273,7 +249,7 @@
       .header-inner, .page, .footer-inner { width: min(100% - 28px, 1180px); }
       .header-inner { align-items: flex-start; flex-direction: column; gap: 13px; min-height: 0; padding: 14px 0 0; }
       .identity { width: 100%; }
-      .tu-mark { width: 40px; height: 40px; margin-right: 10px; font-size: 0.78rem; }
+      .tu-mark { margin-right: 10px; }
       .university-name { font-size: 1.12rem; }
       .university-tagline { font-size: 0.5rem; letter-spacing: 0.1em; }
       .portal-name { margin-left: auto; padding-left: 10px; font-size: 0.82rem; }
@@ -293,7 +269,6 @@
       .preview-sheet-back { top: 63px; right: 10px; height: 298px; }
       .preview-sheet { width: calc(100% - 26px); min-height: 0; padding: 15px 14px; transform: rotate(2.2deg); }
       .preview-head { grid-template-columns: 35px 1fr 35px; }
-      .preview-seal { width: 32px; height: 32px; font-size: 0.57rem; }
       .preview-fields { gap: 3px 10px; }
       .preview-table th, .preview-table td { padding: 4px 3px; }
       .pdf-pill { right: 0; bottom: 10px; width: min(320px, 94%); font-size: 0.62rem; }
@@ -340,7 +315,7 @@
   <header class="site-header">
     <div class="header-inner">
       <div class="identity" aria-label="Tezpur University Grade Card Portal">
-        <span class="tu-mark" aria-hidden="true">TU</span>
+        <img class="tu-mark" src="data:image/jpeg;base64,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" alt="Tezpur University logo" width="40" height="40">
         <span class="identity-copy">
           <span class="university-name">Tezpur University</span>
           <span class="university-tagline">A CENTRAL UNIVERSITY · ESTD. 1994</span>
@@ -405,9 +380,8 @@
             </div>
             <div class="preview-sheet-back" aria-hidden="true"></div>
             <article class="preview-sheet" aria-label="Sample Tezpur University grade card">
-              <span class="sample-tag">SAMPLE</span>
               <header class="preview-head">
-                <span class="preview-seal" aria-hidden="true">TU</span>
+                <img class="preview-seal" src="data:image/jpeg;base64,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" alt="Tezpur University logo" width="44" height="44">
                 <span>
                   <span class="preview-hindi">तेजपुर विश्वविद्यालय</span>
                   <span class="preview-university">TEZPUR UNIVERSITY</span>
@@ -417,25 +391,25 @@
               </header>
               <div class="preview-title">GRADE CARD</div>
               <div class="preview-fields">
-                <div class="preview-field"><span>Roll Number</span><span class="preview-placeholder">ABC00000</span></div>
-                <div class="preview-field"><span>Name</span><span class="preview-placeholder">—</span></div>
-                <div class="preview-field"><span>Programme</span><span class="preview-placeholder">—</span></div>
-                <div class="preview-field"><span>Department</span><span class="preview-placeholder">—</span></div>
-                <div class="preview-field"><span>Semester</span><span class="preview-placeholder">—</span></div>
-                <div class="preview-field"><span>Academic Year</span><span class="preview-placeholder">—</span></div>
+                <div class="preview-field"><span>Roll Number</span><span class="preview-colon">:</span><span>EEB22026</span></div>
+                <div class="preview-field"><span>Name</span><span class="preview-colon">:</span><span></span></div>
+                <div class="preview-field"><span>Programme</span><span class="preview-colon">:</span><span>B.Tech</span></div>
+                <div class="preview-field"><span>Department</span><span class="preview-colon">:</span><span>Electrical Engineering</span></div>
+                <div class="preview-field"><span>Semester</span><span class="preview-colon">:</span><span>VIII</span></div>
+                <div class="preview-field"><span>Academic Year</span><span class="preview-colon">:</span><span></span></div>
               </div>
               <table class="preview-table" aria-label="Sample course grades">
                 <thead><tr><th>Course Code</th><th>Course Title</th><th>Grade</th><th>Credits</th></tr></thead>
                 <tbody>
-                  <tr><td>XX 000</td><td>—</td><td>—</td><td>—</td></tr>
-                  <tr><td>XX 000</td><td>—</td><td>—</td><td>—</td></tr>
-                  <tr><td>XX 000</td><td>—</td><td>—</td><td>—</td></tr>
-                  <tr><td>XX 000</td><td>—</td><td>—</td><td>—</td></tr>
-                  <tr><td>XX 000</td><td>—</td><td>—</td><td>—</td></tr>
+                  <tr><td></td><td></td><td>A+</td><td></td></tr>
+                  <tr><td></td><td></td><td>A</td><td></td></tr>
+                  <tr><td></td><td></td><td>B+</td><td></td></tr>
+                  <tr><td></td><td></td><td>A</td><td></td></tr>
+                  <tr><td></td><td></td><td>B</td><td></td></tr>
                 </tbody>
               </table>
-              <div class="preview-total">SGPA: — &nbsp; | &nbsp; CGPA: —</div>
-              <div class="preview-signoff"><span>Date of Issue: —</span><span>Controller of Examinations</span></div>
+              <div class="preview-total">SGPA : 8.21 &nbsp; | &nbsp; CGPA : 7.71</div>
+              <div class="preview-signoff"><span>Date of Issue :</span><span>Controller of Examinations</span></div>
             </article>
             <div class="pdf-pill" aria-hidden="true"><span class="pdf-glyph">PDF</span><span>Opens the official university PDF in a new tab</span><span class="pill-arrow">↗</span></div>
           </aside>
@@ -515,7 +489,7 @@
   <footer class="site-footer">
     <div class="footer-inner">
       <div><p class="footer-title">Tezpur University Grade Card Portal</p><p class="footer-note">A student-built utility. Not an official Tezpur University service.</p></div>
-      <p class="footer-copy">© 2026</p>
+      <p class="footer-copy">© 2026 &nbsp;|&nbsp; Tezpur University &nbsp;|&nbsp; All rights reserved.</p>
     </div>
   </footer>
 
